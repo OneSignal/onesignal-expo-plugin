@@ -1,1 +1,1 @@
-module.exports = require('./build/withOneSignal.js');
+module.exports = require('./build/onesignal/withOneSignal.js');

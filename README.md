@@ -22,7 +22,7 @@
 ## Install
 
 ```sh
-expo install onesignal-expo-plugin@1.0.0-beta3
+expo install onesignal-expo-plugin
 ```
 
 **Note:** this does not install the [OneSignal SDK](https://github.com/OneSignal/react-native-onesignal).
