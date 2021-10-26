@@ -1,6 +1,6 @@
 {
   "name": "onesignal-expo-plugin",
-  "version": "1.0.0-beta1",
+  "version": "1.0.0-beta2",
   "description": "The OneSignal Expo plugin allows you to use OneSignal without leaving the managed workflow. Developed in collaboration with SweetGreen.",
   "main": "build/withOneSignal.js",
   "scripts": {
@@ -22,7 +22,8 @@
   "author": "rgomezp",
   "contributors": [
     "Karen Grigoryan",
-    "Rodrigo Gomez-Palacio"
+    "Rodrigo Gomez-Palacio",
+    "Charlie Cruzan"
   ],
   "license": "MIT",
   "bugs": {
