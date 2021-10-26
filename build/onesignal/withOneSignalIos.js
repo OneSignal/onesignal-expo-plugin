@@ -12,8 +12,8 @@ const config_plugins_1 = require("@expo/config-plugins");
  * @see https://documentation.onesignal.com/docs/react-native-sdk-setup#step-4-install-for-ios-using-cocoapods-for-ios-apps
  */
 const withAppEnvironment = (config, { mode }) => {
-    return config_plugins_1.withEntitlementsPlist(config, (newConfig) => {
-        newConfig.modResults['aps-environment'] = mode;
+    return (0, config_plugins_1.withEntitlementsPlist)(config, (newConfig) => {
+        newConfig.modResults["aps-environment"] = mode;
         return newConfig;
     });
 };
@@ -22,11 +22,16 @@ const withAppEnvironment = (config, { mode }) => {
  * @see https://documentation.onesignal.com/docs/react-native-sdk-setup#step-4-install-for-ios-using-cocoapods-for-ios-apps
  */
 const withRemoteNotificationsPermissions = (config) => {
-    return config_plugins_1.withInfoPlist(config, (newConfig) => {
-        newConfig.modResults.UIBackgroundModes = [
-            'external-accessory',
-            'remote-notifications',
-        ];
+    const BACKGROUND_MODE_KEYS = ["external-accessory", "remote-notification"];
+    return (0, config_plugins_1.withInfoPlist)(config, (newConfig) => {
+        if (!Array.isArray(newConfig.modResults.UIBackgroundModes)) {
+            newConfig.modResults.UIBackgroundModes = [];
+        }
+        for (const key of BACKGROUND_MODE_KEYS) {
+            if (!newConfig.modResults.UIBackgroundModes.includes(key)) {
+                newConfig.modResults.UIBackgroundModes.push(key);
+            }
+        }
         return newConfig;
     });
 };
@@ -35,11 +40,13 @@ const withRemoteNotificationsPermissions = (config) => {
  * @see https://documentation.onesignal.com/docs/react-native-sdk-setup#step-4-install-for-ios-using-cocoapods-for-ios-apps (step 4.4)
  */
 const withAppGroupPermissions = (config) => {
-    return config_plugins_1.withEntitlementsPlist(config, (newConfig) => {
+    const APP_GROUP_KEY = "com.apple.security.application-groups";
+    return (0, config_plugins_1.withEntitlementsPlist)(config, (newConfig) => {
         var _a;
-        newConfig.modResults['com.apple.security.application-groups'] = [
-            `group.${((_a = newConfig === null || newConfig === void 0 ? void 0 : newConfig.ios) === null || _a === void 0 ? void 0 : _a.bundleIdentifier) || ''}.onesignal`,
-        ];
+        if (!Array.isArray(newConfig.modResults[APP_GROUP_KEY])) {
+            newConfig.modResults[APP_GROUP_KEY] = [];
+        }
+        newConfig.modResults[APP_GROUP_KEY].push(`group.${((_a = newConfig === null || newConfig === void 0 ? void 0 : newConfig.ios) === null || _a === void 0 ? void 0 : _a.bundleIdentifier) || ""}.onesignal`);
         return newConfig;
     });
 };

@@ -20,7 +20,7 @@ buildscript {
 apply plugin: 'com.onesignal.androidsdk.onesignal-gradle-plugin'`;
 // ---------- ---------- ---------- ----------
 const withGradleBuildConfig = (config) => {
-    return config_plugins_1.withAppBuildGradle(config, (newConfig) => {
+    return (0, config_plugins_1.withAppBuildGradle)(config, (newConfig) => {
         newConfig.modResults.contents = `${oneSignalGradle.trimStart()}\n\n${newConfig.modResults.contents}`;
         return newConfig;
     });
