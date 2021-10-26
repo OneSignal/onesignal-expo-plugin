@@ -7,8 +7,8 @@ import {
   ConfigPlugin,
   withEntitlementsPlist,
   withInfoPlist,
-} from '@expo/config-plugins';
-import { OneSignalPluginProps } from './withOneSignal';
+} from "@expo/config-plugins";
+import { OneSignalPluginProps } from "./withOneSignal";
 
 // ---------- ---------- ---------- ----------
 
@@ -18,10 +18,10 @@ import { OneSignalPluginProps } from './withOneSignal';
  */
 const withAppEnvironment: ConfigPlugin<OneSignalPluginProps> = (
   config,
-  { mode },
+  { mode }
 ) => {
   return withEntitlementsPlist(config, (newConfig) => {
-    newConfig.modResults['aps-environment'] = mode;
+    newConfig.modResults["aps-environment"] = mode;
     return newConfig;
   });
 };
@@ -31,13 +31,19 @@ const withAppEnvironment: ConfigPlugin<OneSignalPluginProps> = (
  * @see https://documentation.onesignal.com/docs/react-native-sdk-setup#step-4-install-for-ios-using-cocoapods-for-ios-apps
  */
 const withRemoteNotificationsPermissions: ConfigPlugin<OneSignalPluginProps> = (
-  config,
+  config
 ) => {
+  const BACKGROUND_MODE_KEYS = ["external-accessory", "remote-notification"];
   return withInfoPlist(config, (newConfig) => {
-    newConfig.modResults.UIBackgroundModes = [
-      'external-accessory',
-      'remote-notifications',
-    ];
+    if (!Array.isArray(newConfig.modResults.UIBackgroundModes)) {
+      newConfig.modResults.UIBackgroundModes = [];
+    }
+    for (const key of BACKGROUND_MODE_KEYS) {
+      if (!newConfig.modResults.UIBackgroundModes.includes(key)) {
+        newConfig.modResults.UIBackgroundModes.push(key);
+      }
+    }
+
     return newConfig;
   });
 };
@@ -47,12 +53,17 @@ const withRemoteNotificationsPermissions: ConfigPlugin<OneSignalPluginProps> = (
  * @see https://documentation.onesignal.com/docs/react-native-sdk-setup#step-4-install-for-ios-using-cocoapods-for-ios-apps (step 4.4)
  */
 const withAppGroupPermissions: ConfigPlugin<OneSignalPluginProps> = (
-  config,
+  config
 ) => {
+  const APP_GROUP_KEY = "com.apple.security.application-groups";
   return withEntitlementsPlist(config, (newConfig) => {
-    newConfig.modResults['com.apple.security.application-groups'] = [
-      `group.${newConfig?.ios?.bundleIdentifier || ''}.onesignal`,
-    ];
+    if (!Array.isArray(newConfig.modResults[APP_GROUP_KEY])) {
+      newConfig.modResults[APP_GROUP_KEY] = [];
+    }
+    (newConfig.modResults[APP_GROUP_KEY] as Array<any>).push(
+      `group.${newConfig?.ios?.bundleIdentifier || ""}.onesignal`
+    );
+
     return newConfig;
   });
 };
@@ -60,7 +71,7 @@ const withAppGroupPermissions: ConfigPlugin<OneSignalPluginProps> = (
 // ---------- ---------- ---------- ----------
 export const withOneSignalIos: ConfigPlugin<OneSignalPluginProps> = (
   config,
-  props,
+  props
 ) => {
   withAppEnvironment(config, props);
   withRemoteNotificationsPermissions(config, props);
