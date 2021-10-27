@@ -34,9 +34,30 @@ Add the `withOneSignal.js` file to the [plugin array](https://docs.expo.dev/vers
 ```json
 {
   "plugins": [
-    "onesignal-expo-plugin"
+    [
+      "onesignal-expo-plugin",
+      {
+        "mode": "development"
+      }
+    ]
   ]
 }
+```
+
+or
+
+```js
+export default {
+  ...
+  plugins: [
+    [
+      "onesignal-expo-plugin",
+      {
+        mode: process.env.NODE_ENV || "development"
+      }
+    ]
+  ]
+};
 ```
 
 ### OneSignal App ID
