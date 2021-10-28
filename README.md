@@ -29,7 +29,7 @@ expo install onesignal-expo-plugin
 
 ## Configuration in app.json / app.config.js
 ### Plugin
-Add the `withOneSignal.js` file to the [plugin array](https://docs.expo.dev/versions/latest/config/app/):
+Add the plugin to the [plugin array](https://docs.expo.dev/versions/latest/config/app/):
 
 ```json
 {
