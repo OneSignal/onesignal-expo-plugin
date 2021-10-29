@@ -1,13 +1,13 @@
 <h1 align="center">Welcome to onesignal-expo-plugin 👋</h1>
 <p>
-  <img alt="Version" src="https://img.shields.io/badge/version-1.0.0--beta4-blue.svg?cacheSeconds=2592000" />
+  <img alt="Version" src="https://img.shields.io/badge/version-1.0.0--beta6-blue.svg?cacheSeconds=2592000" />
   <a href="https://github.com/OneSignal/onesignal-expo-plugin#readme" target="_blank">
     <img alt="Documentation" src="https://img.shields.io/badge/documentation-yes-brightgreen.svg" />
   </a>
   <a href="https://github.com/OneSignal/onesignal-expo-plugin/graphs/commit-activity" target="_blank">
     <img alt="Maintenance" src="https://img.shields.io/badge/Maintained%3F-yes-green.svg" />
   </a>
-  <a href="https://github.com/OneSignal/onesignal-expo-plugin/blob/master/LICENSE" target="_blank">
+  <a href="https://github.com/OneSignal/onesignal-expo-plugin/blob/main/LICENSE" target="_blank">
     <img alt="License: MIT" src="https://img.shields.io/github/license/OneSignal/onesignal-expo-plugin" />
   </a>
   <a href="https://twitter.com/onesignal" target="_blank">
@@ -18,7 +18,7 @@
 > The OneSignal Expo plugin allows you to use OneSignal without leaving the managed workflow. Developed in collaboration with SweetGreen.
 
 ### 🏠 [Homepage](https://github.com/OneSignal/onesignal-expo-plugin#readme)
-
+### 🖤 [npm](https://www.npmjs.com/package/onesignal-expo-plugin)
 ## Install
 
 ```sh
@@ -29,6 +29,7 @@ expo install onesignal-expo-plugin
 ### Plugin
 Add the plugin to the [plugin array](https://docs.expo.dev/versions/latest/config/app/):
 
+**app.json**
 ```json
 {
   "plugins": [
@@ -44,8 +45,8 @@ Add the plugin to the [plugin array](https://docs.expo.dev/versions/latest/confi
 
 or
 
+**app.config.js**
 ```js
-// app.config.js
 export default {
   ...
   plugins: [
@@ -104,4 +105,4 @@ Give a ⭐️ if this project helped you!
 ## 📝 License
 
 Copyright © 2021 [OneSignal](https://github.com/OneSignal).<br />
-This project is [MIT](https://github.com/OneSignal/onesignal-expo-plugin/blob/master/LICENSE) licensed.
+This project is [MIT](https://github.com/OneSignal/onesignal-expo-plugin/blob/main/LICENSE) licensed.
