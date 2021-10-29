@@ -25,8 +25,6 @@
 expo install onesignal-expo-plugin
 ```
 
-**Note:** this does not install the [OneSignal SDK](https://github.com/OneSignal/react-native-onesignal).
-
 ## Configuration in app.json / app.config.js
 ### Plugin
 Add the plugin to the [plugin array](https://docs.expo.dev/versions/latest/config/app/):
