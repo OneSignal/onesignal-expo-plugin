@@ -25,8 +25,6 @@
 expo install onesignal-expo-plugin
 ```
 
-**Note:** this does not install the [OneSignal SDK](https://github.com/OneSignal/react-native-onesignal).
-
 ## Configuration in app.json / app.config.js
 ### Plugin
 Add the plugin to the [plugin array](https://docs.expo.dev/versions/latest/config/app/):
@@ -47,6 +45,7 @@ Add the plugin to the [plugin array](https://docs.expo.dev/versions/latest/confi
 or
 
 ```js
+// app.config.js
 export default {
   ...
   plugins: [
@@ -59,6 +58,11 @@ export default {
   ]
 };
 ```
+
+#### Plugin Options
+* `mode`: used to configure [APNs environment](https://developer.apple.com/documentation/bundleresources/entitlements/aps-environment) entitlement.
+   - `"development"`
+   - `"production"`
 
 ### OneSignal App ID
 Add your OneSignal App ID to your [Expo constants via the `extra` param](https://docs.expo.dev/versions/latest/config/app/):
@@ -75,6 +79,7 @@ Add your OneSignal App ID to your [Expo constants via the `extra` param](https:/
 You can then access the value to pass to the `setAppId` function:
 
 ```js
+import OneSignal from 'react-native-onesignal';
 import Constants from "expo-constants";
 OneSignal.setAppId(Constants.manifest.extra.oneSignalAppId);
 ```

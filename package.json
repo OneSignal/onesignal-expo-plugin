@@ -34,5 +34,7 @@
     "expo-module-scripts": "^2.0.0",
     "readme-md-generator": "^1.0.0"
   },
-  "dependencies": {}
+  "dependencies": {
+    "react-native-onesignal": "^4.3.1"
+  }
 }
