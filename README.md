@@ -19,6 +19,9 @@
 
 ### 🏠 [Homepage](https://github.com/OneSignal/onesignal-expo-plugin#readme)
 ### 🖤 [npm](https://www.npmjs.com/package/onesignal-expo-plugin)
+
+## 🚧 In Beta 🚧
+
 ## Install
 
 ```sh
