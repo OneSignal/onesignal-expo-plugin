@@ -33,7 +33,7 @@ const withAppEnvironment: ConfigPlugin<OneSignalPluginProps> = (
 const withRemoteNotificationsPermissions: ConfigPlugin<OneSignalPluginProps> = (
   config
 ) => {
-  const BACKGROUND_MODE_KEYS = ["external-accessory", "remote-notification"];
+  const BACKGROUND_MODE_KEYS = ["remote-notification"];
   return withInfoPlist(config, (newConfig) => {
     if (!Array.isArray(newConfig.modResults.UIBackgroundModes)) {
       newConfig.modResults.UIBackgroundModes = [];
