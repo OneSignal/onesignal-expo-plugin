@@ -7,9 +7,6 @@
   <a href="https://github.com/OneSignal/onesignal-expo-plugin/graphs/commit-activity" target="_blank">
     <img alt="Maintenance" src="https://img.shields.io/badge/Maintained%3F-yes-green.svg" />
   </a>
-  <a href="https://github.com/OneSignal/onesignal-expo-plugin/blob/main/LICENSE" target="_blank">
-    <img alt="License: MIT" src="https://img.shields.io/github/license/OneSignal/onesignal-expo-plugin" />
-  </a>
   <a href="https://twitter.com/onesignal" target="_blank">
     <img alt="Twitter: onesignal" src="https://img.shields.io/twitter/follow/onesignal.svg?style=social" />
   </a>
@@ -17,10 +14,19 @@
 
 > The OneSignal Expo plugin allows you to use OneSignal without leaving the managed workflow. Developed in collaboration with SweetGreen.
 
-### 🏠 [Homepage](https://github.com/OneSignal/onesignal-expo-plugin#readme)
-### 🖤 [npm](https://www.npmjs.com/package/onesignal-expo-plugin)
+* 🏠 [Homepage](https://github.com/OneSignal/onesignal-expo-plugin#readme)
+* 🖤 [npm](https://www.npmjs.com/package/onesignal-expo-plugin)
 
 ## 🚧 In Beta 🚧
+## Overview
+This plugin is an [Expo Config Plugin](https://docs.expo.dev/guides/config-plugins/). It extends the Expo config to allow customizing the prebuild phase of managed workflow builds (no need to eject to a bare workflow). For the purposes of OneSignal integration, the plugin facilitates automatically generating/configuring the necessary native code files needed to get the [OneSignal React-Native SDK](https://github.com/OneSignal/react-native-onesignal) to work. You can think of adding a plugin as adding custom native code.
+
+## Supported environments:
+* [The Expo run commands](https://docs.expo.dev/workflow/customizing/) (`expo run:[android|ios]`)
+* [Custom clients](https://blog.expo.dev/introducing-custom-development-clients-5a2c79a9ddf8)
+* [EAS Build](https://docs.expo.dev/build/introduction/)
+
+---
 
 ## Install
 
@@ -86,6 +92,23 @@ You can then access the value to pass to the `setAppId` function:
 import OneSignal from 'react-native-onesignal';
 import Constants from "expo-constants";
 OneSignal.setAppId(Constants.manifest.extra.oneSignalAppId);
+```
+
+Alternatively, pass the app ID directly to the function:
+
+```js
+OneSignal.setAppId("YOUR-ONESIGNAL-APP-ID");
+```
+
+## Run
+```sh
+$ expo prebuild
+
+# Build your native iOS project
+$ expo run:ios
+
+# Build your native Android project
+$ expo run:android
 ```
 
 ---
