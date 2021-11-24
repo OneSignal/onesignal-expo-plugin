@@ -35,6 +35,7 @@
     "readme-md-generator": "^1.0.0"
   },
   "dependencies": {
+    "expo-dev-client": "^0.6.3",
     "react-native-onesignal": "^4.3.1"
   }
 }
