@@ -13,6 +13,7 @@ import { OneSignalPluginProps } from "./withOneSignal";
 import fs from 'fs';
 import xcode from 'xcode';
 import { IPHONEOS_DEPLOYMENT_TARGET, TARGETED_DEVICE_FAMILY } from "../support/iosConstants";
+import { addTargetDependency } from "./temp";
 
 // ---------- ---------- ---------- ----------
 
@@ -82,6 +83,7 @@ const withOneSignalNSE: ConfigPlugin<OneSignalPluginProps> = (config, {
     const projPath = `${iosPath}/${appName}.xcodeproj/project.pbxproj`;
     const targetName = "OneSignalNotificationServiceExtension";
 
+
     const extFiles = [
       "NotificationService.h",
       "NotificationService.m",
@@ -125,24 +127,49 @@ const withOneSignalNSE: ConfigPlugin<OneSignalPluginProps> = (config, {
         }
       });
 
+      const mainTarget = xcodeProject.getFirstTarget();
+
       // add target
-      let target = xcodeProject.addTarget(targetName, "app_extension", targetName, `${props.ios?.bundleIdentifier}.${targetName}`);
+      let nseTarget = xcodeProject.addTarget(targetName, "app_extension", targetName, `${props.ios?.bundleIdentifier}.${targetName}`);
 
       // Add build phases to the new target
       xcodeProject.addBuildPhase(
         ["NotificationService.m"],
         "PBXSourcesBuildPhase",
         "Sources",
-        target.uuid
+        nseTarget.uuid
       );
-      xcodeProject.addBuildPhase([], "PBXResourcesBuildPhase", "Resources", target.uuid);
+      xcodeProject.addBuildPhase([], "PBXResourcesBuildPhase", "Resources", nseTarget.uuid);
 
       xcodeProject.addBuildPhase(
         [],
         "PBXFrameworksBuildPhase",
         "Frameworks",
-        target.uuid
+        nseTarget.uuid
       );
+
+      xcodeProject.addBuildPhase([], "PBXTargetDependency", "PBXTargetDependency", nseTarget.uuid);
+      xcodeProject.addBuildPhase([], "PBXContainerItemProxy", "PBXContainerItemProxy", nseTarget.uuid)
+
+      // xcodeProject.addBuildPhase(
+      //   [targetName + '.appex'],
+      //   'PBXCopyFilesBuildPhase',
+      //   'Embed App Extensions',
+      //   nseTarget.uuid,
+      //   'app_extension'
+      // );
+
+      addTargetDependency(xcodeProject, mainTarget.uuid, [nseTarget.uuid]);
+
+      const pbxTargetDependencySection = xcodeProject.hash.project.objects["PBXTargetDependency"];
+      const pbxContainerItemProxySection = xcodeProject.hash.project.objects["PBXContainerItemProxy"];
+
+      console.log("HEEEEEEERE!!!!!!!!!!!");
+      // console.log(JSON.stringify(xcodeProject));
+      // console.log("-----------");
+      console.log(JSON.stringify(pbxTargetDependencySection));
+      console.log("-----------");
+      console.log(JSON.stringify(pbxContainerItemProxySection));
 
       // Edit the Deployment info of the new Target, only IphoneOS and Targeted Device Family
       // However, can be more
@@ -162,7 +189,7 @@ const withOneSignalNSE: ConfigPlugin<OneSignalPluginProps> = (config, {
       }
 
       // Add development teams to both your target and the original project
-      xcodeProject.addTargetAttribute("DevelopmentTeam", devTeam, target);
+      xcodeProject.addTargetAttribute("DevelopmentTeam", devTeam, nseTarget);
       xcodeProject.addTargetAttribute("DevelopmentTeam", devTeam);
 
       fs.writeFileSync(projPath, xcodeProject.writeSync());
