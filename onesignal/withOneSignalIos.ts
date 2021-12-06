@@ -13,7 +13,8 @@ import { OneSignalPluginProps } from "./withOneSignal";
 import fs from 'fs';
 import xcode from 'xcode';
 import { IPHONEOS_DEPLOYMENT_TARGET, TARGETED_DEVICE_FAMILY } from "../support/iosConstants";
-import { addTargetDependency } from "./temp";
+import { updatePodfile } from "../support/updatePodfile";
+import { updateNSEEntitlements } from "../support/updateNSEEntitlements";
 
 // ---------- ---------- ---------- ----------
 
@@ -109,6 +110,9 @@ export function xcodeProjectAddNse(
   devTeam: string,
   sourceDir: string
 ): void {
+  updatePodfile(iosPath);
+  updateNSEEntitlements(`group.${bundleIdentifier}.onesignal`)
+
   const projPath = `${iosPath}/${appName}.xcodeproj/project.pbxproj`;
   const targetName = "OneSignalNotificationServiceExtension";
 
@@ -155,8 +159,6 @@ export function xcodeProjectAddNse(
       }
     });
 
-    const mainTarget = xcodeProject.getFirstTarget();
-
     // WORK AROUND for codeProject.addTarget BUG
     // Xcode projects don't contain these if there is only one target
     // An upstream fix should be made to the code referenced in this link:
@@ -183,16 +185,6 @@ export function xcodeProjectAddNse(
       "Frameworks",
       nseTarget.uuid
     );
-
-    const pbxTargetDependencySection = xcodeProject.hash.project.objects["PBXTargetDependency"];
-    const pbxContainerItemProxySection = xcodeProject.hash.project.objects["PBXContainerItemProxy"];
-
-    console.log("HEEEEEEERE!!!!!!!!!!!");
-    // console.log(JSON.stringify(xcodeProject));
-    // console.log("-----------");
-    console.log(JSON.stringify(pbxTargetDependencySection));
-    console.log("-----------");
-    console.log(JSON.stringify(pbxContainerItemProxySection));
 
     // Edit the Deployment info of the new Target, only IphoneOS and Targeted Device Family
     // However, can be more
