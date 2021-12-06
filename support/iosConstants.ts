@@ -7,3 +7,5 @@ target 'OneSignalNotificationServiceExtension' do
 end`;
 
 export const NSE_PODFILE_REGEX = /target 'OneSignalNotificationServiceExtension'/;
+
+export const GROUP_IDENTIFIER_TEMPLATE_REGEX = /{{GROUP_IDENTIFIER}}/gm;
