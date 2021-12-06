@@ -13,6 +13,8 @@ import { OneSignalPluginProps } from "./withOneSignal";
 import fs from 'fs';
 import xcode from 'xcode';
 import { IPHONEOS_DEPLOYMENT_TARGET, TARGETED_DEVICE_FAMILY } from "../support/iosConstants";
+import { updatePodfile } from "../support/updatePodfile";
+import { updateNSEEntitlements } from "../support/updateNSEEntitlements";
 
 // ---------- ---------- ---------- ----------
 
@@ -88,12 +90,18 @@ const withOneSignalNSE: ConfigPlugin<OneSignalPluginProps> = (config, {
   });
 }
 
-    const extFiles = [
-      "NotificationService.h",
-      "NotificationService.m",
-      `${targetName}.entitlements`,
-      `${targetName}-Info.plist`
-    ];
+// ---------- ---------- ---------- ----------
+export const withOneSignalIos: ConfigPlugin<OneSignalPluginProps> = (
+  config,
+  props
+) => {
+  withAppEnvironment(config, props);
+  withRemoteNotificationsPermissions(config, props);
+  withAppGroupPermissions(config, props);
+  withOneSignalNSE(config, props);
+  return config;
+};
+
 
 export function xcodeProjectAddNse(
   appName: string,
@@ -102,6 +110,9 @@ export function xcodeProjectAddNse(
   devTeam: string,
   sourceDir: string
 ): void {
+  updatePodfile(iosPath);
+  updateNSEEntitlements(`group.${bundleIdentifier}.onesignal`)
+
   const projPath = `${iosPath}/${appName}.xcodeproj/project.pbxproj`;
   const targetName = "OneSignalNotificationServiceExtension";
 
@@ -136,46 +147,65 @@ export function xcodeProjectAddNse(
 
     const projObjects = xcodeProject.hash.project.objects;
 
-      // add target
-      let target = xcodeProject.addTarget(targetName, "app_extension", targetName, `${props.ios?.bundleIdentifier}.${targetName}`);
+    // Create new PBXGroup for the extension
+    let extGroup = xcodeProject.addPbxGroup(extFiles, targetName, targetName);
 
-      // Add build phases to the new target
-      xcodeProject.addBuildPhase(
-        ["NotificationService.m"],
-        "PBXSourcesBuildPhase",
-        "Sources",
-        target.uuid
-      );
-      xcodeProject.addBuildPhase([], "PBXResourcesBuildPhase", "Resources", target.uuid);
+    // Add the new PBXGroup to the top level group. This makes the
+    // files / folder appear in the file explorer in Xcode.
+    let groups = xcodeProject.hash.project.objects["PBXGroup"];
+    Object.keys(groups).forEach(function (key) {
+      if (groups[key].name === undefined) {
+        xcodeProject.addToPbxGroup(extGroup.uuid, key);
+      }
+    });
 
-      xcodeProject.addBuildPhase(
-        [],
-        "PBXFrameworksBuildPhase",
-        "Frameworks",
-        target.uuid
-      );
+    // WORK AROUND for codeProject.addTarget BUG
+    // Xcode projects don't contain these if there is only one target
+    // An upstream fix should be made to the code referenced in this link:
+    //   - https://github.com/apache/cordova-node-xcode/blob/8b98cabc5978359db88dc9ff2d4c015cba40f150/lib/pbxProject.js#L860
+    projObjects['PBXTargetDependency'] = projObjects['PBXTargetDependency'] || {};
+    projObjects['PBXContainerItemProxy'] = projObjects['PBXTargetDependency'] || {};
 
-      // Edit the Deployment info of the new Target, only IphoneOS and Targeted Device Family
-      // However, can be more
-      let configurations = xcodeProject.pbxXCBuildConfigurationSection();
-      for (let key in configurations) {
-        if (
-          typeof configurations[key].buildSettings !== "undefined" &&
-          configurations[key].buildSettings.PRODUCT_NAME == `"${targetName}"`
-        ) {
-          let buildSettingsObj = configurations[key].buildSettings;
-          buildSettingsObj.DEVELOPMENT_TEAM = devTeam;
-          buildSettingsObj.IPHONEOS_DEPLOYMENT_TARGET = IPHONEOS_DEPLOYMENT_TARGET;
-          buildSettingsObj.TARGETED_DEVICE_FAMILY = TARGETED_DEVICE_FAMILY;
-          buildSettingsObj.CODE_SIGN_ENTITLEMENTS = `${targetName}/${targetName}.entitlements`;
-          buildSettingsObj.CODE_SIGN_STYLE = "Automatic";
-        }
+    // Add the NSE target
+    // This adds PBXTargetDependency and PBXContainerItemProxy for you
+    const nseTarget = xcodeProject.addTarget(targetName, "app_extension", targetName, `${bundleIdentifier}.${targetName}`);
+
+    // Add build phases to the new target
+    xcodeProject.addBuildPhase(
+      ["NotificationService.m"],
+      "PBXSourcesBuildPhase",
+      "Sources",
+      nseTarget.uuid
+    );
+    xcodeProject.addBuildPhase([], "PBXResourcesBuildPhase", "Resources", nseTarget.uuid);
+
+    xcodeProject.addBuildPhase(
+      [],
+      "PBXFrameworksBuildPhase",
+      "Frameworks",
+      nseTarget.uuid
+    );
+
+    // Edit the Deployment info of the new Target, only IphoneOS and Targeted Device Family
+    // However, can be more
+    let configurations = xcodeProject.pbxXCBuildConfigurationSection();
+    for (let key in configurations) {
+      if (
+        typeof configurations[key].buildSettings !== "undefined" &&
+        configurations[key].buildSettings.PRODUCT_NAME == `"${targetName}"`
+      ) {
+        let buildSettingsObj = configurations[key].buildSettings;
+        buildSettingsObj.DEVELOPMENT_TEAM = devTeam;
+        buildSettingsObj.IPHONEOS_DEPLOYMENT_TARGET = IPHONEOS_DEPLOYMENT_TARGET;
+        buildSettingsObj.TARGETED_DEVICE_FAMILY = TARGETED_DEVICE_FAMILY;
+        buildSettingsObj.CODE_SIGN_ENTITLEMENTS = `${targetName}/${targetName}.entitlements`;
+        buildSettingsObj.CODE_SIGN_STYLE = "Automatic";
       }
     }
 
-      // Add development teams to both your target and the original project
-      xcodeProject.addTargetAttribute("DevelopmentTeam", devTeam, target);
-      xcodeProject.addTargetAttribute("DevelopmentTeam", devTeam);
+    // Add development teams to both your target and the original project
+    xcodeProject.addTargetAttribute("DevelopmentTeam", devTeam, nseTarget);
+    xcodeProject.addTargetAttribute("DevelopmentTeam", devTeam);
 
     fs.writeFileSync(projPath, xcodeProject.writeSync());
   })
