@@ -39,7 +39,8 @@ Add the plugin to the [plugin array](https://docs.expo.dev/versions/latest/confi
     [
       "onesignal-expo-plugin",
       {
-        "mode": "development"
+        "mode": "development",
+        "devTeam": "91SW8A37CR"
       }
     ]
   ]
@@ -56,7 +57,8 @@ export default {
     [
       "onesignal-expo-plugin",
       {
-        mode: process.env.NODE_ENV || "development"
+        mode: process.env.NODE_ENV || "development",
+        devTeam: "91SW8A37CR"
       }
     ]
   ]
@@ -67,6 +69,7 @@ export default {
 * `mode`: used to configure [APNs environment](https://developer.apple.com/documentation/bundleresources/entitlements/aps-environment) entitlement.
    - `"development"`
    - `"production"`
+* `devTeam`: used to configure Apple Team ID. You can find your Apple Team ID by running `expo credentials:manager`.
 
 ### OneSignal App ID
 Add your OneSignal App ID to your [Expo constants via the `extra` param](https://docs.expo.dev/versions/latest/config/app/):
