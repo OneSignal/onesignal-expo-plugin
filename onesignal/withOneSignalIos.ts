@@ -166,6 +166,11 @@ export function xcodeProjectAddNse(
     projObjects['PBXTargetDependency'] = projObjects['PBXTargetDependency'] || {};
     projObjects['PBXContainerItemProxy'] = projObjects['PBXTargetDependency'] || {};
 
+    if (!!xcodeProject.pbxTargetByName(targetName)) {
+      console.log(targetName, "already exists in project. Skipping...");
+      return;
+    }
+
     // Add the NSE target
     // This adds PBXTargetDependency and PBXContainerItemProxy for you
     const nseTarget = xcodeProject.addTarget(targetName, "app_extension", targetName, `${bundleIdentifier}.${targetName}`);
