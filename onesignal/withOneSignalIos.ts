@@ -81,15 +81,13 @@ const withAppGroupPermissions: ConfigPlugin<OneSignalPluginProps> = (
   });
 };
 
-const withOneSignalNSE: ConfigPlugin<OneSignalPluginProps> = (config, {
-  devTeam,
-}) => {
+const withOneSignalNSE: ConfigPlugin<OneSignalPluginProps> = (config, onesignalProps) => {
   return withXcodeProject(config, async props => {
     xcodeProjectAddNse(
       props.modRequest.projectName || "",
       props.modRequest.platformProjectRoot,
       props.ios?.bundleIdentifier || "",
-      devTeam,
+      onesignalProps?.devTeam,
       "node_modules/onesignal-expo-plugin/build/support/serviceExtensionFiles/"
     );
 
@@ -114,7 +112,7 @@ export function xcodeProjectAddNse(
   appName: string,
   iosPath: string,
   bundleIdentifier: string,
-  devTeam: string,
+  devTeam: string | undefined,
   sourceDir: string
 ): void {
   updatePodfile(iosPath);
