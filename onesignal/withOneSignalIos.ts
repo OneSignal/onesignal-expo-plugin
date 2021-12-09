@@ -24,10 +24,17 @@ import { updateNSEEntitlements } from "../support/updateNSEEntitlements";
  */
 const withAppEnvironment: ConfigPlugin<OneSignalPluginProps> = (
   config,
-  { mode }
+  onesignalProps
 ) => {
   return withEntitlementsPlist(config, (newConfig) => {
-    newConfig.modResults["aps-environment"] = mode;
+    if (onesignalProps?.mode == null) {
+      throw new Error(`
+        Missing required "mode" key in your app.json or app.config.js file for "onesignal-expo-plugin".
+        "mode" can be either "development" or "production".
+        Please see onesignal-expo-plugin's README.md for more details.`
+      )
+    }
+    newConfig.modResults["aps-environment"] = onesignalProps.mode;
     return newConfig;
   });
 };
@@ -74,15 +81,13 @@ const withAppGroupPermissions: ConfigPlugin<OneSignalPluginProps> = (
   });
 };
 
-const withOneSignalNSE: ConfigPlugin<OneSignalPluginProps> = (config, {
-  devTeam,
-}) => {
+const withOneSignalNSE: ConfigPlugin<OneSignalPluginProps> = (config, onesignalProps) => {
   return withXcodeProject(config, async props => {
     xcodeProjectAddNse(
       props.modRequest.projectName || "",
       props.modRequest.platformProjectRoot,
       props.ios?.bundleIdentifier || "",
-      devTeam,
+      onesignalProps?.devTeam,
       "node_modules/onesignal-expo-plugin/build/support/serviceExtensionFiles/"
     );
 
@@ -107,7 +112,7 @@ export function xcodeProjectAddNse(
   appName: string,
   iosPath: string,
   bundleIdentifier: string,
-  devTeam: string,
+  devTeam: string | undefined,
   sourceDir: string
 ): void {
   updatePodfile(iosPath);
