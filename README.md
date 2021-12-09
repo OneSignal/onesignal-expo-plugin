@@ -69,7 +69,7 @@ export default {
 * `mode`: used to configure [APNs environment](https://developer.apple.com/documentation/bundleresources/entitlements/aps-environment) entitlement.
    - `"development"`
    - `"production"`
-* `devTeam`: used to configure Apple Team ID. You can find your Apple Team ID by running `expo credentials:manager`.
+* `devTeam`: *optional* - used to configure Apple Team ID. You can find your Apple Team ID by running `expo credentials:manager`.
 
 ### OneSignal App ID
 Add your OneSignal App ID to your [Expo constants via the `extra` param](https://docs.expo.dev/versions/latest/config/app/):
