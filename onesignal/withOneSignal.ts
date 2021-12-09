@@ -13,6 +13,7 @@ export type OneSignalPluginProps = {
    */
   mode: string;
   iOsBundleIdentifier: string;
+  devTeam: string;
 };
 
 const withOneSignal: ConfigPlugin<OneSignalPluginProps> = (config, props) => {

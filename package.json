@@ -1,11 +1,11 @@
 {
   "name": "onesignal-expo-plugin",
-  "version": "1.0.0-beta7",
+  "version": "1.0.0-beta8",
   "description": "The OneSignal Expo plugin allows you to use OneSignal without leaving the managed workflow. Developed in collaboration with SweetGreen.",
   "main": "./app.plugin.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "rm -rf build && tsc",
+    "build": "rm -rf build && tsc && cp -a support/serviceExtensionFiles build/support/",
     "prepare": "yarn run build"
   },
   "repository": {
@@ -35,6 +35,7 @@
     "readme-md-generator": "^1.0.0"
   },
   "dependencies": {
-    "react-native-onesignal": "^4.3.1"
+    "react-native-onesignal": "^4.3.1",
+    "xcode": "^3.0.1"
   }
 }
