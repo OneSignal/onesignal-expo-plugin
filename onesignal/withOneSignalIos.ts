@@ -24,10 +24,17 @@ import { updateNSEEntitlements } from "../support/updateNSEEntitlements";
  */
 const withAppEnvironment: ConfigPlugin<OneSignalPluginProps> = (
   config,
-  { mode }
+  onesignalProps
 ) => {
   return withEntitlementsPlist(config, (newConfig) => {
-    newConfig.modResults["aps-environment"] = mode;
+    if (onesignalProps?.mode == null) {
+      throw new Error(`
+        Missing required "mode" key in your app.json or app.config.js file for "onesignal-expo-plugin".
+        "mode" can be either "development" or "production".
+        Please see onesignal-expo-plugin's README.md for more details.`
+      )
+    }
+    newConfig.modResults["aps-environment"] = onesignalProps.mode;
     return newConfig;
   });
 };
