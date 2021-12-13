@@ -106,7 +106,7 @@ OneSignal.setAppId("YOUR-ONESIGNAL-APP-ID");
 
 ## Run
 ```sh
-$ expo prebuild
+$ expo prebuild --clean
 
 # Build your native iOS project
 $ expo run:ios
