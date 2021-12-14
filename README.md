@@ -32,6 +32,7 @@ This plugin is an [Expo Config Plugin](https://docs.expo.dev/guides/config-plugi
 
 ```sh
 expo install onesignal-expo-plugin
+yarn add react-native-onesignal
 ```
 
 ## Configuration in app.json / app.config.js
@@ -105,7 +106,7 @@ OneSignal.setAppId("YOUR-ONESIGNAL-APP-ID");
 
 ## Run
 ```sh
-$ expo prebuild
+$ expo prebuild --clean
 
 # Build your native iOS project
 $ expo run:ios
