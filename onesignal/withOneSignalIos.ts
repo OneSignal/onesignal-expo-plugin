@@ -219,7 +219,7 @@ export function xcodeProjectAddNse(
       ) {
         let buildSettingsObj = configurations[key].buildSettings;
         buildSettingsObj.DEVELOPMENT_TEAM = devTeam;
-        buildSettingsObj.IPHONEOS_DEPLOYMENT_TARGET = IPHONEOS_DEPLOYMENT_TARGET;
+        buildSettingsObj.IPHONEOS_DEPLOYMENT_TARGET = iPhoneDeploymentTarget ?? IPHONEOS_DEPLOYMENT_TARGET;
         buildSettingsObj.TARGETED_DEVICE_FAMILY = TARGETED_DEVICE_FAMILY;
         buildSettingsObj.CODE_SIGN_ENTITLEMENTS = `${targetName}/${targetName}.entitlements`;
         buildSettingsObj.CODE_SIGN_STYLE = "Automatic";
