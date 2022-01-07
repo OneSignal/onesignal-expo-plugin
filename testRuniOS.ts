@@ -11,10 +11,16 @@ import { xcodeProjectAddNse } from "./onesignal/withOneSignalIos";
 //    - If you forget your main target in your Podfile you will get the
 //     "Please add the host targets for the embedded targets to the Podfile." error
 //      even if your .xcodeproj is correct.
+
+const options = {
+  iosPath: '.',
+  bundleIdentifier: "com.onesignal.XcodeTestProj",
+  devTeam: "99SW8E36CT",
+  iPhoneDeploymentTarget: '12.0'
+};
+
 xcodeProjectAddNse(
-    "XcodeTestProj", 
-    ".", 
-    "com.onesignal.XcodeTestProj",
-    "99SW8E36CT",
+    "XcodeTestProj",
+    options,
     "../../repos/onesignal-expo-plugin/support/serviceExtensionFiles/"
-); 
+);
