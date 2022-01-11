@@ -1,6 +1,6 @@
 <h1 align="center">Welcome to onesignal-expo-plugin 👋</h1>
 <p>
-  <img alt="Version" src="https://img.shields.io/badge/version-1.0.0--beta8-blue.svg?cacheSeconds=2592000" />
+  <img alt="Version" src="https://img.shields.io/badge/version-1.0.0--beta9-blue.svg?cacheSeconds=2592000" />
   <a href="https://github.com/OneSignal/onesignal-expo-plugin#readme" target="_blank">
     <img alt="Documentation" src="https://img.shields.io/badge/documentation-yes-brightgreen.svg" />
   </a>
@@ -47,7 +47,6 @@ Add the plugin to the [plugin array](https://docs.expo.dev/versions/latest/confi
       "onesignal-expo-plugin",
       {
         "mode": "development",
-        "devTeam": "91SW8A37CR"
       }
     ]
   ]
@@ -64,19 +63,21 @@ export default {
     [
       "onesignal-expo-plugin",
       {
-        mode: process.env.NODE_ENV || "development",
-        devTeam: "91SW8A37CR"
+        mode: "development",
       }
     ]
   ]
 };
 ```
 
-#### Plugin Options
-* `mode`: used to configure [APNs environment](https://developer.apple.com/documentation/bundleresources/entitlements/aps-environment) entitlement.
-   - `"development"`
-   - `"production"`
-* `devTeam`: *optional* - used to configure Apple Team ID. You can find your Apple Team ID by running `expo credentials:manager`.
+#### Plugin Prop
+You can pass props to the plugin config object to configure:
+
+| Plugin Prop              |          |                                                                                                                                                                                                                                                                                                                                |
+|--------------------------|----------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `mode`                   | **required** | Used to configure  [APNs environment](https://developer.apple.com/documentation/bundleresources/entitlements/aps-environment)  entitlement.  `"development"` or  `"production"`                                                                                                                                                |
+| `devTeam`                | optional | Used to configure Apple Team ID. You can find your Apple Team ID by running `expo credentials:manager`  e.g: `"91SW8A37CR"`                                                                                                                                                                                                    |
+| `iPhoneDeploymentTarget` | optional | Target `IPHONEOS_DEPLOYMENT_TARGET` value to be used when adding the iOS [NSE](https://documentation.onesignal.com/docs/service-extensions). A deployment target is nothing more than the minimum version of the operating system the application can run on. This value should match the value in your Podfile e.g: `"12.0"`. |
 
 ### OneSignal App ID
 Add your OneSignal App ID to your [Expo constants via the `extra` param](https://docs.expo.dev/versions/latest/config/app/):

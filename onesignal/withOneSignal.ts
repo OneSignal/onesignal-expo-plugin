@@ -12,8 +12,8 @@ export type OneSignalPluginProps = {
    * (iOS only) Environment name and bundle identifier
    */
   mode: string;
-  iOsBundleIdentifier: string;
   devTeam: string;
+  iPhoneDeploymentTarget: string;
 };
 
 const withOneSignal: ConfigPlugin<OneSignalPluginProps> = (config, props) => {

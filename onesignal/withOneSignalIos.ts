@@ -16,6 +16,14 @@ import { IPHONEOS_DEPLOYMENT_TARGET, TARGETED_DEVICE_FAMILY } from "../support/i
 import { updatePodfile } from "../support/updatePodfile";
 import { updateNSEEntitlements } from "../support/updateNSEEntitlements";
 
+/* I N T E R F A C E S */
+interface PluginOptions {
+  iosPath: string,
+  devTeam?: string,
+  bundleIdentifier?: string,
+  iPhoneDeploymentTarget?: string
+}
+
 // ---------- ---------- ---------- ----------
 
 /**
@@ -83,11 +91,16 @@ const withAppGroupPermissions: ConfigPlugin<OneSignalPluginProps> = (
 
 const withOneSignalNSE: ConfigPlugin<OneSignalPluginProps> = (config, onesignalProps) => {
   return withXcodeProject(config, async props => {
+    const options: PluginOptions = {
+      iosPath: props.modRequest.platformProjectRoot,
+      bundleIdentifier: props.ios?.bundleIdentifier,
+      devTeam: onesignalProps?.devTeam,
+      iPhoneDeploymentTarget: onesignalProps?.iPhoneDeploymentTarget
+    };
+
     xcodeProjectAddNse(
       props.modRequest.projectName || "",
-      props.modRequest.platformProjectRoot,
-      props.ios?.bundleIdentifier || "",
-      onesignalProps?.devTeam,
+      options,
       "node_modules/onesignal-expo-plugin/build/support/serviceExtensionFiles/"
     );
 
@@ -110,11 +123,11 @@ export const withOneSignalIos: ConfigPlugin<OneSignalPluginProps> = (
 
 export function xcodeProjectAddNse(
   appName: string,
-  iosPath: string,
-  bundleIdentifier: string,
-  devTeam: string | undefined,
+  options: PluginOptions,
   sourceDir: string
 ): void {
+  const { iosPath, devTeam, bundleIdentifier, iPhoneDeploymentTarget } = options;
+
   updatePodfile(iosPath);
   updateNSEEntitlements(`group.${bundleIdentifier}.onesignal`)
 
@@ -206,7 +219,7 @@ export function xcodeProjectAddNse(
       ) {
         let buildSettingsObj = configurations[key].buildSettings;
         buildSettingsObj.DEVELOPMENT_TEAM = devTeam;
-        buildSettingsObj.IPHONEOS_DEPLOYMENT_TARGET = IPHONEOS_DEPLOYMENT_TARGET;
+        buildSettingsObj.IPHONEOS_DEPLOYMENT_TARGET = iPhoneDeploymentTarget ?? IPHONEOS_DEPLOYMENT_TARGET;
         buildSettingsObj.TARGETED_DEVICE_FAMILY = TARGETED_DEVICE_FAMILY;
         buildSettingsObj.CODE_SIGN_ENTITLEMENTS = `${targetName}/${targetName}.entitlements`;
         buildSettingsObj.CODE_SIGN_STYLE = "Automatic";
