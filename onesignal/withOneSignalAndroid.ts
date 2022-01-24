@@ -9,14 +9,20 @@ import { OneSignalPluginProps } from './withOneSignal';
 
 const withGradleBuildConfig: ConfigPlugin<OneSignalPluginProps> = (config) => {
   return withAppBuildGradle(config, (newConfig) => {
-    newConfig.modResults.contents = `${oneSignalGradle.trimStart()}\n\n${
-      newConfig.modResults.contents
-    }`;
+    let { contents } = newConfig.modResults;
+
+    // make sure we haven't previously added dependencies
+    if (!contents.includes(ONESIGNAL_GRADLE)) {
+      contents = `${ONESIGNAL_GRADLE}\n${contents}`;
+    } else {
+      console.log("OneSignal dependencies already added to build.gradle. Skipping...");
+    }
+
+    newConfig.modResults.contents = contents;
     return newConfig;
   });
 };
 
-// ---------- ---------- ---------- ----------
 export const withOneSignalAndroid: ConfigPlugin<OneSignalPluginProps> = (
   config,
   props,
