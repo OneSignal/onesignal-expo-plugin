@@ -77,13 +77,16 @@ const withAppGroupPermissions: ConfigPlugin<OneSignalPluginProps> = (
   config
 ) => {
   const APP_GROUP_KEY = "com.apple.security.application-groups";
-  return withEntitlementsPlist(config, (newConfig) => {
+  return withEntitlementsPlist(config, newConfig => {
     if (!Array.isArray(newConfig.modResults[APP_GROUP_KEY])) {
       newConfig.modResults[APP_GROUP_KEY] = [];
     }
-    (newConfig.modResults[APP_GROUP_KEY] as Array<any>).push(
-      `group.${newConfig?.ios?.bundleIdentifier || ""}.onesignal`
-    );
+    let modResultsArray = (newConfig.modResults[APP_GROUP_KEY] as Array<any>);
+    let entitlement = `group.${newConfig?.ios?.bundleIdentifier || ""}.onesignal`;
+    if (modResultsArray.indexOf(entitlement) !== -1) {
+      return newConfig;
+    }
+    modResultsArray.push(entitlement);
 
     return newConfig;
   });
