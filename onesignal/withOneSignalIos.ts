@@ -14,7 +14,7 @@ import fs from 'fs';
 import xcode from 'xcode';
 import { IPHONEOS_DEPLOYMENT_TARGET, TARGETED_DEVICE_FAMILY } from "../support/iosConstants";
 import { updatePodfile } from "../support/updatePodfile";
-import { updateNSEEntitlements } from "../support/updateNSEEntitlements";
+import NseUpdaterManager from "../support/NseUpdaterManager";
 
 /* I N T E R F A C E S */
 interface PluginOptions {
