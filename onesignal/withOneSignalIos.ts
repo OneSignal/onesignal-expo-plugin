@@ -12,19 +12,24 @@ import {
 import { OneSignalPluginProps } from "./withOneSignal";
 import * as fs from 'fs';
 import xcode from 'xcode';
-import { IPHONEOS_DEPLOYMENT_TARGET, TARGETED_DEVICE_FAMILY } from "../support/iosConstants";
+import {
+  DEFAULT_BUNDLE_SHORT_VERSION,
+  DEFAULT_BUNDLE_VERSION,
+  IPHONEOS_DEPLOYMENT_TARGET,
+  TARGETED_DEVICE_FAMILY
+} from "../support/iosConstants";
 import { updatePodfile } from "../support/updatePodfile";
 import NseUpdaterManager from "../support/NseUpdaterManager";
 
 /* I N T E R F A C E S */
 interface PluginOptions {
-  iosPath: string,
-  devTeam?: string,
-  bundleIdentifier?: string,
-  iPhoneDeploymentTarget?: string
+  iosPath:                  string,
+  devTeam?:                 string,
+  bundleVersion?:           string,
+  bundleShortVersion?:      string,
+  bundleIdentifier?:        string,
+  iPhoneDeploymentTarget?:  string
 }
-
-// ---------- ---------- ---------- ----------
 
 /**
  * Add 'app-environment' record with current environment to '<project-name>.entitlements' file
@@ -98,6 +103,8 @@ const withOneSignalNSE: ConfigPlugin<OneSignalPluginProps> = (config, onesignalP
       iosPath: props.modRequest.platformProjectRoot,
       bundleIdentifier: props.ios?.bundleIdentifier,
       devTeam: onesignalProps?.devTeam,
+      bundleVersion: props.ios?.buildNumber,
+      bundleShortVersion: props?.version,
       iPhoneDeploymentTarget: onesignalProps?.iPhoneDeploymentTarget
     };
 
@@ -111,7 +118,6 @@ const withOneSignalNSE: ConfigPlugin<OneSignalPluginProps> = (config, onesignalP
   });
 }
 
-// ---------- ---------- ---------- ----------
 export const withOneSignalIos: ConfigPlugin<OneSignalPluginProps> = (
   config,
   props
@@ -129,10 +135,12 @@ export function xcodeProjectAddNse(
   options: PluginOptions,
   sourceDir: string
 ): void {
-  const { iosPath, devTeam, bundleIdentifier, iPhoneDeploymentTarget } = options;
+  const { iosPath, devTeam, bundleIdentifier, bundleVersion, bundleShortVersion, iPhoneDeploymentTarget } = options;
 
   updatePodfile(iosPath);
-  updateNSEEntitlements(`group.${bundleIdentifier}.onesignal`)
+  NseUpdaterManager.updateNSEEntitlements(`group.${bundleIdentifier}.onesignal`)
+  NseUpdaterManager.updateNSEBundleVersion(bundleVersion ?? DEFAULT_BUNDLE_VERSION);
+  NseUpdaterManager.updateNSEBundleShortVersion(bundleShortVersion ?? DEFAULT_BUNDLE_SHORT_VERSION);
 
   const projPath = `${iosPath}/${appName}.xcodeproj/project.pbxproj`;
   const targetName = "OneSignalNotificationServiceExtension";
