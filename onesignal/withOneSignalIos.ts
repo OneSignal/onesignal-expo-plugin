@@ -10,7 +10,7 @@ import {
   withXcodeProject,
 } from "@expo/config-plugins";
 import { OneSignalPluginProps } from "./withOneSignal";
-import fs from 'fs';
+import * as fs from 'fs';
 import xcode from 'xcode';
 import { IPHONEOS_DEPLOYMENT_TARGET, TARGETED_DEVICE_FAMILY } from "../support/iosConstants";
 import { updatePodfile } from "../support/updatePodfile";
