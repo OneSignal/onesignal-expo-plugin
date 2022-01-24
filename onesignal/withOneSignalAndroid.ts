@@ -5,6 +5,7 @@
 
 import { ConfigPlugin, withAppBuildGradle } from '@expo/config-plugins';
 import { ONESIGNAL_GRADLE } from '../support/androidConstants';
+import { OneSignalLog } from '../support/OneSignalLog';
 import { OneSignalPluginProps } from './withOneSignal';
 
 const withGradleBuildConfig: ConfigPlugin<OneSignalPluginProps> = (config) => {
@@ -15,7 +16,7 @@ const withGradleBuildConfig: ConfigPlugin<OneSignalPluginProps> = (config) => {
     if (!contents.includes(ONESIGNAL_GRADLE)) {
       contents = `${ONESIGNAL_GRADLE}\n${contents}`;
     } else {
-      console.log("OneSignal dependencies already added to build.gradle. Skipping...");
+      OneSignalLog.log("OneSignal dependencies already added to build.gradle. Skipping...");
     }
 
     newConfig.modResults.contents = contents;

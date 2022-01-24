@@ -1,5 +1,6 @@
 import * as fs from 'fs';
 import { BUNDLE_SHORT_VERSION_TEMPLATE_REGEX, BUNDLE_VERSION_TEMPLATE_REGEX, GROUP_IDENTIFIER_TEMPLATE_REGEX } from './iosConstants';
+import { OneSignalLog } from './OneSignalLog';
 import { ReaderManager } from './ReaderManager';
 
 const entitlementsFilePath =`${__dirname}/serviceExtensionFiles/OneSignalNotificationServiceExtension.entitlements`;
@@ -7,7 +8,7 @@ const plistFilePath = `${__dirname}/serviceExtensionFiles/OneSignalNotificationS
 
 const logIfError = (err: NodeJS.ErrnoException | null) => {
   if (err) {
-    console.error("Error updating OneSignal NSE Entitlement File.");
+    OneSignalLog.error("Error updating OneSignal NSE Entitlement File.");
   }
 }
 

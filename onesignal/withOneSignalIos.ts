@@ -20,6 +20,7 @@ import {
 } from "../support/iosConstants";
 import { updatePodfile } from "../support/updatePodfile";
 import NseUpdaterManager from "../support/NseUpdaterManager";
+import { OneSignalLog } from "../support/OneSignalLog";
 
 /* I N T E R F A C E S */
 interface PluginOptions {
@@ -156,7 +157,7 @@ export function xcodeProjectAddNse(
 
   xcodeProject.parse(function(err: Error) {
     if (err) {
-      console.log(`Error parsing iOS project: ${JSON.stringify(err)}`);
+      OneSignalLog.log(`Error parsing iOS project: ${JSON.stringify(err)}`);
       return;
     }
 
@@ -170,7 +171,7 @@ export function xcodeProjectAddNse(
           fs.createWriteStream(targetFile)
         );
       } catch (err) {
-        console.log(err);
+        OneSignalLog.log(err as string);
       }
     });
 
@@ -196,7 +197,7 @@ export function xcodeProjectAddNse(
     projObjects['PBXContainerItemProxy'] = projObjects['PBXTargetDependency'] || {};
 
     if (!!xcodeProject.pbxTargetByName(targetName)) {
-      console.log(targetName, "already exists in project. Skipping...");
+      OneSignalLog.log(`${targetName} already exists in project. Skipping...`);
       return;
     }
 

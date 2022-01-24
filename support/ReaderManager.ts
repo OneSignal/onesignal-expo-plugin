@@ -1,4 +1,5 @@
 import * as fs from 'fs';
+import { OneSignalLog } from './OneSignalLog';
 
 export class ReaderManager {
   static async readFile(path: string, replace?: string): Promise<string> {
@@ -8,7 +9,7 @@ export class ReaderManager {
           reject(err);
         }
         if (!data) {
-          console.error("Couldn't read file:", path);
+          OneSignalLog.error("Couldn't read file:" + path);
           return;
         }
         resolve(data);
