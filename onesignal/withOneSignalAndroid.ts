@@ -4,32 +4,26 @@
  */
 
 import { ConfigPlugin, withAppBuildGradle } from '@expo/config-plugins';
+import { ONESIGNAL_GRADLE } from '../support/androidConstants';
+import { OneSignalLog } from '../support/OneSignalLog';
 import { OneSignalPluginProps } from './withOneSignal';
 
-// ---------- ---------- ---------- ----------
-const oneSignalGradle = `
-buildscript {
-    repositories {
-        gradlePluginPortal()
-    }
-    dependencies {
-        classpath 'gradle.plugin.com.onesignal:onesignal-gradle-plugin:[0.12.10, 0.99.99]'
-    }
-}
-
-apply plugin: 'com.onesignal.androidsdk.onesignal-gradle-plugin'`;
-
-// ---------- ---------- ---------- ----------
 const withGradleBuildConfig: ConfigPlugin<OneSignalPluginProps> = (config) => {
   return withAppBuildGradle(config, (newConfig) => {
-    newConfig.modResults.contents = `${oneSignalGradle.trimStart()}\n\n${
-      newConfig.modResults.contents
-    }`;
+    let { contents } = newConfig.modResults;
+
+    // make sure we haven't previously added dependencies
+    if (!contents.includes(ONESIGNAL_GRADLE)) {
+      contents = `${ONESIGNAL_GRADLE}\n${contents}`;
+    } else {
+      OneSignalLog.log("OneSignal dependencies already added to build.gradle. Skipping...");
+    }
+
+    newConfig.modResults.contents = contents;
     return newConfig;
   });
 };
 
-// ---------- ---------- ---------- ----------
 export const withOneSignalAndroid: ConfigPlugin<OneSignalPluginProps> = (
   config,
   props,

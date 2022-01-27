@@ -1,6 +1,6 @@
 <h1 align="center">Welcome to onesignal-expo-plugin 👋</h1>
 <p>
-  <img alt="Version" src="https://img.shields.io/badge/version-1.0.0--beta9-blue.svg?cacheSeconds=2592000" />
+  <img alt="Version" src="https://img.shields.io/badge/version-1.0.0--beta10-blue.svg?cacheSeconds=2592000" />
   <a href="https://github.com/OneSignal/onesignal-expo-plugin#readme" target="_blank">
     <img alt="Documentation" src="https://img.shields.io/badge/documentation-yes-brightgreen.svg" />
   </a>
@@ -104,6 +104,16 @@ Alternatively, pass the app ID directly to the function:
 ```js
 OneSignal.setAppId("YOUR-ONESIGNAL-APP-ID");
 ```
+
+### Versioning
+In your configuration file, make sure you set:
+
+| Property             | Details                                                                                                                                                                      |
+|-------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `version`         | Your app version. Corresponds to `CFBundleShortVersionString` on iOS. This value will be used in your NSE* target's plist file.                                               |
+| `ios.buildNumber` | Build number for your iOS standalone app. Corresponds to `CFBundleVersion` and must match Apple's specified format. This value will be used in your NSE* target's plist file. |
+
+\* NSE = Notification Service Extension. Learn more about the NSE [here](https://documentation.onesignal.com/docs/service-extensions).
 
 ## Run
 ```sh
