@@ -1,16 +1,15 @@
 import { FileManager } from './FileManager';
-import { BUNDLE_SHORT_VERSION_TEMPLATE_REGEX, BUNDLE_VERSION_TEMPLATE_REGEX, GROUP_IDENTIFIER_TEMPLATE_REGEX } from './iosConstants';
-import { OneSignalLog } from './OneSignalLog';
-import { ReaderManager } from './ReaderManager';
+import {
+  BUNDLE_SHORT_VERSION_TEMPLATE_REGEX,
+  BUNDLE_VERSION_TEMPLATE_REGEX,
+  GROUP_IDENTIFIER_TEMPLATE_REGEX,
+  NSE_TARGET_NAME
+} from './iosConstants';
 
 const entitlementsFilePath =`${__dirname}/serviceExtensionFiles/OneSignalNotificationServiceExtension.entitlements`;
 const plistFilePath = `${__dirname}/serviceExtensionFiles/OneSignalNotificationServiceExtension-Info.plist`;
 
-const logIfError = (err: NodeJS.ErrnoException | null) => {
-  if (err) {
-    OneSignalLog.error("Error updating OneSignal NSE Entitlement File.");
-  }
-}
+
 
 export default class NseUpdaterManager {
   static async updateNSEEntitlements(groupIdentifier: string) {
