@@ -22,6 +22,7 @@ import {
 import { updatePodfile } from "../support/updatePodfile";
 import NseUpdaterManager from "../support/NseUpdaterManager";
 import { OneSignalLog } from "../support/OneSignalLog";
+import { FileManager } from "../support/FileManager";
 
 /* I N T E R F A C E S */
 interface PluginOptions {
@@ -152,25 +153,21 @@ export function xcodeProjectAddNse(
 
   const xcodeProject = xcode.project(projPath);
 
-  xcodeProject.parse(function(err: Error) {
+  xcodeProject.parse(async function(err: Error) {
     if (err) {
       OneSignalLog.log(`Error parsing iOS project: ${JSON.stringify(err)}`);
       return;
     }
 
-    // Copy in the extension files
+    /* COPY OVER EXTENSION FILES */
     fs.mkdirSync(`${iosPath}/${NSE_TARGET_NAME}`, { recursive: true });
-    extFiles.forEach(function (extFile) {
-      const targetFile = `${iosPath}/${targetName}/${extFile}`;
 
-      try {
-        fs.createReadStream(`${sourceDir}${extFile}`).pipe(
-          fs.createWriteStream(targetFile)
-        );
-      } catch (err) {
-        OneSignalLog.log(err as string);
-      }
-    });
+    for(let i = 0; i < extFiles.length; i++) {
+      const extFile = extFiles[i];
+      const targetFile = `${iosPath}/${NSE_TARGET_NAME}/${extFile}`;
+      await FileManager.copyFile(`${sourceDir}${extFile}`, targetFile);
+    }
+
     /* MODIFY COPIED EXTENSION FILES */
     const nseUpdater = new NseUpdaterManager(iosPath);
     await nseUpdater.updateNSEEntitlements(`group.${bundleIdentifier}.onesignal`)
