@@ -1,4 +1,4 @@
-import * as fs from 'fs';
+import { FileManager } from './FileManager';
 import { BUNDLE_SHORT_VERSION_TEMPLATE_REGEX, BUNDLE_VERSION_TEMPLATE_REGEX, GROUP_IDENTIFIER_TEMPLATE_REGEX } from './iosConstants';
 import { OneSignalLog } from './OneSignalLog';
 import { ReaderManager } from './ReaderManager';
