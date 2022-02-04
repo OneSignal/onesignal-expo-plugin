@@ -141,9 +141,6 @@ export function xcodeProjectAddNse(
 
   // not awaiting in order to not block main thread
   updatePodfile(iosPath).catch(err => { OneSignalLog.error(err) });
-  NseUpdaterManager.updateNSEEntitlements(`group.${bundleIdentifier}.onesignal`)
-  NseUpdaterManager.updateNSEBundleVersion(bundleVersion ?? DEFAULT_BUNDLE_VERSION);
-  NseUpdaterManager.updateNSEBundleShortVersion(bundleShortVersion ?? DEFAULT_BUNDLE_SHORT_VERSION);
 
   const projPath = `${iosPath}/${appName}.xcodeproj/project.pbxproj`;
 
@@ -175,6 +172,11 @@ export function xcodeProjectAddNse(
         OneSignalLog.log(err as string);
       }
     });
+    /* MODIFY COPIED EXTENSION FILES */
+    const nseUpdater = new NseUpdaterManager(iosPath);
+    await nseUpdater.updateNSEEntitlements(`group.${bundleIdentifier}.onesignal`)
+    await nseUpdater.updateNSEBundleVersion(bundleVersion ?? DEFAULT_BUNDLE_VERSION);
+    await nseUpdater.updateNSEBundleShortVersion(bundleShortVersion ?? DEFAULT_BUNDLE_SHORT_VERSION);
 
     const projObjects = xcodeProject.hash.project.objects;
 
