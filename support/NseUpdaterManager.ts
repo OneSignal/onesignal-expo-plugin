@@ -6,36 +6,36 @@ import {
   NSE_TARGET_NAME
 } from './iosConstants';
 
-const entitlementsFilePath =`${__dirname}/serviceExtensionFiles/OneSignalNotificationServiceExtension.entitlements`;
-const plistFilePath = `${__dirname}/serviceExtensionFiles/OneSignalNotificationServiceExtension-Info.plist`;
+// project `ios/OneSignalNotificationServiceExtension` directory
+const entitlementsFileName =`OneSignalNotificationServiceExtension.entitlements`;
+const plistFileName = `OneSignalNotificationServiceExtension-Info.plist`;
 
 
 
 export default class NseUpdaterManager {
-  static async updateNSEEntitlements(groupIdentifier: string) {
-    let entitlementsFile = await ReaderManager.readFile(entitlementsFilePath);
+  private nsePath = '';
+  constructor(iosPath: string) {
+    this.nsePath = `${iosPath}/${NSE_TARGET_NAME}`;
+  }
+
+  async updateNSEEntitlements(groupIdentifier: string): Promise<void> {
+    const entitlementsFilePath = `${this.nsePath}/${entitlementsFileName}`;
+    let entitlementsFile = await FileManager.readFile(entitlementsFilePath);
     entitlementsFile = entitlementsFile.replace(GROUP_IDENTIFIER_TEMPLATE_REGEX, groupIdentifier);
-
-    fs.writeFile(entitlementsFilePath, entitlementsFile, 'utf-8', (err) => {
-      logIfError(err);
-    })
+    await FileManager.writeFile(entitlementsFilePath, entitlementsFile);
   }
 
-  static async updateNSEBundleVersion(version: string) {
-    let plistFile = await ReaderManager.readFile(plistFilePath);
+  async updateNSEBundleVersion(version: string): Promise<void> {
+    const plistFilePath = `${this.nsePath}/${plistFileName}`;
+    let plistFile = await FileManager.readFile(plistFilePath);
     plistFile = plistFile.replace(BUNDLE_VERSION_TEMPLATE_REGEX, version);
-
-    fs.writeFile(plistFilePath, plistFile, 'utf-8', err => {
-      logIfError(err);
-    });
+    await FileManager.writeFile(plistFilePath, plistFile);
   }
 
-  static async updateNSEBundleShortVersion(version: string) {
-    let plistFile = await ReaderManager.readFile(plistFilePath);
+  async updateNSEBundleShortVersion(version: string): Promise<void> {
+    const plistFilePath = `${this.nsePath}/${plistFileName}`;
+    let plistFile = await FileManager.readFile(plistFilePath);
     plistFile = plistFile.replace(BUNDLE_SHORT_VERSION_TEMPLATE_REGEX, version);
-
-    fs.writeFile(plistFilePath, plistFile, 'utf-8', err => {
-      logIfError(err);
-    });
+    await FileManager.writeFile(plistFilePath, plistFile);
   }
 }
