@@ -16,6 +16,7 @@ import {
   DEFAULT_BUNDLE_SHORT_VERSION,
   DEFAULT_BUNDLE_VERSION,
   IPHONEOS_DEPLOYMENT_TARGET,
+  NSE_TARGET_NAME,
   TARGETED_DEVICE_FAMILY
 } from "../support/iosConstants";
 import { updatePodfile } from "../support/updatePodfile";
@@ -145,13 +146,12 @@ export function xcodeProjectAddNse(
   NseUpdaterManager.updateNSEBundleShortVersion(bundleShortVersion ?? DEFAULT_BUNDLE_SHORT_VERSION);
 
   const projPath = `${iosPath}/${appName}.xcodeproj/project.pbxproj`;
-  const targetName = "OneSignalNotificationServiceExtension";
 
   const extFiles = [
     "NotificationService.h",
     "NotificationService.m",
-    `${targetName}.entitlements`,
-    `${targetName}-Info.plist`
+    `${NSE_TARGET_NAME}.entitlements`,
+    `${NSE_TARGET_NAME}-Info.plist`
   ];
 
   const xcodeProject = xcode.project(projPath);
@@ -163,7 +163,7 @@ export function xcodeProjectAddNse(
     }
 
     // Copy in the extension files
-    fs.mkdirSync(`${iosPath}/${targetName}`, { recursive: true });
+    fs.mkdirSync(`${iosPath}/${NSE_TARGET_NAME}`, { recursive: true });
     extFiles.forEach(function (extFile) {
       const targetFile = `${iosPath}/${targetName}/${extFile}`;
 
@@ -179,7 +179,7 @@ export function xcodeProjectAddNse(
     const projObjects = xcodeProject.hash.project.objects;
 
     // Create new PBXGroup for the extension
-    const extGroup = xcodeProject.addPbxGroup(extFiles, targetName, targetName);
+    const extGroup = xcodeProject.addPbxGroup(extFiles, NSE_TARGET_NAME, NSE_TARGET_NAME);
 
     // Add the new PBXGroup to the top level group. This makes the
     // files / folder appear in the file explorer in Xcode.
@@ -197,14 +197,14 @@ export function xcodeProjectAddNse(
     projObjects['PBXTargetDependency'] = projObjects['PBXTargetDependency'] || {};
     projObjects['PBXContainerItemProxy'] = projObjects['PBXTargetDependency'] || {};
 
-    if (!!xcodeProject.pbxTargetByName(targetName)) {
-      OneSignalLog.log(`${targetName} already exists in project. Skipping...`);
+    if (!!xcodeProject.pbxTargetByName(NSE_TARGET_NAME)) {
+      OneSignalLog.log(`${NSE_TARGET_NAME} already exists in project. Skipping...`);
       return;
     }
 
     // Add the NSE target
     // This adds PBXTargetDependency and PBXContainerItemProxy for you
-    const nseTarget = xcodeProject.addTarget(targetName, "app_extension", targetName, `${bundleIdentifier}.${targetName}`);
+    const nseTarget = xcodeProject.addTarget(NSE_TARGET_NAME, "app_extension", NSE_TARGET_NAME, `${bundleIdentifier}.${NSE_TARGET_NAME}`);
 
     // Add build phases to the new target
     xcodeProject.addBuildPhase(
@@ -228,13 +228,13 @@ export function xcodeProjectAddNse(
     for (const key in configurations) {
       if (
         typeof configurations[key].buildSettings !== "undefined" &&
-        configurations[key].buildSettings.PRODUCT_NAME == `"${targetName}"`
+        configurations[key].buildSettings.PRODUCT_NAME == `"${NSE_TARGET_NAME}"`
       ) {
         const buildSettingsObj = configurations[key].buildSettings;
         buildSettingsObj.DEVELOPMENT_TEAM = devTeam;
         buildSettingsObj.IPHONEOS_DEPLOYMENT_TARGET = iPhoneDeploymentTarget ?? IPHONEOS_DEPLOYMENT_TARGET;
         buildSettingsObj.TARGETED_DEVICE_FAMILY = TARGETED_DEVICE_FAMILY;
-        buildSettingsObj.CODE_SIGN_ENTITLEMENTS = `${targetName}/${targetName}.entitlements`;
+        buildSettingsObj.CODE_SIGN_ENTITLEMENTS = `${NSE_TARGET_NAME}/${NSE_TARGET_NAME}.entitlements`;
         buildSettingsObj.CODE_SIGN_STYLE = "Automatic";
       }
     }
