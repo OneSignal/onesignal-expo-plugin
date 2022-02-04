@@ -10,8 +10,6 @@ import {
 const entitlementsFileName =`OneSignalNotificationServiceExtension.entitlements`;
 const plistFileName = `OneSignalNotificationServiceExtension-Info.plist`;
 
-
-
 export default class NseUpdaterManager {
   private nsePath = '';
   constructor(iosPath: string) {

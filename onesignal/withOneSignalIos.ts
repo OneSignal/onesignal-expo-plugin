@@ -110,7 +110,7 @@ const withOneSignalNSE: ConfigPlugin<OneSignalPluginProps> = (config, onesignalP
       iPhoneDeploymentTarget: onesignalProps?.iPhoneDeploymentTarget
     };
 
-    await xcodeProjectAddNse(
+    xcodeProjectAddNse(
       props.modRequest.projectName || "",
       options,
       "node_modules/onesignal-expo-plugin/build/support/serviceExtensionFiles/"
@@ -130,7 +130,6 @@ export const withOneSignalIos: ConfigPlugin<OneSignalPluginProps> = (
   withOneSignalNSE(config, props);
   return config;
 };
-
 
 export function xcodeProjectAddNse(
   appName: string,
@@ -178,8 +177,6 @@ export function xcodeProjectAddNse(
     await nseUpdater.updateNSEBundleVersion(bundleVersion ?? DEFAULT_BUNDLE_VERSION);
     await nseUpdater.updateNSEBundleShortVersion(bundleShortVersion ?? DEFAULT_BUNDLE_SHORT_VERSION);
 
-    const projObjects = xcodeProject.hash.project.objects;
-
     // Create new PBXGroup for the extension
     const extGroup = xcodeProject.addPbxGroup(extFiles, NSE_TARGET_NAME, NSE_TARGET_NAME);
 
@@ -196,6 +193,7 @@ export function xcodeProjectAddNse(
     // Xcode projects don't contain these if there is only one target
     // An upstream fix should be made to the code referenced in this link:
     //   - https://github.com/apache/cordova-node-xcode/blob/8b98cabc5978359db88dc9ff2d4c015cba40f150/lib/pbxProject.js#L860
+    const projObjects = xcodeProject.hash.project.objects;
     projObjects['PBXTargetDependency'] = projObjects['PBXTargetDependency'] || {};
     projObjects['PBXContainerItemProxy'] = projObjects['PBXTargetDependency'] || {};
 
