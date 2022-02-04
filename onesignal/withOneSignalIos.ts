@@ -87,8 +87,8 @@ const withAppGroupPermissions: ConfigPlugin<OneSignalPluginProps> = (
     if (!Array.isArray(newConfig.modResults[APP_GROUP_KEY])) {
       newConfig.modResults[APP_GROUP_KEY] = [];
     }
-    let modResultsArray = (newConfig.modResults[APP_GROUP_KEY] as Array<any>);
-    let entitlement = `group.${newConfig?.ios?.bundleIdentifier || ""}.onesignal`;
+    const modResultsArray = (newConfig.modResults[APP_GROUP_KEY] as Array<any>);
+    const entitlement = `group.${newConfig?.ios?.bundleIdentifier || ""}.onesignal`;
     if (modResultsArray.indexOf(entitlement) !== -1) {
       return newConfig;
     }
@@ -109,7 +109,7 @@ const withOneSignalNSE: ConfigPlugin<OneSignalPluginProps> = (config, onesignalP
       iPhoneDeploymentTarget: onesignalProps?.iPhoneDeploymentTarget
     };
 
-    xcodeProjectAddNse(
+    await xcodeProjectAddNse(
       props.modRequest.projectName || "",
       options,
       "node_modules/onesignal-expo-plugin/build/support/serviceExtensionFiles/"
@@ -138,7 +138,8 @@ export function xcodeProjectAddNse(
 ): void {
   const { iosPath, devTeam, bundleIdentifier, bundleVersion, bundleShortVersion, iPhoneDeploymentTarget } = options;
 
-  updatePodfile(iosPath);
+  // not awaiting in order to not block main thread
+  updatePodfile(iosPath).catch(err => { OneSignalLog.error(err) });
   NseUpdaterManager.updateNSEEntitlements(`group.${bundleIdentifier}.onesignal`)
   NseUpdaterManager.updateNSEBundleVersion(bundleVersion ?? DEFAULT_BUNDLE_VERSION);
   NseUpdaterManager.updateNSEBundleShortVersion(bundleShortVersion ?? DEFAULT_BUNDLE_SHORT_VERSION);
@@ -164,7 +165,7 @@ export function xcodeProjectAddNse(
     // Copy in the extension files
     fs.mkdirSync(`${iosPath}/${targetName}`, { recursive: true });
     extFiles.forEach(function (extFile) {
-      let targetFile = `${iosPath}/${targetName}/${extFile}`;
+      const targetFile = `${iosPath}/${targetName}/${extFile}`;
 
       try {
         fs.createReadStream(`${sourceDir}${extFile}`).pipe(
@@ -178,11 +179,11 @@ export function xcodeProjectAddNse(
     const projObjects = xcodeProject.hash.project.objects;
 
     // Create new PBXGroup for the extension
-    let extGroup = xcodeProject.addPbxGroup(extFiles, targetName, targetName);
+    const extGroup = xcodeProject.addPbxGroup(extFiles, targetName, targetName);
 
     // Add the new PBXGroup to the top level group. This makes the
     // files / folder appear in the file explorer in Xcode.
-    let groups = xcodeProject.hash.project.objects["PBXGroup"];
+    const groups = xcodeProject.hash.project.objects["PBXGroup"];
     Object.keys(groups).forEach(function (key) {
       if (groups[key].name === undefined) {
         xcodeProject.addToPbxGroup(extGroup.uuid, key);
@@ -223,13 +224,13 @@ export function xcodeProjectAddNse(
 
     // Edit the Deployment info of the new Target, only IphoneOS and Targeted Device Family
     // However, can be more
-    let configurations = xcodeProject.pbxXCBuildConfigurationSection();
-    for (let key in configurations) {
+    const configurations = xcodeProject.pbxXCBuildConfigurationSection();
+    for (const key in configurations) {
       if (
         typeof configurations[key].buildSettings !== "undefined" &&
         configurations[key].buildSettings.PRODUCT_NAME == `"${targetName}"`
       ) {
-        let buildSettingsObj = configurations[key].buildSettings;
+        const buildSettingsObj = configurations[key].buildSettings;
         buildSettingsObj.DEVELOPMENT_TEAM = devTeam;
         buildSettingsObj.IPHONEOS_DEPLOYMENT_TARGET = iPhoneDeploymentTarget ?? IPHONEOS_DEPLOYMENT_TARGET;
         buildSettingsObj.TARGETED_DEVICE_FAMILY = TARGETED_DEVICE_FAMILY;

@@ -1,5 +1,5 @@
 export const IPHONEOS_DEPLOYMENT_TARGET = "11.0";
-export const TARGETED_DEVICE_FAMILY = `\"1,2\"`;
+export const TARGETED_DEVICE_FAMILY = `"1,2"`;
 
 export const NSE_PODFILE_SNIPPET = `
 target 'OneSignalNotificationServiceExtension' do
