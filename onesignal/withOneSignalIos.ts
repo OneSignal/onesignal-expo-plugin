@@ -16,11 +16,13 @@ import {
   DEFAULT_BUNDLE_SHORT_VERSION,
   DEFAULT_BUNDLE_VERSION,
   IPHONEOS_DEPLOYMENT_TARGET,
+  NSE_TARGET_NAME,
   TARGETED_DEVICE_FAMILY
 } from "../support/iosConstants";
 import { updatePodfile } from "../support/updatePodfile";
 import NseUpdaterManager from "../support/NseUpdaterManager";
 import { OneSignalLog } from "../support/OneSignalLog";
+import { FileManager } from "../support/FileManager";
 
 /* I N T E R F A C E S */
 interface PluginOptions {
@@ -87,8 +89,8 @@ const withAppGroupPermissions: ConfigPlugin<OneSignalPluginProps> = (
     if (!Array.isArray(newConfig.modResults[APP_GROUP_KEY])) {
       newConfig.modResults[APP_GROUP_KEY] = [];
     }
-    let modResultsArray = (newConfig.modResults[APP_GROUP_KEY] as Array<any>);
-    let entitlement = `group.${newConfig?.ios?.bundleIdentifier || ""}.onesignal`;
+    const modResultsArray = (newConfig.modResults[APP_GROUP_KEY] as Array<any>);
+    const entitlement = `group.${newConfig?.ios?.bundleIdentifier || ""}.onesignal`;
     if (modResultsArray.indexOf(entitlement) !== -1) {
       return newConfig;
     }
@@ -130,7 +132,6 @@ export const withOneSignalIos: ConfigPlugin<OneSignalPluginProps> = (
   return config;
 };
 
-
 export function xcodeProjectAddNse(
   appName: string,
   options: PluginOptions,
@@ -138,51 +139,47 @@ export function xcodeProjectAddNse(
 ): void {
   const { iosPath, devTeam, bundleIdentifier, bundleVersion, bundleShortVersion, iPhoneDeploymentTarget } = options;
 
-  updatePodfile(iosPath);
-  NseUpdaterManager.updateNSEEntitlements(`group.${bundleIdentifier}.onesignal`)
-  NseUpdaterManager.updateNSEBundleVersion(bundleVersion ?? DEFAULT_BUNDLE_VERSION);
-  NseUpdaterManager.updateNSEBundleShortVersion(bundleShortVersion ?? DEFAULT_BUNDLE_SHORT_VERSION);
+  // not awaiting in order to not block main thread
+  updatePodfile(iosPath).catch(err => { OneSignalLog.error(err) });
 
   const projPath = `${iosPath}/${appName}.xcodeproj/project.pbxproj`;
-  const targetName = "OneSignalNotificationServiceExtension";
 
   const extFiles = [
     "NotificationService.h",
     "NotificationService.m",
-    `${targetName}.entitlements`,
-    `${targetName}-Info.plist`
+    `${NSE_TARGET_NAME}.entitlements`,
+    `${NSE_TARGET_NAME}-Info.plist`
   ];
 
   const xcodeProject = xcode.project(projPath);
 
-  xcodeProject.parse(function(err: Error) {
+  xcodeProject.parse(async function(err: Error) {
     if (err) {
       OneSignalLog.log(`Error parsing iOS project: ${JSON.stringify(err)}`);
       return;
     }
 
-    // Copy in the extension files
-    fs.mkdirSync(`${iosPath}/${targetName}`, { recursive: true });
-    extFiles.forEach(function (extFile) {
-      let targetFile = `${iosPath}/${targetName}/${extFile}`;
+    /* COPY OVER EXTENSION FILES */
+    fs.mkdirSync(`${iosPath}/${NSE_TARGET_NAME}`, { recursive: true });
 
-      try {
-        fs.createReadStream(`${sourceDir}${extFile}`).pipe(
-          fs.createWriteStream(targetFile)
-        );
-      } catch (err) {
-        OneSignalLog.log(err as string);
-      }
-    });
+    for(let i = 0; i < extFiles.length; i++) {
+      const extFile = extFiles[i];
+      const targetFile = `${iosPath}/${NSE_TARGET_NAME}/${extFile}`;
+      await FileManager.copyFile(`${sourceDir}${extFile}`, targetFile);
+    }
 
-    const projObjects = xcodeProject.hash.project.objects;
+    /* MODIFY COPIED EXTENSION FILES */
+    const nseUpdater = new NseUpdaterManager(iosPath);
+    await nseUpdater.updateNSEEntitlements(`group.${bundleIdentifier}.onesignal`)
+    await nseUpdater.updateNSEBundleVersion(bundleVersion ?? DEFAULT_BUNDLE_VERSION);
+    await nseUpdater.updateNSEBundleShortVersion(bundleShortVersion ?? DEFAULT_BUNDLE_SHORT_VERSION);
 
     // Create new PBXGroup for the extension
-    let extGroup = xcodeProject.addPbxGroup(extFiles, targetName, targetName);
+    const extGroup = xcodeProject.addPbxGroup(extFiles, NSE_TARGET_NAME, NSE_TARGET_NAME);
 
     // Add the new PBXGroup to the top level group. This makes the
     // files / folder appear in the file explorer in Xcode.
-    let groups = xcodeProject.hash.project.objects["PBXGroup"];
+    const groups = xcodeProject.hash.project.objects["PBXGroup"];
     Object.keys(groups).forEach(function (key) {
       if (groups[key].name === undefined) {
         xcodeProject.addToPbxGroup(extGroup.uuid, key);
@@ -193,17 +190,18 @@ export function xcodeProjectAddNse(
     // Xcode projects don't contain these if there is only one target
     // An upstream fix should be made to the code referenced in this link:
     //   - https://github.com/apache/cordova-node-xcode/blob/8b98cabc5978359db88dc9ff2d4c015cba40f150/lib/pbxProject.js#L860
+    const projObjects = xcodeProject.hash.project.objects;
     projObjects['PBXTargetDependency'] = projObjects['PBXTargetDependency'] || {};
     projObjects['PBXContainerItemProxy'] = projObjects['PBXTargetDependency'] || {};
 
-    if (!!xcodeProject.pbxTargetByName(targetName)) {
-      OneSignalLog.log(`${targetName} already exists in project. Skipping...`);
+    if (!!xcodeProject.pbxTargetByName(NSE_TARGET_NAME)) {
+      OneSignalLog.log(`${NSE_TARGET_NAME} already exists in project. Skipping...`);
       return;
     }
 
     // Add the NSE target
     // This adds PBXTargetDependency and PBXContainerItemProxy for you
-    const nseTarget = xcodeProject.addTarget(targetName, "app_extension", targetName, `${bundleIdentifier}.${targetName}`);
+    const nseTarget = xcodeProject.addTarget(NSE_TARGET_NAME, "app_extension", NSE_TARGET_NAME, `${bundleIdentifier}.${NSE_TARGET_NAME}`);
 
     // Add build phases to the new target
     xcodeProject.addBuildPhase(
@@ -223,17 +221,17 @@ export function xcodeProjectAddNse(
 
     // Edit the Deployment info of the new Target, only IphoneOS and Targeted Device Family
     // However, can be more
-    let configurations = xcodeProject.pbxXCBuildConfigurationSection();
-    for (let key in configurations) {
+    const configurations = xcodeProject.pbxXCBuildConfigurationSection();
+    for (const key in configurations) {
       if (
         typeof configurations[key].buildSettings !== "undefined" &&
-        configurations[key].buildSettings.PRODUCT_NAME == `"${targetName}"`
+        configurations[key].buildSettings.PRODUCT_NAME == `"${NSE_TARGET_NAME}"`
       ) {
-        let buildSettingsObj = configurations[key].buildSettings;
+        const buildSettingsObj = configurations[key].buildSettings;
         buildSettingsObj.DEVELOPMENT_TEAM = devTeam;
         buildSettingsObj.IPHONEOS_DEPLOYMENT_TARGET = iPhoneDeploymentTarget ?? IPHONEOS_DEPLOYMENT_TARGET;
         buildSettingsObj.TARGETED_DEVICE_FAMILY = TARGETED_DEVICE_FAMILY;
-        buildSettingsObj.CODE_SIGN_ENTITLEMENTS = `${targetName}/${targetName}.entitlements`;
+        buildSettingsObj.CODE_SIGN_ENTITLEMENTS = `${NSE_TARGET_NAME}/${NSE_TARGET_NAME}.entitlements`;
         buildSettingsObj.CODE_SIGN_STYLE = "Automatic";
       }
     }
