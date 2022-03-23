@@ -32,6 +32,11 @@ This plugin is an [Expo Config Plugin](https://docs.expo.dev/guides/config-plugi
 
 ```sh
 expo install onesignal-expo-plugin
+
+# npm
+npm install react-native-onesignal
+
+# yarn
 yarn add react-native-onesignal
 ```
 
@@ -115,15 +120,34 @@ In your configuration file, make sure you set:
 
 \* NSE = Notification Service Extension. Learn more about the NSE [here](https://documentation.onesignal.com/docs/service-extensions).
 
-## Run
+## EAS (Expo Application Services)
+See our [EAS documentation](EAS.md) for help with EAS.
+
+### iOS Credentials: OneSignal + EAS
+To distribute your iOS application via EAS, you will need to ensure your credentials are set up correctly. See our [credentials setup guide for instructions](IOS_CREDENTIALS_EAS.md).
+
+## Prebuild
+Since we are using custom native code (via the OneSignal plugin), we need to generate the native runtime code for the project. By prebuilding, we automatically link and configure the native modules that have implemented CocoaPods, autolinking, and other config plugins. You can think of prebuild like a native code bundler.
+
+When you run `expo prebuild` we enter into a custom managed workflow which provides most of the benefits of bare workflows and managed workflows at the same time.
+
 ```sh
-$ expo prebuild --clean
+expo prebuild
+```
 
-# Build your native iOS project
-$ expo run:ios
+```sh
+# nukes changes and rebuilds
+expo prebuild --clean
+```
 
-# Build your native Android project
-$ expo run:android
+## Run
+The following commands will prebuild *and* run your application. Note that for iOS, push notifications will **not** work in the Simulator.
+```sh
+# Build and run your native iOS project
+expo run:ios
+
+# Build and run your native Android project
+expo run:android
 ```
 
 ---
