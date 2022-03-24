@@ -1,22 +1,25 @@
 {
-    "build": {
-      "release": {
-        "android": {
-          "gradleCommand": ":app:bundleRelease"
-        },
-        "ios": {
-          "buildConfiguration": "Release"
-        }
+  "build": {
+    "release": {
+      "android": {
+        "gradleCommand": ":app:bundleRelease"
       },
-      "preview": {
-        "android": {
-          "buildType": "apk"
-        },
-        "distribution": "internal"
-      },
-      "development": {
-        "developmentClient": true,
-        "distribution": "internal"
+      "ios": {
+        "credentialsSource": "local",
+        "buildConfiguration": "Release"
       }
+    },
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "credentialsSource": "local"
+    },
+    "developmentRemoteCredentials": {
+      "developmentClient": true,
+      "distribution": "internal"
     }
+  },
+  "cli": {
+    "version": ">= 0.40.0"
   }
+}

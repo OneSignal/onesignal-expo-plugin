@@ -1,0 +1,47 @@
+{
+  "expo": {
+    "name": "RNOneSignalExpoExample",
+    "slug": "RNOneSignalExpoExample",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "extra": {
+      "oneSignalAppId": "f4b533f2-9a13-4523-9d40-67c41278d2a0"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.testapp.rodrigo"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#FFFFFF"
+      },
+      "package": "com.testapp.rodrigo"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      [
+        "onesignal-expo-plugin",
+        {
+          "mode": "development",
+          "iPhoneDeploymentTarget": "12.0",
+          "devTeam": "99SW8E36CT"
+        }
+      ]
+    ]
+  }
+}
