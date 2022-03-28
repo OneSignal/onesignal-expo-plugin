@@ -1,6 +1,6 @@
 <h1 align="center">Welcome to onesignal-expo-plugin 👋</h1>
 <p>
-  <img alt="Version" src="https://img.shields.io/badge/version-1.0.0--beta11-blue.svg?cacheSeconds=2592000" />
+  <img alt="Version" src="https://img.shields.io/badge/version-1.0.0-blue.svg?cacheSeconds=2592000" />
   <a href="https://github.com/OneSignal/onesignal-expo-plugin#readme" target="_blank">
     <img alt="Documentation" src="https://img.shields.io/badge/documentation-yes-brightgreen.svg" />
   </a>
@@ -17,7 +17,6 @@
 * 🏠 [Homepage](https://github.com/OneSignal/onesignal-expo-plugin#readme)
 * 🖤 [npm](https://www.npmjs.com/package/onesignal-expo-plugin)
 
-## 🚧 In Beta 🚧
 ## Overview
 This plugin is an [Expo Config Plugin](https://docs.expo.dev/guides/config-plugins/). It extends the Expo config to allow customizing the prebuild phase of managed workflow builds (no need to eject to a bare workflow). For the purposes of OneSignal integration, the plugin facilitates automatically generating/configuring the necessary native code files needed to get the [OneSignal React-Native SDK](https://github.com/OneSignal/react-native-onesignal) to work. You can think of adding a plugin as adding custom native code.
 
