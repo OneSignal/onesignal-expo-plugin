@@ -17,6 +17,29 @@ body:
       placeholder: How do I...?
     validations:
       required: true
+  - type: textarea
+    id: expo-sdk-version
+    attributes:
+      label: OneSignal Expo SDK version
+      description: The version of the OneSignal Expo SDK you have a question for.
+      placeholder: 1.0.0
+    validations:
+      required: true
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Platform
+      description: Which platform are you having an issue with?
+      multiple: true
+      options:
+        - iOS
+        - Android
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant log output
+      description: Please copy and paste any relevant log output. This will be automatically formatted into code, so no need for backticks.
+      render: Shell
   - type: checkboxes
     id: terms
     attributes:
