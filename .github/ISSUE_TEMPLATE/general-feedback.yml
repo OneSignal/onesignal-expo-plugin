@@ -1,6 +1,6 @@
 name: General feedback
 description: Tell us what's on your mind
-title: "[Bug]: "
+title: "[feedback]: "
 labels: ["triage"]
 # assignees:
 #   - assign your sdk team e.g., onesignal/unity
