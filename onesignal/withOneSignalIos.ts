@@ -9,7 +9,6 @@ import {
   withInfoPlist,
   withXcodeProject,
 } from "@expo/config-plugins";
-import { OneSignalPluginProps } from "./withOneSignal";
 import * as fs from 'fs';
 import xcode from 'xcode';
 import {
@@ -23,18 +22,7 @@ import { updatePodfile } from "../support/updatePodfile";
 import NseUpdaterManager from "../support/NseUpdaterManager";
 import { OneSignalLog } from "../support/OneSignalLog";
 import { FileManager } from "../support/FileManager";
-import { Mode } from "../types/types";
-
-/* I N T E R F A C E S */
-interface PluginOptions {
-  iosPath:                  string,
-  mode:                     Mode,
-  devTeam?:                 string,
-  bundleVersion?:           string,
-  bundleShortVersion?:      string,
-  bundleIdentifier?:        string,
-  iPhoneDeploymentTarget?:  string
-}
+import { OneSignalPluginProps, PluginOptions } from "../types/types";
 
 /**
  * Add 'aps-environment' record with current environment to '<project-name>.entitlements' file
