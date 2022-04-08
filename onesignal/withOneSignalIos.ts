@@ -28,6 +28,7 @@ import { Mode } from "../types/types";
 /* I N T E R F A C E S */
 interface PluginOptions {
   iosPath:                  string,
+  mode:                     Mode,
   devTeam?:                 string,
   bundleVersion?:           string,
   bundleShortVersion?:      string,
@@ -36,7 +37,7 @@ interface PluginOptions {
 }
 
 /**
- * Add 'app-environment' record with current environment to '<project-name>.entitlements' file
+ * Add 'aps-environment' record with current environment to '<project-name>.entitlements' file
  * @see https://documentation.onesignal.com/docs/react-native-sdk-setup#step-4-install-for-ios-using-cocoapods-for-ios-apps
  */
 const withAppEnvironment: ConfigPlugin<OneSignalPluginProps> = (
@@ -109,6 +110,7 @@ const withOneSignalNSE: ConfigPlugin<OneSignalPluginProps> = (config, onesignalP
       devTeam: onesignalProps?.devTeam,
       bundleVersion: props.ios?.buildNumber,
       bundleShortVersion: props?.version,
+      mode: onesignalProps?.mode,
       iPhoneDeploymentTarget: onesignalProps?.iPhoneDeploymentTarget
     };
 
@@ -138,7 +140,7 @@ export function xcodeProjectAddNse(
   options: PluginOptions,
   sourceDir: string
 ): void {
-  const { iosPath, devTeam, bundleIdentifier, bundleVersion, bundleShortVersion, iPhoneDeploymentTarget } = options;
+  const { iosPath, devTeam, bundleIdentifier, bundleVersion, bundleShortVersion, iPhoneDeploymentTarget, mode } = options;
 
   // not awaiting in order to not block main thread
   updatePodfile(iosPath).catch(err => { OneSignalLog.error(err) });
@@ -171,7 +173,7 @@ export function xcodeProjectAddNse(
 
     /* MODIFY COPIED EXTENSION FILES */
     const nseUpdater = new NseUpdaterManager(iosPath);
-    await nseUpdater.updateNSEEntitlements(`group.${bundleIdentifier}.onesignal`)
+    await nseUpdater.updateNSEEntitlements(`group.${bundleIdentifier}.onesignal`, mode)
     await nseUpdater.updateNSEBundleVersion(bundleVersion ?? DEFAULT_BUNDLE_VERSION);
     await nseUpdater.updateNSEBundleShortVersion(bundleShortVersion ?? DEFAULT_BUNDLE_SHORT_VERSION);
 
