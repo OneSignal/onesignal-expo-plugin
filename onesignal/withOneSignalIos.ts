@@ -23,6 +23,7 @@ import { updatePodfile } from "../support/updatePodfile";
 import NseUpdaterManager from "../support/NseUpdaterManager";
 import { OneSignalLog } from "../support/OneSignalLog";
 import { FileManager } from "../support/FileManager";
+import { Mode } from "../types/types";
 
 /* I N T E R F A C E S */
 interface PluginOptions {

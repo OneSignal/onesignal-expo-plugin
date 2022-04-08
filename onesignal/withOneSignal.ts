@@ -4,6 +4,7 @@
  */
 
 import { ConfigPlugin } from '@expo/config-plugins';
+import { Mode } from '../types/types';
 import { withOneSignalAndroid } from './withOneSignalAndroid';
 import { withOneSignalIos } from './withOneSignalIos';
 
@@ -11,7 +12,7 @@ export type OneSignalPluginProps = {
   /**
    * (iOS only) Environment name and bundle identifier
    */
-  mode: string;
+  mode: Mode;
   devTeam: string;
   iPhoneDeploymentTarget: string;
 };

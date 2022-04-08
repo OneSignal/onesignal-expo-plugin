@@ -1,3 +1,4 @@
+import { Mode } from '../types/types';
 import { FileManager } from './FileManager';
 import {
   BUNDLE_SHORT_VERSION_TEMPLATE_REGEX,
