@@ -1,6 +1,6 @@
 <h1 align="center">Welcome to onesignal-expo-plugin 👋</h1>
 <p>
-  <img alt="Version" src="https://img.shields.io/badge/version-1.0.0-blue.svg?cacheSeconds=2592000" />
+  <img alt="Version" src="https://img.shields.io/badge/version-1.0.1-blue.svg?cacheSeconds=2592000" />
   <a href="https://github.com/OneSignal/onesignal-expo-plugin#readme" target="_blank">
     <img alt="Documentation" src="https://img.shields.io/badge/documentation-yes-brightgreen.svg" />
   </a>
@@ -125,11 +125,15 @@ See our [EAS documentation](EAS.md) for help with EAS.
 ### iOS Credentials: OneSignal + EAS
 To distribute your iOS application via EAS, you will need to ensure your credentials are set up correctly. See our [credentials setup guide for instructions](IOS_CREDENTIALS_EAS.md).
 
-## Prebuild
-Since we are using custom native code (via the OneSignal plugin), we need to generate the native runtime code for the project. By prebuilding, we automatically link and configure the native modules that have implemented CocoaPods, autolinking, and other config plugins. You can think of prebuild like a native code bundler.
+## Prebuild (optional)
+Prebuilding in Expo will result in the generation of the native runtime code for the project (and `ios` and `android` directories being built). By prebuilding, we automatically link and configure the native modules that have implemented CocoaPods, autolinking, and other config plugins. You can think of prebuild like a native code bundler.
 
 When you run `expo prebuild` we enter into a custom managed workflow which provides most of the benefits of bare workflows and managed workflows at the same time.
 
+#### Why should I prebuild?
+It may make sense to prebuild locally to inspect config plugin changes and help in debugging issues.
+
+#### Run
 ```sh
 expo prebuild
 ```
@@ -138,6 +142,8 @@ expo prebuild
 # nukes changes and rebuilds
 expo prebuild --clean
 ```
+
+**EAS Note:** if you choose to stay in a fully managed workflow by not prebuilding, EAS will still run `expo prebuild` at build time. You can also prebuild locally but remain in a fully managed workflow by adding the `android` and `ios` directories to your .gitignore.
 
 ## Run
 The following commands will prebuild *and* run your application. Note that for iOS, push notifications will **not** work in the Simulator.

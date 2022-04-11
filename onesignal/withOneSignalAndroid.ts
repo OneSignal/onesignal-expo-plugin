@@ -6,7 +6,7 @@
 import { ConfigPlugin, withAppBuildGradle } from '@expo/config-plugins';
 import { ONESIGNAL_GRADLE } from '../support/androidConstants';
 import { OneSignalLog } from '../support/OneSignalLog';
-import { OneSignalPluginProps } from './withOneSignal';
+import { OneSignalPluginProps } from '../types/types';
 
 const withGradleBuildConfig: ConfigPlugin<OneSignalPluginProps> = (config) => {
   return withAppBuildGradle(config, (newConfig) => {

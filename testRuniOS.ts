@@ -1,4 +1,5 @@
 import { xcodeProjectAddNse } from "./onesignal/withOneSignalIos";
+import { Mode } from "./types/types";
 
 // Quick testing on any Xcode project
 
@@ -14,6 +15,7 @@ import { xcodeProjectAddNse } from "./onesignal/withOneSignalIos";
 
 const options = {
   iosPath: '.',
+  mode: Mode.Dev,
   bundleIdentifier: "com.onesignal.XcodeTestProj",
   devTeam: "99SW8E36CT",
   iPhoneDeploymentTarget: '12.0'
