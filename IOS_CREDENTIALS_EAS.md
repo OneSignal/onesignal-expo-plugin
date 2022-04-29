@@ -11,6 +11,14 @@ If you are using EAS, you may be letting Expo handle all your credentials. This 
 To set up OneSignal on iOS, you will need a [push notification certificate](https://documentation.onesignal.com/docs/generate-an-ios-push-certificate). The push certificate is used to send notifications to devices and has nothing to do with the build process. After you have uploaded the certificate to OneSignal, it should just work.
 
 ### Capabilities
+As of eas-cli `v0.52.0`, the previous capabilities issues should now be resolved. See the [release notes](https://github.com/expo/eas-cli/releases/tag/v0.52.0) for details.
+
+You can still view the old instructions by clicking below.
+
+<details>
+  <summary>Click to expand</summary>
+
+---
 To receive notifications, you must add the `aps-environment` capability (Push Notifications) to your app at build time. The OneSignal plugin tries to facilitate this as much as possible but there could be complications if you added other capabilities/entitlements or another config plugin did. This is because EAS doesn't currently respect entitlement files on a per-target basis. If there are more than one entitlements files, it simply picks one and applies it to both targets.
 
 Due to this, there are two setup paths:
@@ -42,8 +50,6 @@ The OneSignal plugin will create an additional target: `OneSignalNotificationSer
 Each target has an entitlement file. If there are multiple entitlements files per project, EAS will randomly pick one and apply it to both targets. To mitigate this, we have added the push capability entilement to both files (even though it's really only necessary in the main target). This can still pose a problem if it picks the NSE's entitlements file since it *could* break any other capabilities in your project, given that file will not have capabilities added to your main target by yourself or other plugins.
 
 The following section details how to mitigate these issues and not break your other capabilities.
-
----
 
 ## Complex Setup
 
@@ -130,13 +136,18 @@ We recommend creating a `certs` directory in your project with subdirectories fo
 **Note:** your push certificate (p12) file should not appear anywhere in the `credentials.json` file.
 
 ## Build (complex setup continued)
+
+**IMPORTANT**: run the `eas build` command with `EXPO_NO_CAPABILITY_SYNC` if you want to prevent EAS from syncing capabilities (e.g: overwriting the steps you took in the complex setup).
+
 ### Release
 If you are ready for a production build, you should use the AppStore provisioning profiles you created. Make sure your `credentials.json` file is using the correct profiles.
 
 ### Development
 The development build will use the AdHoc provisioning profiles you created. Make sure your `credentials.json` file is using the correct profiles.
 
-## All builds (simple or complex setup)
+---
+</details>
+
 ### Expo development client
 If you haven't already, add the expo development client to your project:
 
@@ -152,12 +163,8 @@ eas build --profile <build profile> --platform ios
 ```
 where `<build profile>` refers to the build profile in your `eas.json` file (e.g: "development" vs "release").
 
-**IMPORTANT**: run with `EXPO_NO_CAPABILITY_SYNC` if you want to prevent EAS from syncing capabilities (e.g: overwriting the steps you took in the complex setup).
-
 ### Build success
 At this point, your build should succeed. You can check its progress by opening the build link in the terminal.
-
----
 
 ## How to run on your device
 See our [EAS guide](EAS.md) for instructions.
