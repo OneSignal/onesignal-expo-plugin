@@ -1,7 +1,5 @@
-import { Mode } from '../types/types';
 import { FileManager } from './FileManager';
 import {
-  APS_ENVIRONMENT_MODE,
   BUNDLE_SHORT_VERSION_TEMPLATE_REGEX,
   BUNDLE_VERSION_TEMPLATE_REGEX,
   GROUP_IDENTIFIER_TEMPLATE_REGEX,
@@ -18,11 +16,10 @@ export default class NseUpdaterManager {
     this.nsePath = `${iosPath}/${NSE_TARGET_NAME}`;
   }
 
-  async updateNSEEntitlements(groupIdentifier: string, mode: Mode): Promise<void> {
+  async updateNSEEntitlements(groupIdentifier: string): Promise<void> {
     const entitlementsFilePath = `${this.nsePath}/${entitlementsFileName}`;
     let entitlementsFile = await FileManager.readFile(entitlementsFilePath);
 
-    entitlementsFile = entitlementsFile.replace(APS_ENVIRONMENT_MODE, mode);
     entitlementsFile = entitlementsFile.replace(GROUP_IDENTIFIER_TEMPLATE_REGEX, groupIdentifier);
     await FileManager.writeFile(entitlementsFilePath, entitlementsFile);
   }
