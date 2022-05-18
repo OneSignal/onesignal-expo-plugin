@@ -1,6 +1,8 @@
 <h1 align="center">Welcome to onesignal-expo-plugin 👋</h1>
 <p>
-  <img alt="Version" src="https://img.shields.io/badge/version-1.0.1-blue.svg?cacheSeconds=2592000" />
+  <a href="https://www.npmjs.com/package/onesignal-expo-plugin" target="_blank">
+    <img alt="Version" src="https://img.shields.io/npm/v/onesignal-expo-plugin.svg">
+  </a>
   <a href="https://github.com/OneSignal/onesignal-expo-plugin#readme" target="_blank">
     <img alt="Documentation" src="https://img.shields.io/badge/documentation-yes-brightgreen.svg" />
   </a>
@@ -41,7 +43,7 @@ yarn add react-native-onesignal
 
 ## Configuration in app.json / app.config.js
 ### Plugin
-Add the plugin to the [plugin array](https://docs.expo.dev/versions/latest/config/app/):
+Add the plugin to the **front** of the [plugin array](https://docs.expo.dev/versions/latest/config/app/). It should be added automatically if you ran `expo install`. Just make sure it is the first plugin in the array and to configure any desired plugin props:
 
 **app.json**
 ```json
@@ -174,5 +176,5 @@ Give a ⭐️ if this project helped you!
 
 ## 📝 License
 
-Copyright © 2021 [OneSignal](https://github.com/OneSignal).<br />
+Copyright © 2022 [OneSignal](https://github.com/OneSignal).<br />
 This project is [MIT](https://github.com/OneSignal/onesignal-expo-plugin/blob/main/LICENSE) licensed.
