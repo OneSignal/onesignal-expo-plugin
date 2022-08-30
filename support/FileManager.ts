@@ -35,4 +35,8 @@ export class FileManager {
     const fileContents = await FileManager.readFile(path1);
     await FileManager.writeFile(path2, fileContents);
   }
+
+  static dirExists(path: string): boolean {
+    return fs.existsSync(path)
+  }
 }

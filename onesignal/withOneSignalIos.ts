@@ -105,10 +105,17 @@ const withOneSignalNSE: ConfigPlugin<OneSignalPluginProps> = (config, onesignalP
       iPhoneDeploymentTarget: onesignalProps?.iPhoneDeploymentTarget
     };
 
+    // support for monorepos where node_modules can be up to 5 parents
+    // above the project directory.
+    let dir = "node_modules"
+    for(let x=0; x < 5 && !FileManager.dirExists(dir); x++) {
+      dir = "../" + dir
+    }
+
     xcodeProjectAddNse(
       props.modRequest.projectName || "",
       options,
-      "node_modules/onesignal-expo-plugin/build/support/serviceExtensionFiles/"
+      dir + "/onesignal-expo-plugin/build/support/serviceExtensionFiles/"
     );
 
     return props;
