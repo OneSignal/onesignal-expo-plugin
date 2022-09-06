@@ -11,7 +11,7 @@ export const withOneSignalAndroid: ConfigPlugin<OneSignalPluginProps> = (
   config,
   props,
 ) => {
-  OneSignalLog.log("No specific actions required for OneSignal on Android...");
-
+  //commented out until https://github.com/expo/eas-cli/issues/1226 is confirmed fixed
+  //OneSignalLog.log("No specific actions required for OneSignal on Android...");
   return config;
 };
