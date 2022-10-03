@@ -36,6 +36,7 @@
 
 ## Testing
    - [ ] I have personally tested this on my device, or explained why that is not possible
+   - [ ] This was tested on both Android and iOS, or explained why that is not possible
 
 ## Final pass
    - [ ] Code is as readable as possible.
