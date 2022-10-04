@@ -1,6 +1,22 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## October 2022
+### `1.1.2` - 10/04/22
+#### Fixes
+- Specify `use_frameworks` on `OneSignalNotificationServiceExtension` target in iOS Podfile when applicable (i.e. the app target also specifies `use_frameworks`).
+
+## September 2022
+### `1.1.1` - 09/06/22
+#### Fixes
+- Fix issue where EAS release builds were no longer successfully building due to log statement
+
+### `1.1.0` - 09/01/22
+#### Changes
+- No longer inject the OneSignal Gradle plugin on Android builds
+#### Fixes
+- Fix issue where plugin does not support monorepos
+
 ## April 2022
 ### `1.0.1` - 04/11/22
 
