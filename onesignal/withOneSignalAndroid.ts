@@ -31,9 +31,11 @@ const withSmallIcons: ConfigPlugin<OneSignalPluginProps> = (
   onesignalProps
 ) => {
 
-  if(!onesignalProps.smallIcons && !config.notification?.icon)
+  if(!onesignalProps.smallIcons && !config.notification?.icon) {
     return config
+  }
 
+  // we are modifying the android build (adding files) without a base mod
   return withDangerousMod(config, [
     'android',
     async (config) => {
@@ -54,9 +56,11 @@ const withLargeIcons: ConfigPlugin<OneSignalPluginProps> = (
   onesignalProps
 ) => {
 
-  if(!onesignalProps.largeIcons)
+  if(!onesignalProps.largeIcons) {
     return config
+  }
 
+  // we are modifying the android build (adding files) without a base mod
   return withDangerousMod(config, [
     'android',
     async (config) => {
@@ -82,7 +86,7 @@ async function saveIconAsync(icon: string, projectRoot: string, dirsToSize: { [n
   for(const iconResourceDir in dirsToSize) {
     const path = resolve(projectRoot, RESOURCE_ROOT_PATH, iconResourceDir);
 
-    if (!existsSync(path)) {
+    if(!existsSync(path)) {
       mkdirSync(path, { recursive: true });
     }
 
