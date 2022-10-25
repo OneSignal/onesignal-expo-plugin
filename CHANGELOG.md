@@ -2,6 +2,12 @@
 All notable changes to this project will be documented in this file.
 
 ## October 2022
+### `1.2.0` - 10/25/22
+#### Changes
+- Add `smallIcons` and `largeIcons` configuration options to the plugin, which allows an app to specify large and small notification icons to package within the Android build.
+- Bump jpeg-js from 0.4.3 to 0.4.4
+- Bump simple-plist from 1.3.0 to 1.3.1
+
 ### `1.1.2` - 10/04/22
 #### Fixes
 - Specify `use_frameworks` on `OneSignalNotificationServiceExtension` target in iOS Podfile when applicable (i.e. the app target also specifies `use_frameworks`).
