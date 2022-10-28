@@ -10,6 +10,7 @@ import {
   withXcodeProject,
 } from "@expo/config-plugins";
 import * as fs from 'fs';
+import * as path from 'path';
 import xcode from 'xcode';
 import {
   DEFAULT_BUNDLE_SHORT_VERSION,
@@ -105,17 +106,13 @@ const withOneSignalNSE: ConfigPlugin<OneSignalPluginProps> = (config, onesignalP
       iPhoneDeploymentTarget: onesignalProps?.iPhoneDeploymentTarget
     };
 
-    // support for monorepos where node_modules can be up to 5 parents
-    // above the project directory.
-    let dir = "node_modules"
-    for(let x=0; x < 5 && !FileManager.dirExists(dir); x++) {
-      dir = "../" + dir
-    }
+    // support for monorepos where node_modules can be above the project directory.
+    const pluginDir = require.resolve("onesignal-expo-plugin/package.json")
 
     xcodeProjectAddNse(
       props.modRequest.projectName || "",
       options,
-      dir + "/onesignal-expo-plugin/build/support/serviceExtensionFiles/"
+      path.join(pluginDir, "../build/support/serviceExtensionFiles/")
     );
 
     return props;
