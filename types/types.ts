@@ -28,6 +28,13 @@
    * (optional) The large notification icons for Android. Images will be automatically scaled up/down to 256x256.
    */
   largeIcons?:            string[];
+
+  /**
+   * (optional) The local path to a custom Notification Service Extension (NSE). The NSE will typically start as a copy
+   * of the default NSE found at (support/serviceExtensionFiles/NotificationService.m, then altered to support any custom
+   * logic required.
+   */
+   nse?:            string;
 };
 
 /**
@@ -41,7 +48,8 @@ export type PluginOptions = {
   bundleVersion?:           string,
   bundleShortVersion?:      string,
   bundleIdentifier?:        string,
-  iPhoneDeploymentTarget?:  string
+  iPhoneDeploymentTarget?:  string,
+  nse?:                     string
 }
 
 export enum Mode {
