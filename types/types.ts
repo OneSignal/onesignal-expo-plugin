@@ -30,11 +30,11 @@
   largeIcons?:            string[];
 
   /**
-   * (optional) The local path to a custom Notification Service Extension (NSE). The NSE will typically start as a copy
+   * (optional) The local path to a custom Notification Service Extension (NSE), written in Objective-C. The NSE will typically start as a copy
    * of the default NSE found at (support/serviceExtensionFiles/NotificationService.m, then altered to support any custom
    * logic required.
    */
-   nse?:            string;
+   iosNSEFilePath?:       string;
 };
 
 /**
@@ -49,7 +49,7 @@ export type PluginOptions = {
   bundleShortVersion?:      string,
   bundleIdentifier?:        string,
   iPhoneDeploymentTarget?:  string,
-  nse?:                     string
+  iosNSEFilePath?:          string
 }
 
 export enum Mode {

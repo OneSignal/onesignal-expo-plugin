@@ -103,7 +103,7 @@ const withOneSignalNSE: ConfigPlugin<OneSignalPluginProps> = (config, onesignalP
       bundleShortVersion: props?.version,
       mode: onesignalProps?.mode,
       iPhoneDeploymentTarget: onesignalProps?.iPhoneDeploymentTarget,
-      nse: onesignalProps.nse
+      iosNSEFilePath: onesignalProps.iosNSEFilePath
     };
 
     // support for monorepos where node_modules can be up to 5 parents
@@ -146,7 +146,7 @@ export function xcodeProjectAddNse(
   options: PluginOptions,
   sourceDir: string
 ): void {
-  const { iosPath, devTeam, bundleIdentifier, bundleVersion, bundleShortVersion, iPhoneDeploymentTarget, nse } = options;
+  const { iosPath, devTeam, bundleIdentifier, bundleVersion, bundleShortVersion, iPhoneDeploymentTarget, iosNSEFilePath } = options;
 
   // not awaiting in order to not block main thread
   updatePodfile(iosPath).catch(err => { OneSignalLog.error(err) });
@@ -178,7 +178,7 @@ export function xcodeProjectAddNse(
     }
 
     // Copy NSE source file either from configuration-provided location, falling back to the default one.
-    const sourcePath = nse ?? `${sourceDir}${sourceFile}`
+    const sourcePath = iosNSEFilePath ?? `${sourceDir}${sourceFile}`
     const targetFile = `${iosPath}/${NSE_TARGET_NAME}/${sourceFile}`;
     await FileManager.copyFile(`${sourcePath}`, targetFile);
 
