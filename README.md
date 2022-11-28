@@ -117,9 +117,10 @@ OneSignal.setAppId("YOUR-ONESIGNAL-APP-ID");
 In your configuration file, make sure you set:
 
 | Property             | Details                                                                                                                                                                      |
-|-------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|-------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `version`         | Your app version. Corresponds to `CFBundleShortVersionString` on iOS. This value will be used in your NSE* target's plist file.                                               |
 | `ios.buildNumber` | Build number for your iOS standalone app. Corresponds to `CFBundleVersion` and must match Apple's specified format. This value will be used in your NSE* target's plist file. |
+| `ios.bundleIdentifier` | Bundle identifier for your iOS standalone app. Corresponds to `CFBundleIdentifier`. This value will be used in your NSE* target's plist and entitlements file.           |
 
 \* NSE = Notification Service Extension. Learn more about the NSE [here](https://documentation.onesignal.com/docs/service-extensions).
 
