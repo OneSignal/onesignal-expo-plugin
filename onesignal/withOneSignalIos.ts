@@ -102,7 +102,8 @@ const withOneSignalNSE: ConfigPlugin<OneSignalPluginProps> = (config, onesignalP
       bundleVersion: props.ios?.buildNumber,
       bundleShortVersion: props?.version,
       mode: onesignalProps?.mode,
-      iPhoneDeploymentTarget: onesignalProps?.iPhoneDeploymentTarget
+      iPhoneDeploymentTarget: onesignalProps?.iPhoneDeploymentTarget,
+      iosNSEFilePath: onesignalProps.iosNSEFilePath
     };
 
     // support for monorepos where node_modules can be up to 5 parents
@@ -145,16 +146,16 @@ export function xcodeProjectAddNse(
   options: PluginOptions,
   sourceDir: string
 ): void {
-  const { iosPath, devTeam, bundleIdentifier, bundleVersion, bundleShortVersion, iPhoneDeploymentTarget } = options;
+  const { iosPath, devTeam, bundleIdentifier, bundleVersion, bundleShortVersion, iPhoneDeploymentTarget, iosNSEFilePath } = options;
 
   // not awaiting in order to not block main thread
   updatePodfile(iosPath).catch(err => { OneSignalLog.error(err) });
 
   const projPath = `${iosPath}/${appName}.xcodeproj/project.pbxproj`;
 
+  const sourceFile = "NotificationService.m"
   const extFiles = [
     "NotificationService.h",
-    "NotificationService.m",
     `${NSE_TARGET_NAME}.entitlements`,
     `${NSE_TARGET_NAME}-Info.plist`
   ];
@@ -176,6 +177,11 @@ export function xcodeProjectAddNse(
       await FileManager.copyFile(`${sourceDir}${extFile}`, targetFile);
     }
 
+    // Copy NSE source file either from configuration-provided location, falling back to the default one.
+    const sourcePath = iosNSEFilePath ?? `${sourceDir}${sourceFile}`
+    const targetFile = `${iosPath}/${NSE_TARGET_NAME}/${sourceFile}`;
+    await FileManager.copyFile(`${sourcePath}`, targetFile);
+
     /* MODIFY COPIED EXTENSION FILES */
     const nseUpdater = new NseUpdaterManager(iosPath);
     await nseUpdater.updateNSEEntitlements(`group.${bundleIdentifier}.onesignal`)
@@ -183,7 +189,7 @@ export function xcodeProjectAddNse(
     await nseUpdater.updateNSEBundleShortVersion(bundleShortVersion ?? DEFAULT_BUNDLE_SHORT_VERSION);
 
     // Create new PBXGroup for the extension
-    const extGroup = xcodeProject.addPbxGroup(extFiles, NSE_TARGET_NAME, NSE_TARGET_NAME);
+    const extGroup = xcodeProject.addPbxGroup([...extFiles, sourceFile], NSE_TARGET_NAME, NSE_TARGET_NAME);
 
     // Add the new PBXGroup to the top level group. This makes the
     // files / folder appear in the file explorer in Xcode.
