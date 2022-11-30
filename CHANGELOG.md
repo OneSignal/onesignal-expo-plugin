@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## November 2022
+### `1.3.0` - 11/30/22
+#### Changes
+- Add `iosNSEFilePath` configuration options to the plugin, which allows an app to specify a custom iOS Notification Service Extension.
+
 ## October 2022
 ### `1.2.0` - 10/25/22
 #### Changes
