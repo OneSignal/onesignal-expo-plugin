@@ -32,7 +32,7 @@ This plugin is an [Expo Config Plugin](https://docs.expo.dev/guides/config-plugi
 ## Install
 
 ```sh
-expo install onesignal-expo-plugin
+npx expo install onesignal-expo-plugin
 
 # npm
 npm install react-native-onesignal
@@ -43,7 +43,7 @@ yarn add react-native-onesignal
 
 ## Configuration in app.json / app.config.js
 ### Plugin
-Add the plugin to the **front** of the [plugin array](https://docs.expo.dev/versions/latest/config/app/). It should be added automatically if you ran `expo install`. Just make sure it is the first plugin in the array and to configure any desired plugin props:
+Add the plugin to the **front** of the [plugin array](https://docs.expo.dev/versions/latest/config/app/). It should be added automatically if you ran `npx expo install`. Just make sure it is the first plugin in the array and to configure any desired plugin props:
 
 **app.json**
 ```json
@@ -141,24 +141,24 @@ It may make sense to prebuild locally to inspect config plugin changes and help 
 
 #### Run
 ```sh
-expo prebuild
+npx expo prebuild
 ```
 
 ```sh
 # nukes changes and rebuilds
-expo prebuild --clean
+npx expo prebuild --clean
 ```
 
-**EAS Note:** if you choose to stay in a fully managed workflow by not prebuilding, EAS will still run `expo prebuild` at build time. You can also prebuild locally but remain in a fully managed workflow by adding the `android` and `ios` directories to your .gitignore.
+**EAS Note:** if you choose to stay in a fully managed workflow by not prebuilding, EAS will still run `npx expo prebuild` at build time. You can also prebuild locally but remain in a fully managed workflow by adding the `android` and `ios` directories to your .gitignore.
 
 ## Run
 The following commands will prebuild *and* run your application. Note that for iOS, push notifications will **not** work in the Simulator.
 ```sh
 # Build and run your native iOS project
-expo run:ios
+npx expo run:ios
 
 # Build and run your native Android project
-expo run:android
+npx expo run:android
 ```
 
 ---
