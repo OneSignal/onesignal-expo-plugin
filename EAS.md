@@ -18,4 +18,4 @@ For development/internal distribution builds, you will need to install a [develo
 2. In the terminal, run `expo start --dev-client` to be able to serve the application to the client.
 3. Scan the generated QR code to open the dev client and fetch the app bundle from the running Expo process.
 4. You may be prompted to allow the app to find local area network devices. Approve.
-5. Rescan the QR code & open the app. At this point, you should see the mero bundler working. As soon as the bundle is complete, your working app should open!
+5. Rescan the QR code & open the app. At this point, you should see the metro bundler working. As soon as the bundle is complete, your working app should open!
