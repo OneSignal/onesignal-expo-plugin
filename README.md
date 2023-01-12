@@ -1,4 +1,4 @@
-<h1 align="center">Welcome to onesignal-expo-plugin 👋</h1>
+<h1 align="center">Welcome to the onesignal-expo-plugin 👋</h1>
 <p>
   <a href="https://www.npmjs.com/package/onesignal-expo-plugin" target="_blank">
     <img alt="Version" src="https://img.shields.io/npm/v/onesignal-expo-plugin.svg">
@@ -30,6 +30,7 @@ This plugin is an [Expo Config Plugin](https://docs.expo.dev/guides/config-plugi
 ---
 
 ## Install
+You need both the `onesignal-expo-plugin` *and* the `react-native-onesignal` npm package.
 
 ```sh
 npx expo install onesignal-expo-plugin
@@ -119,9 +120,9 @@ In your configuration file, make sure you set:
 
 | Property             | Details                                                                                                                                                                      |
 |-------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `version`         | Your app version. Corresponds to `CFBundleShortVersionString` on iOS. This value will be used in your NSE* target's plist file.                                               |
-| `ios.buildNumber` | Build number for your iOS standalone app. Corresponds to `CFBundleVersion` and must match Apple's specified format. This value will be used in your NSE* target's plist file. |
-| `ios.bundleIdentifier` | Bundle identifier for your iOS standalone app. Corresponds to `CFBundleIdentifier`. This value will be used in your NSE* target's plist and entitlements file.           |
+| `version`         | Your app version. Corresponds to `CFBundleShortVersionString` on iOS. It is a human-readable version number of an iOS app, and is typically in the format of "X.X.X" (e.g. "1.0" or "2.3.1"). It is the version number that is typically displayed to users in the App Store and in the app itself. This value will be used in your NSE* target's plist file.                                               |
+| `ios.buildNumber` | Build number for your iOS standalone app. Corresponds to `CFBundleVersion` and must match Apple's specified format (e.g: "42" or "100"). The build number is used by the App Store and iOS to identify and track different versions of an app, and is typically incremented for each new release. It is a number typically used for the developer's and system reference. This value will be used in your NSE* target's plist file. |
+| `ios.bundleIdentifier` | Bundle identifier for your iOS standalone app. Corresponds to `CFBundleIdentifier`. It's a unique identifier string that is used to identify an iOS app or bundle. It is typically in the format of `"com.companyname.appname"` (e.g. `"com.example.myapp"`). This value will be used in your NSE* target's plist and entitlements file.           |
 
 \* NSE = Notification Service Extension. Learn more about the NSE [here](https://documentation.onesignal.com/docs/service-extensions).
 
@@ -180,5 +181,5 @@ Give a ⭐️ if this project helped you!
 
 ## 📝 License
 
-Copyright © 2022 [OneSignal](https://github.com/OneSignal).<br />
+Copyright © 2023 [OneSignal](https://github.com/OneSignal).<br />
 This project is [MIT](https://github.com/OneSignal/onesignal-expo-plugin/blob/main/LICENSE) licensed.
