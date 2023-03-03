@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## March 2023
+### `1.3.1` - 03/03/23
+#### Changes
+- Update monorepo logic to rely on the more reliable `require.resolve` to find the `onesignal-expo-plugin` package.
+
 ## November 2022
 ### `1.3.0` - 11/30/22
 #### Changes
