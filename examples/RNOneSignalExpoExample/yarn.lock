@@ -1241,6 +1241,23 @@
     semver "7.3.2"
     tempy "0.3.0"
 
+"@expo/image-utils@^0.3.22":
+  version "0.3.23"
+  resolved "https://registry.yarnpkg.com/@expo/image-utils/-/image-utils-0.3.23.tgz#f14fd7e1f5ff6f8e4911a41e27dd274470665c3f"
+  integrity sha512-nhUVvW0TrRE4jtWzHQl8TR4ox7kcmrc2I0itaeJGjxF5A54uk7avgA0wRt7jP1rdvqQo1Ke1lXyLYREdhN9tPw==
+  dependencies:
+    "@expo/spawn-async" "1.5.0"
+    chalk "^4.0.0"
+    fs-extra "9.0.0"
+    getenv "^1.0.0"
+    jimp-compact "0.16.1"
+    mime "^2.4.4"
+    node-fetch "^2.6.0"
+    parse-png "^2.1.0"
+    resolve-from "^5.0.0"
+    semver "7.3.2"
+    tempy "0.3.0"
+
 "@expo/json-file@8.2.36", "@expo/json-file@^8.2.35":
   version "8.2.36"
   resolved "https://registry.yarnpkg.com/@expo/json-file/-/json-file-8.2.36.tgz#62a505cb7f30a34d097386476794680a3f7385ff"
@@ -1799,9 +1816,9 @@
     wonka "^4.0.14"
 
 "@xmldom/xmldom@~0.7.0":
-  version "0.7.5"
-  resolved "https://registry.yarnpkg.com/@xmldom/xmldom/-/xmldom-0.7.5.tgz#09fa51e356d07d0be200642b0e4f91d8e6dd408d"
-  integrity sha512-V3BIhmY36fXZ1OtVcI9W+FxQqxVLsPKcNjWigIaa81dLC9IolJl5Mt4Cvhmr0flUnjSpTdrbMTSbXqYqV5dT6A==
+  version "0.7.9"
+  resolved "https://registry.yarnpkg.com/@xmldom/xmldom/-/xmldom-0.7.9.tgz#7f9278a50e737920e21b297b8a35286e9942c056"
+  integrity sha512-yceMpm/xd4W2a85iqZyO09gTnHvXF6pyiWjD2jcOJs7hRoZtNNOO1eJlhHj1ixA+xip2hOyGn+LgcvLCMo5zXA==
 
 abort-controller@^3.0.0:
   version "3.0.0"
@@ -5046,11 +5063,12 @@ once@^1.3.0, once@^1.3.1, once@^1.4.0:
   dependencies:
     wrappy "1"
 
-onesignal-expo-plugin@^1.0.2:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/onesignal-expo-plugin/-/onesignal-expo-plugin-1.0.2.tgz#aca816c8f1be3a760bb9b007b2fde9f8ddb0065e"
-  integrity sha512-BFfM9oxAGAxeMd2POh3vo+jjSGX02ZgWszO8m0goIOkwtFecSPRGEXePL/ZxglYm5SntPYVpqKd5/rrtKlrSsw==
+onesignal-expo-plugin@^1.3.1:
+  version "1.3.1"
+  resolved "https://registry.yarnpkg.com/onesignal-expo-plugin/-/onesignal-expo-plugin-1.3.1.tgz#5ded34af799a01f8f79d045bd32479167a574623"
+  integrity sha512-F/Evz53RhPjp/hba8rp9vFMqPsspOU1F9In+UpAJlxqW7QUB/5///WYn/rtOUgeBkH+sErBZOjK9KnTjvADpJA==
   dependencies:
+    "@expo/image-utils" "^0.3.22"
     xcode "^3.0.1"
 
 onetime@^2.0.0:
@@ -5466,10 +5484,10 @@ react-native-gradle-plugin@^0.0.6:
   resolved "https://registry.yarnpkg.com/react-native-gradle-plugin/-/react-native-gradle-plugin-0.0.6.tgz#b61a9234ad2f61430937911003cddd7e15c72b45"
   integrity sha512-eIlgtsmDp1jLC24dRn43hB3kEcZVqx6DUQbR0N1ABXGnMEafm9I3V3dUUeD1vh+Dy5WqijSoEwLNUPLgu5zDMg==
 
-react-native-onesignal@^4.3.9:
-  version "4.3.9"
-  resolved "https://registry.yarnpkg.com/react-native-onesignal/-/react-native-onesignal-4.3.9.tgz#8ebe2e144d0484481f097b839d43cec95a19968e"
-  integrity sha512-hRxJuqkX9xGXX4CmHie7x5t8AIVH17T5bY+h/i19Ac0xWpuRWtZWqZJALJo841G+Bheaoj8+8CStoRjror67yA==
+react-native-onesignal@^4.4.1:
+  version "4.5.1"
+  resolved "https://registry.yarnpkg.com/react-native-onesignal/-/react-native-onesignal-4.5.1.tgz#f46007d0a30a7c4e42a531b7c4940f0bfdfbc326"
+  integrity sha512-9XtRwW/Hn3dTD7jxQiKIW4+o1bWNgm1jCUPK1SkjyPd7TiH4cnGuL9JGaAMCUvAWUAp9KC8ejShr6v8K0dGVGQ==
   dependencies:
     invariant "^2.2.2"
 
