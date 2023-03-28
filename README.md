@@ -101,18 +101,19 @@ Add your OneSignal App ID to your [Expo constants via the `extra` param](https:/
 }
 ```
 
-You can then access the value to pass to the `setAppId` function:
+You can then access the value to pass to the `initialize` function:
 
 ```js
-import OneSignal from 'react-native-onesignal';
+import { OneSignal } from 'react-native-onesignal'
 import Constants from "expo-constants";
-OneSignal.setAppId(Constants.manifest.extra.oneSignalAppId);
+
+OneSignal.initialize(Constants.manifest.extra.oneSignalAppId);
 ```
 
 Alternatively, pass the app ID directly to the function:
 
 ```js
-OneSignal.setAppId("YOUR-ONESIGNAL-APP-ID");
+OneSignal.initialize("YOUR-ONESIGNAL-APP-ID");
 ```
 
 ### Versioning
