@@ -8,22 +8,24 @@ import {
   withEntitlementsPlist,
   withInfoPlist,
   withXcodeProject,
+  withDangerousMod
 } from "@expo/config-plugins";
 import * as fs from 'fs';
 import * as path from 'path';
-import xcode from 'xcode';
 import {
   DEFAULT_BUNDLE_SHORT_VERSION,
   DEFAULT_BUNDLE_VERSION,
   IPHONEOS_DEPLOYMENT_TARGET,
   NSE_TARGET_NAME,
+  NSE_SOURCE_FILE,
+  NSE_EXT_FILES,
   TARGETED_DEVICE_FAMILY
 } from "../support/iosConstants";
 import { updatePodfile } from "../support/updatePodfile";
 import NseUpdaterManager from "../support/NseUpdaterManager";
 import { OneSignalLog } from "../support/OneSignalLog";
 import { FileManager } from "../support/FileManager";
-import { OneSignalPluginProps, PluginOptions } from "../types/types";
+import { OneSignalPluginProps } from "../types/types";
 import assert from 'assert';
 import getEasManagedCredentialsConfigExtra from "../support/eas/getEasManagedCredentialsConfigExtra";
 import { ExpoConfig } from '@expo/config-types';
@@ -94,100 +96,67 @@ const withAppGroupPermissions: ConfigPlugin<OneSignalPluginProps> = (
   });
 };
 
-const withOneSignalNSE: ConfigPlugin<OneSignalPluginProps> = (config, onesignalProps) => {
-  return withXcodeProject(config, async props => {
-    const options: PluginOptions = {
-      iosPath: props.modRequest.platformProjectRoot,
-      bundleIdentifier: props.ios?.bundleIdentifier,
-      devTeam: onesignalProps?.devTeam,
-      bundleVersion: props.ios?.buildNumber,
-      bundleShortVersion: props?.version,
-      mode: onesignalProps?.mode,
-      iPhoneDeploymentTarget: onesignalProps?.iPhoneDeploymentTarget,
-      iosNSEFilePath: onesignalProps.iosNSEFilePath
-    };
-
-    // support for monorepos where node_modules can be above the project directory.
-    const pluginDir = require.resolve("onesignal-expo-plugin/package.json")
-
-    xcodeProjectAddNse(
-      props.modRequest.projectName || "",
-      options,
-      path.join(pluginDir, "../build/support/serviceExtensionFiles/")
-    );
-
-    return props;
-  });
-}
-
 const withEasManagedCredentials: ConfigPlugin<OneSignalPluginProps> = (config) => {
   assert(config.ios?.bundleIdentifier, "Missing 'ios.bundleIdentifier' in app config.")
   config.extra = getEasManagedCredentialsConfigExtra(config as ExpoConfig);
   return config;
 }
 
-export const withOneSignalIos: ConfigPlugin<OneSignalPluginProps> = (
-  config,
-  props
-) => {
-  withAppEnvironment(config, props);
-  withRemoteNotificationsPermissions(config, props);
-  withAppGroupPermissions(config, props);
-  withOneSignalNSE(config, props);
-  withEasManagedCredentials(config, props);
-  return config;
-};
+const withOneSignalPodfile: ConfigPlugin<OneSignalPluginProps> = (config) => {
+  return withDangerousMod(config, [
+    'ios',
+    async config => {
+      // not awaiting in order to not block main thread
+      const iosRoot = path.join(config.modRequest.projectRoot, "ios")
+      updatePodfile(iosRoot).catch(err => { OneSignalLog.error(err) });
 
-export function xcodeProjectAddNse(
-  appName: string,
-  options: PluginOptions,
-  sourceDir: string
-): void {
-  const { iosPath, devTeam, bundleIdentifier, bundleVersion, bundleShortVersion, iPhoneDeploymentTarget, iosNSEFilePath } = options;
+      return config;
+    },
+  ]);
+}
 
-  // not awaiting in order to not block main thread
-  updatePodfile(iosPath).catch(err => { OneSignalLog.error(err) });
+const withOneSignalNSE: ConfigPlugin<OneSignalPluginProps> = (config, props) => {
+  // support for monorepos where node_modules can be above the project directory.
+  const pluginDir = require.resolve("onesignal-expo-plugin/package.json")
+  const sourceDir = path.join(pluginDir, "../build/support/serviceExtensionFiles/")
 
-  const projPath = `${iosPath}/${appName}.xcodeproj/project.pbxproj`;
+  return withDangerousMod(config, [
+    'ios',
+    async config => {
+      const iosPath = path.join(config.modRequest.projectRoot, "ios")
 
-  const sourceFile = "NotificationService.m"
-  const extFiles = [
-    "NotificationService.h",
-    `${NSE_TARGET_NAME}.entitlements`,
-    `${NSE_TARGET_NAME}-Info.plist`
-  ];
+      /* COPY OVER EXTENSION FILES */
+      fs.mkdirSync(`${iosPath}/${NSE_TARGET_NAME}`, { recursive: true });
 
-  const xcodeProject = xcode.project(projPath);
+      for (let i = 0; i < NSE_EXT_FILES.length; i++) {
+        const extFile = NSE_EXT_FILES[i];
+        const targetFile = `${iosPath}/${NSE_TARGET_NAME}/${extFile}`;
+        await FileManager.copyFile(`${sourceDir}${extFile}`, targetFile);
+      }
 
-  xcodeProject.parse(async function(err: Error) {
-    if (err) {
-      OneSignalLog.log(`Error parsing iOS project: ${JSON.stringify(err)}`);
-      return;
-    }
+      // Copy NSE source file either from configuration-provided location, falling back to the default one.
+      const sourcePath = props.iosNSEFilePath ?? `${sourceDir}${NSE_SOURCE_FILE}`
+      const targetFile = `${iosPath}/${NSE_TARGET_NAME}/${NSE_SOURCE_FILE}`;
+      await FileManager.copyFile(`${sourcePath}`, targetFile);
 
-    /* COPY OVER EXTENSION FILES */
-    fs.mkdirSync(`${iosPath}/${NSE_TARGET_NAME}`, { recursive: true });
+      /* MODIFY COPIED EXTENSION FILES */
+      const nseUpdater = new NseUpdaterManager(iosPath);
+      await nseUpdater.updateNSEEntitlements(`group.${config.ios?.bundleIdentifier}.onesignal`)
+      await nseUpdater.updateNSEBundleVersion(config.ios?.buildNumber ?? DEFAULT_BUNDLE_VERSION);
+      await nseUpdater.updateNSEBundleShortVersion(config?.version ?? DEFAULT_BUNDLE_SHORT_VERSION);
 
-    for (let i = 0; i < extFiles.length; i++) {
-      const extFile = extFiles[i];
-      const targetFile = `${iosPath}/${NSE_TARGET_NAME}/${extFile}`;
-      await FileManager.copyFile(`${sourceDir}${extFile}`, targetFile);
-    }
+      return config;
+    },
+  ]);
+}
 
-    // Copy NSE source file either from configuration-provided location, falling back to the default one.
-    const sourcePath = iosNSEFilePath ?? `${sourceDir}${sourceFile}`
-    const targetFile = `${iosPath}/${NSE_TARGET_NAME}/${sourceFile}`;
-    await FileManager.copyFile(`${sourcePath}`, targetFile);
-
-    /* MODIFY COPIED EXTENSION FILES */
-    const nseUpdater = new NseUpdaterManager(iosPath);
-    await nseUpdater.updateNSEEntitlements(`group.${bundleIdentifier}.onesignal`)
-    await nseUpdater.updateNSEBundleVersion(bundleVersion ?? DEFAULT_BUNDLE_VERSION);
-    await nseUpdater.updateNSEBundleShortVersion(bundleShortVersion ?? DEFAULT_BUNDLE_SHORT_VERSION);
+const withOneSignalXcodeProject: ConfigPlugin<OneSignalPluginProps> = (config, props) => {
+  return withXcodeProject(config, newConfig => {
+    const xcodeProject = newConfig.modResults
 
     // Create new PBXGroup for the extension
-    const extGroup = xcodeProject.addPbxGroup([...extFiles, sourceFile], NSE_TARGET_NAME, NSE_TARGET_NAME);
-
+    const extGroup = xcodeProject.addPbxGroup([...NSE_EXT_FILES, NSE_SOURCE_FILE], NSE_TARGET_NAME, NSE_TARGET_NAME);
+        
     // Add the new PBXGroup to the top level group. This makes the
     // files / folder appear in the file explorer in Xcode.
     const groups = xcodeProject.hash.project.objects["PBXGroup"];
@@ -207,12 +176,12 @@ export function xcodeProjectAddNse(
 
     if (!!xcodeProject.pbxTargetByName(NSE_TARGET_NAME)) {
       OneSignalLog.log(`${NSE_TARGET_NAME} already exists in project. Skipping...`);
-      return;
+      return newConfig;
     }
 
     // Add the NSE target
     // This adds PBXTargetDependency and PBXContainerItemProxy for you
-    const nseTarget = xcodeProject.addTarget(NSE_TARGET_NAME, "app_extension", NSE_TARGET_NAME, `${bundleIdentifier}.${NSE_TARGET_NAME}`);
+    const nseTarget = xcodeProject.addTarget(NSE_TARGET_NAME, "app_extension", NSE_TARGET_NAME, `${config.ios?.bundleIdentifier}.${NSE_TARGET_NAME}`);
 
     // Add build phases to the new target
     xcodeProject.addBuildPhase(
@@ -239,8 +208,8 @@ export function xcodeProjectAddNse(
         configurations[key].buildSettings.PRODUCT_NAME == `"${NSE_TARGET_NAME}"`
       ) {
         const buildSettingsObj = configurations[key].buildSettings;
-        buildSettingsObj.DEVELOPMENT_TEAM = devTeam;
-        buildSettingsObj.IPHONEOS_DEPLOYMENT_TARGET = iPhoneDeploymentTarget ?? IPHONEOS_DEPLOYMENT_TARGET;
+        buildSettingsObj.DEVELOPMENT_TEAM = props?.devTeam;
+        buildSettingsObj.IPHONEOS_DEPLOYMENT_TARGET = props?.iPhoneDeploymentTarget ?? IPHONEOS_DEPLOYMENT_TARGET;
         buildSettingsObj.TARGETED_DEVICE_FAMILY = TARGETED_DEVICE_FAMILY;
         buildSettingsObj.CODE_SIGN_ENTITLEMENTS = `${NSE_TARGET_NAME}/${NSE_TARGET_NAME}.entitlements`;
         buildSettingsObj.CODE_SIGN_STYLE = "Automatic";
@@ -248,9 +217,19 @@ export function xcodeProjectAddNse(
     }
 
     // Add development teams to both your target and the original project
-    xcodeProject.addTargetAttribute("DevelopmentTeam", devTeam, nseTarget);
-    xcodeProject.addTargetAttribute("DevelopmentTeam", devTeam);
-
-    fs.writeFileSync(projPath, xcodeProject.writeSync());
+    xcodeProject.addTargetAttribute("DevelopmentTeam", props?.devTeam, nseTarget);
+    xcodeProject.addTargetAttribute("DevelopmentTeam", props?.devTeam);
+    return newConfig;
   })
 }
+
+export const withOneSignalIos: ConfigPlugin<OneSignalPluginProps> = (config, props) => {
+  config = withAppEnvironment(config, props);
+  config = withRemoteNotificationsPermissions(config, props);
+  config = withAppGroupPermissions(config, props);
+  config = withOneSignalPodfile(config, props)
+  config = withOneSignalNSE(config, props)
+  config = withOneSignalXcodeProject(config, props)
+  config = withEasManagedCredentials(config, props);
+  return config;
+};
