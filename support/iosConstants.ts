@@ -17,3 +17,9 @@ export const DEFAULT_BUNDLE_VERSION = '1';
 export const DEFAULT_BUNDLE_SHORT_VERSION = '1.0';
 
 export const NSE_TARGET_NAME = "OneSignalNotificationServiceExtension";
+export const NSE_SOURCE_FILE = "NotificationService.m"
+export const NSE_EXT_FILES = [
+  "NotificationService.h",
+  `${NSE_TARGET_NAME}.entitlements`,
+  `${NSE_TARGET_NAME}-Info.plist`
+];
