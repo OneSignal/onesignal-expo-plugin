@@ -6,6 +6,9 @@ All notable changes to this project will be documented in this file.
 #### Changes
 - Update iOS generation to write xcode project via expo mod rather than directly to file system.
 - Bump qs from 6.5.2 to 6.5.3
+- Bump decode-uri-component from 0.2.0 to 0.2.2 
+- Bump @xmldom/xmldom from 0.7.5 to 0.7.10
+- Bump multiple dependency versions in OneSignal Example App (ua-parser-js, decode-uri-component, @sideway/formula, @xmldom/xmldom)
 
 ## March 2023
 ### `1.3.1` - 03/03/23
