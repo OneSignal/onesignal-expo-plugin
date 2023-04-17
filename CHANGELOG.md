@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## April 2023
+### `1.3.2` - 04/17/23
+#### Changes
+- Update iOS generation to write xcode project via expo mod rather than directly to file system.
+
 ## March 2023
 ### `1.3.1` - 03/03/23
 #### Changes
