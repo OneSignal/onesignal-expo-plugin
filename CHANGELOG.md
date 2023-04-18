@@ -2,7 +2,7 @@
 All notable changes to this project will be documented in this file.
 
 ## April 2023
-### `1.3.2` - 04/17/23
+### `1.3.2` - 04/18/23
 #### Changes
 - Update iOS generation to write xcode project via expo mod rather than directly to file system.
 - Bump qs from 6.5.2 to 6.5.3
