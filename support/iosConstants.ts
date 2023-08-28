@@ -3,7 +3,7 @@ export const TARGETED_DEVICE_FAMILY = `"1,2"`;
 
 export const NSE_PODFILE_SNIPPET = `
 target 'OneSignalNotificationServiceExtension' do
-  pod 'OneSignalXCFramework', '>= 3.0', '< 4.0'
+  pod 'OneSignalXCFramework', '>= 5.0', '< 6.0'
   use_frameworks! :linkage => podfile_properties['ios.useFrameworks'].to_sym if podfile_properties['ios.useFrameworks']
 end`;
 
