@@ -153,7 +153,7 @@ npx expo prebuild --clean
 **EAS Note:** if you choose to stay in a fully managed workflow by not prebuilding, EAS will still run `npx expo prebuild` at build time. You can also prebuild locally but remain in a fully managed workflow by adding the `android` and `ios` directories to your .gitignore.
 
 ## Run
-The following commands will prebuild *and* run your application. Note that for iOS, push notifications will **not** work in the Simulator.
+The following commands will prebuild *and* run your application.
 ```sh
 # Build and run your native iOS project
 npx expo run:ios
