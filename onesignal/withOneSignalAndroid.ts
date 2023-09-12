@@ -1,5 +1,5 @@
 /**
- * Expo config plugin for One Signal (Android)
+ * Expo config plugin for OneSignal (Android)
  * @see https://documentation.onesignal.com/docs/react-native-sdk-setup#step-4-install-for-ios-using-cocoapods-for-ios-apps
  */
 
@@ -13,8 +13,8 @@ import { existsSync, mkdirSync, writeFileSync } from 'fs';
 const RESOURCE_ROOT_PATH = 'android/app/src/main/res/';
 
 // The name of each small icon folder resource, and the icon size for that folder.
-const SMALL_ICON_DIRS_TO_SIZE: { [name: string]: number } = { 
-        'drawable-mdpi': 24, 
+const SMALL_ICON_DIRS_TO_SIZE: { [name: string]: number } = {
+        'drawable-mdpi': 24,
         'drawable-hdpi': 36,
         'drawable-xhdpi': 48,
         'drawable-xxhdpi': 72,
@@ -22,7 +22,7 @@ const SMALL_ICON_DIRS_TO_SIZE: { [name: string]: number } = {
   };
 
 // The name of each large icon folder resource, and the icon size for that folder.
-const LARGE_ICON_DIRS_TO_SIZE: { [name: string]: number } = { 
+const LARGE_ICON_DIRS_TO_SIZE: { [name: string]: number } = {
         'drawable-xxxhdpi': 256
   };
 
