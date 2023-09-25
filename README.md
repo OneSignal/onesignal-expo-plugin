@@ -90,7 +90,7 @@ You can pass props to the plugin config object to configure:
 | `iosNSEFilePath`         | optional | The local path to a custom Notification Service Extension (NSE), written in Objective-C. The NSE will typically start as a copy of the [default NSE](https://github.com/OneSignal/onesignal-expo-plugin/blob/main/support/serviceExtensionFiles/NotificationService.m), then altered to support any custom logic required.  e.g: `"./assets/NotificationService.m"`. |
 
 ### OneSignal App ID
-Add your OneSignal App ID to your [Expo constants via the `extra` param](https://docs.expo.dev/versions/latest/config/app/):
+Add your OneSignal App ID to your [Expo constants via the `extra` param](https://docs.expo.dev/versions/latest/config/app/#extra):
 
 **Example:**
 ```json
@@ -101,18 +101,18 @@ Add your OneSignal App ID to your [Expo constants via the `extra` param](https:/
 }
 ```
 
-You can then access the value to pass to the `setAppId` function:
+You can then access the value to pass to the `initialize` function:
 
 ```js
 import OneSignal from 'react-native-onesignal';
 import Constants from "expo-constants";
-OneSignal.setAppId(Constants.manifest.extra.oneSignalAppId);
+OneSignal.initialize(Constants.expoConfig.extra.oneSignalAppId);
 ```
 
 Alternatively, pass the app ID directly to the function:
 
 ```js
-OneSignal.setAppId("YOUR-ONESIGNAL-APP-ID");
+OneSignal.initialize("YOUR-ONESIGNAL-APP-ID");
 ```
 
 ### Versioning
