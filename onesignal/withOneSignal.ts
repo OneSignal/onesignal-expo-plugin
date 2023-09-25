@@ -9,6 +9,13 @@ import { withOneSignalAndroid } from './withOneSignalAndroid';
 import { withOneSignalIos } from './withOneSignalIos';
 
 const withOneSignal: ConfigPlugin<OneSignalPluginProps> = (config, props) => {
+  // if props are undefined, throw error
+  if (!props) {
+    throw new Error(
+      'You are trying to use the OneSignal plugin without any props. Property "mode" is required. Please see https://github.com/OneSignal/onesignal-expo-plugin for more info.'
+    );
+  }
+
   config = withOneSignalIos(config, props);
   config = withOneSignalAndroid(config, props);
 
