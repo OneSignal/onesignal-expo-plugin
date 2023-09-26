@@ -25,6 +25,11 @@
   smallIcons?:            string[];
 
   /**
+   * (optional) The accent color to use for notification icons on Android. Must be a valid Android color resource, for example: "#FF0000"
+   */
+  smallIconAccentColor?:  string;
+
+  /**
    * (optional) The large notification icons for Android. Images will be automatically scaled up/down to 256x256.
    */
   largeIcons?:            string[];

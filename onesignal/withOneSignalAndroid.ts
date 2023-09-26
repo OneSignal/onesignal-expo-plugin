@@ -3,7 +3,7 @@
  * @see https://documentation.onesignal.com/docs/react-native-sdk-setup#step-4-install-for-ios-using-cocoapods-for-ios-apps
  */
 
-import { ConfigPlugin, withDangerousMod } from '@expo/config-plugins';
+import { ConfigPlugin, withDangerousMod, withStringsXml } from '@expo/config-plugins';
 import { generateImageAsync } from '@expo/image-utils';
 import { OneSignalLog } from '../support/OneSignalLog';
 import { OneSignalPluginProps } from '../types/types';
@@ -72,6 +72,35 @@ const withLargeIcons: ConfigPlugin<OneSignalPluginProps> = (
   ]);
 };
 
+const withSmallIconAccentColor: ConfigPlugin<OneSignalPluginProps> = (config, onesignalProps) => {
+  if(!onesignalProps.smallIconAccentColor) {
+    return config
+  }
+
+  return withStringsXml(config, (config) => {
+    const colorInARGB = `FF${onesignalProps.smallIconAccentColor?.replace('#', '')}`;
+    const strings = config.modResults.resources.string ?? [];
+
+    // Check if the accent color entry already exists
+    const hasAccentColor = strings.some(
+      (stringEntry) =>
+        stringEntry.$?.name === 'onesignal_notification_accent_color' &&
+        stringEntry._ === colorInARGB
+    );
+
+    if (!hasAccentColor) {
+      const accentColorEntry = {
+        $: { name: 'onesignal_notification_accent_color' },
+        _: colorInARGB,
+      };
+
+      config.modResults.resources.string = [...strings, accentColorEntry];
+    }
+
+    return config;
+  });
+}
+
 async function saveIconsArrayAsync(projectRoot: string, icons: string[], dirsToSize: { [name: string]: number }) {
   for(const icon of icons) {
     await saveIconAsync(icon, projectRoot, dirsToSize);
@@ -113,5 +142,6 @@ export const withOneSignalAndroid: ConfigPlugin<OneSignalPluginProps> = (
 ) => {
   config = withSmallIcons(config, props);
   config = withLargeIcons(config, props);
+  config = withSmallIconAccentColor(config, props);
   return config;
 };
