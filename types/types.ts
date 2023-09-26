@@ -42,6 +42,16 @@
    iosNSEFilePath?:       string;
 };
 
+export const ONESIGNAL_PLUGIN_PROPS: string[] = [
+  "mode",
+  "devTeam",
+  "iPhoneDeploymentTarget",
+  "smallIcons",
+  "largeIcons",
+  "iosNSEFilePath",
+  "smallIconAccentColor"
+];
+
 export enum Mode {
   Dev = "development",
   Prod = "production"

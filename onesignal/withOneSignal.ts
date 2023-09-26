@@ -7,6 +7,7 @@ import { ConfigPlugin } from '@expo/config-plugins';
 import { OneSignalPluginProps } from '../types/types';
 import { withOneSignalAndroid } from './withOneSignalAndroid';
 import { withOneSignalIos } from './withOneSignalIos';
+import { validatePluginProps } from '../support/helpers';
 
 const withOneSignal: ConfigPlugin<OneSignalPluginProps> = (config, props) => {
   // if props are undefined, throw error
@@ -15,6 +16,8 @@ const withOneSignal: ConfigPlugin<OneSignalPluginProps> = (config, props) => {
       'You are trying to use the OneSignal plugin without any props. Property "mode" is required. Please see https://github.com/OneSignal/onesignal-expo-plugin for more info.'
     );
   }
+
+  validatePluginProps(props);
 
   config = withOneSignalIos(config, props);
   config = withOneSignalAndroid(config, props);
