@@ -8,15 +8,15 @@
   mode: Mode;
 
   /**
-   * (optional) Used to configure Apple Team ID. You can find your Apple Team ID by running expo credentials:manager e.g: "91SW8A37CR" 
+   * (optional) Used to configure Apple Team ID. You can find your Apple Team ID by running expo credentials:manager e.g: "91SW8A37CR"
    */
-  devTeam: string;
+  devTeam?: string;
 
   /**
    * (optional) Target IPHONEOS_DEPLOYMENT_TARGET value to be used when adding the iOS NSE. A deployment target is nothing more than
    * the minimum version of the operating system the application can run on. This value should match the value in your Podfile e.g: "12.0".
    */
-  iPhoneDeploymentTarget: string;
+  iPhoneDeploymentTarget?: string;
 
   /**
    * (optional) The small notification icons for Android.  Images will be automatically scaled up/down, the recommended size
@@ -41,6 +41,16 @@
    */
    iosNSEFilePath?:       string;
 };
+
+export const ONESIGNAL_PLUGIN_PROPS: string[] = [
+  "mode",
+  "devTeam",
+  "iPhoneDeploymentTarget",
+  "smallIcons",
+  "largeIcons",
+  "iosNSEFilePath",
+  "smallIconAccentColor"
+];
 
 export enum Mode {
   Dev = "development",
