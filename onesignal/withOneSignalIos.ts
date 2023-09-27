@@ -154,9 +154,14 @@ const withOneSignalXcodeProject: ConfigPlugin<OneSignalPluginProps> = (config, p
   return withXcodeProject(config, newConfig => {
     const xcodeProject = newConfig.modResults
 
+    if (!!xcodeProject.pbxTargetByName(NSE_TARGET_NAME)) {
+      OneSignalLog.log(`${NSE_TARGET_NAME} already exists in project. Skipping...`);
+      return newConfig;
+    }
+
     // Create new PBXGroup for the extension
     const extGroup = xcodeProject.addPbxGroup([...NSE_EXT_FILES, NSE_SOURCE_FILE], NSE_TARGET_NAME, NSE_TARGET_NAME);
-        
+
     // Add the new PBXGroup to the top level group. This makes the
     // files / folder appear in the file explorer in Xcode.
     const groups = xcodeProject.hash.project.objects["PBXGroup"];
@@ -173,11 +178,6 @@ const withOneSignalXcodeProject: ConfigPlugin<OneSignalPluginProps> = (config, p
     const projObjects = xcodeProject.hash.project.objects;
     projObjects['PBXTargetDependency'] = projObjects['PBXTargetDependency'] || {};
     projObjects['PBXContainerItemProxy'] = projObjects['PBXTargetDependency'] || {};
-
-    if (!!xcodeProject.pbxTargetByName(NSE_TARGET_NAME)) {
-      OneSignalLog.log(`${NSE_TARGET_NAME} already exists in project. Skipping...`);
-      return newConfig;
-    }
 
     // Add the NSE target
     // This adds PBXTargetDependency and PBXContainerItemProxy for you
