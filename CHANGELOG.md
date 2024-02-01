@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## September 2023
+## October 2023
 ### `2.0.2` - 10/16/23
 #### Changes
 - Move target check to top of function to avoid adding duped PBXGroup
@@ -13,7 +13,6 @@ All notable changes to this project will be documented in this file.
 - Add ability to set the small icon accent color
 - Update Usage in README to reflect major release changes
 
-## September 2023
 ### `2.0.0` - 09/12/23
 #### Changes
 - Native version update & major release
