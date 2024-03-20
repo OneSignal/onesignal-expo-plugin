@@ -5063,13 +5063,12 @@ once@^1.3.0, once@^1.3.1, once@^1.4.0:
   dependencies:
     wrappy "1"
 
-onesignal-expo-plugin@^1.3.1:
-  version "1.3.1"
-  resolved "https://registry.yarnpkg.com/onesignal-expo-plugin/-/onesignal-expo-plugin-1.3.1.tgz#5ded34af799a01f8f79d045bd32479167a574623"
-  integrity sha512-F/Evz53RhPjp/hba8rp9vFMqPsspOU1F9In+UpAJlxqW7QUB/5///WYn/rtOUgeBkH+sErBZOjK9KnTjvADpJA==
+onesignal-expo-plugin@^1.3.2:
+  version "1.3.2"
+  resolved "https://registry.yarnpkg.com/onesignal-expo-plugin/-/onesignal-expo-plugin-1.3.2.tgz#7979fc1cf33efe0addb24ce7335cea7d2a0e3f55"
+  integrity sha512-3asutWnAEg9jeJDFVne7VpI9akStYwLkx0k7+CIQB2cQtjw1JAscDGdydTqXlivCNwixlkGrj0KxDPe+RDV5vQ==
   dependencies:
     "@expo/image-utils" "^0.3.22"
-    xcode "^3.0.1"
 
 onetime@^2.0.0:
   version "2.0.1"
@@ -5443,9 +5442,9 @@ rc@~1.2.7:
     strip-json-comments "~2.0.1"
 
 react-devtools-core@^4.23.0:
-  version "4.24.5"
-  resolved "https://registry.yarnpkg.com/react-devtools-core/-/react-devtools-core-4.24.5.tgz#99b611ecb6dbe96d5de362ca2d1b0a1b9da06e0a"
-  integrity sha512-zr1LbHB5N5XjSNSCbxbfDNW8vryQdt2zYs8qnk5YacvFcwrMXGGXYoQ4gdu0rKe4mB/5MQYwgFse6IlyQiZwVw==
+  version "4.28.4"
+  resolved "https://registry.yarnpkg.com/react-devtools-core/-/react-devtools-core-4.28.4.tgz#fb8183eada77093f4c2f9830e664bf22255abe27"
+  integrity sha512-IUZKLv3CimeM07G3vX4H4loxVpByrzq3HvfTX7v9migalwvLs9ZY5D3S3pKR33U+GguYfBBdMMZyToFhsSE/iQ==
   dependencies:
     shell-quote "^1.6.1"
     ws "^7"
