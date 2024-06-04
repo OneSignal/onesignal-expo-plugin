@@ -1,6 +1,6 @@
 {
   "name": "onesignal-expo-plugin",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "The OneSignal Expo plugin allows you to use OneSignal without leaving the managed workflow. Developed in collaboration with SweetGreen.",
   "main": "./app.plugin.js",
   "scripts": {
