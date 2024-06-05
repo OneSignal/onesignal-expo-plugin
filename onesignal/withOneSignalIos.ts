@@ -132,6 +132,11 @@ const withOneSignalNSE: ConfigPlugin<OneSignalPluginProps> = (config, props) => 
         const extFile = NSE_EXT_FILES[i];
         const targetFile = `${iosPath}/${NSE_TARGET_NAME}/${extFile}`;
         await FileManager.copyFile(`${sourceDir}${extFile}`, targetFile);
+
+        if (extFile === 'OneSignalNotificationServiceExtension-Info.plist') {
+          // Copy the plist file to the project root as well
+          await FileManager.copyFile(`${sourceDir}${extFile}`, `${iosPath}/${extFile}`);
+        }
       }
 
       // Copy NSE source file either from configuration-provided location, falling back to the default one.
