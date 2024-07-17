@@ -40,6 +40,9 @@
           "iPhoneDeploymentTarget": "12.0"
         }
       ]
-    ]
+    ],
+    "extra": {
+      "oneSignalAppId": "8fbf6c72-4b80-47a8-86ae-68de02259355"
+    }
   }
 }
