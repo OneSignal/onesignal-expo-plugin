@@ -42,6 +42,6 @@
     "typescript": "^4.5.5"
   },
   "dependencies": {
-    "@expo/image-utils": "^0.3.22"
+    "@expo/image-utils": "^0.5.1"
   }
 }
