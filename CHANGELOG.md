@@ -1,6 +1,23 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## October 2023
+### `2.0.2` - 10/16/23
+#### Changes
+- Move target check to top of function to avoid adding duped PBXGroup
+
+## September 2023
+### `2.0.1` - 09/27/23
+#### Changes
+- Plugin Prop Validation & Improvements
+- Add ability to set the small icon accent color
+- Update Usage in README to reflect major release changes
+
+### `2.0.0` - 09/12/23
+#### Changes
+- Native version update & major release
+- Bump word-wrap from 1.2.3 to 1.2.4
+
 ## April 2023
 ### `1.3.2` - 04/18/23
 #### Changes
