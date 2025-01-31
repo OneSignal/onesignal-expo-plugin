@@ -208,7 +208,7 @@ const withOneSignalXcodeProject: ConfigPlugin<OneSignalPluginProps> = (config, p
         configurations[key].buildSettings.PRODUCT_NAME == `"${NSE_TARGET_NAME}"`
       ) {
         const buildSettingsObj = configurations[key].buildSettings;
-        buildSettingsObj.DEVELOPMENT_TEAM = props?.devTeam;
+        buildSettingsObj.DEVELOPMENT_TEAM = config.ios.appleTeamId;
         buildSettingsObj.IPHONEOS_DEPLOYMENT_TARGET = props?.iPhoneDeploymentTarget ?? IPHONEOS_DEPLOYMENT_TARGET;
         buildSettingsObj.TARGETED_DEVICE_FAMILY = TARGETED_DEVICE_FAMILY;
         buildSettingsObj.CODE_SIGN_ENTITLEMENTS = `${NSE_TARGET_NAME}/${NSE_TARGET_NAME}.entitlements`;
@@ -216,9 +216,6 @@ const withOneSignalXcodeProject: ConfigPlugin<OneSignalPluginProps> = (config, p
       }
     }
 
-    // Add development teams to both your target and the original project
-    xcodeProject.addTargetAttribute("DevelopmentTeam", props?.devTeam, nseTarget);
-    xcodeProject.addTargetAttribute("DevelopmentTeam", props?.devTeam);
     return newConfig;
   })
 }
