@@ -1,7 +1,8 @@
-import { NSE_TARGET_NAME } from "../iosConstants";
 import { ExpoConfig } from '@expo/config-types';
+import { OneSignalPluginProps } from "../../types/types";
+import { NSE_TARGET_NAME } from "../iosConstants";
 
-export default function getEasManagedCredentialsConfigExtra(config: ExpoConfig): {[k: string]: any} {
+export default function getEasManagedCredentialsConfigExtra(config: ExpoConfig, props?: OneSignalPluginProps): {[k: string]: any} {
   return {
     ...config.extra,
     eas: {
@@ -20,7 +21,7 @@ export default function getEasManagedCredentialsConfigExtra(config: ExpoConfig):
                 bundleIdentifier: `${config?.ios?.bundleIdentifier}.${NSE_TARGET_NAME}`,
                 entitlements: {
                   'com.apple.security.application-groups': [
-                    `group.${config?.ios?.bundleIdentifier}.onesignal`
+                    `group.${props?.appGroupName || config?.ios?.bundleIdentifier}.onesignal`
                   ]
                 },
               }

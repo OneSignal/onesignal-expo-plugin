@@ -5,30 +5,30 @@
 
 import {
   ConfigPlugin,
+  withDangerousMod,
   withEntitlementsPlist,
   withInfoPlist,
-  withXcodeProject,
-  withDangerousMod
+  withXcodeProject
 } from "@expo/config-plugins";
+import { ExpoConfig } from '@expo/config-types';
+import * as assert from 'assert';
 import * as fs from 'fs';
 import * as path from 'path';
+import getEasManagedCredentialsConfigExtra from "../support/eas/getEasManagedCredentialsConfigExtra";
+import { FileManager } from "../support/FileManager";
 import {
   DEFAULT_BUNDLE_SHORT_VERSION,
   DEFAULT_BUNDLE_VERSION,
   IPHONEOS_DEPLOYMENT_TARGET,
-  NSE_TARGET_NAME,
-  NSE_SOURCE_FILE,
   NSE_EXT_FILES,
+  NSE_SOURCE_FILE,
+  NSE_TARGET_NAME,
   TARGETED_DEVICE_FAMILY
 } from "../support/iosConstants";
-import { updatePodfile } from "../support/updatePodfile";
 import NseUpdaterManager from "../support/NseUpdaterManager";
 import { OneSignalLog } from "../support/OneSignalLog";
-import { FileManager } from "../support/FileManager";
+import { updatePodfile } from "../support/updatePodfile";
 import { OneSignalPluginProps } from "../types/types";
-import assert from 'assert';
-import getEasManagedCredentialsConfigExtra from "../support/eas/getEasManagedCredentialsConfigExtra";
-import { ExpoConfig } from '@expo/config-types';
 
 /**
  * Add 'aps-environment' record with current environment to '<project-name>.entitlements' file
@@ -78,7 +78,8 @@ const withRemoteNotificationsPermissions: ConfigPlugin<OneSignalPluginProps> = (
  * @see https://documentation.onesignal.com/docs/react-native-sdk-setup#step-4-install-for-ios-using-cocoapods-for-ios-apps (step 4.4)
  */
 const withAppGroupPermissions: ConfigPlugin<OneSignalPluginProps> = (
-  config
+  config,
+  props
 ) => {
   const APP_GROUP_KEY = "com.apple.security.application-groups";
   return withEntitlementsPlist(config, newConfig => {
@@ -86,7 +87,7 @@ const withAppGroupPermissions: ConfigPlugin<OneSignalPluginProps> = (
       newConfig.modResults[APP_GROUP_KEY] = [];
     }
     const modResultsArray = (newConfig.modResults[APP_GROUP_KEY] as Array<any>);
-    const entitlement = `group.${newConfig?.ios?.bundleIdentifier || ""}.onesignal`;
+    const entitlement = `group.${props?.appGroupName || newConfig?.ios?.bundleIdentifier || ""}.onesignal`;
     if (modResultsArray.indexOf(entitlement) !== -1) {
       return newConfig;
     }
@@ -96,10 +97,15 @@ const withAppGroupPermissions: ConfigPlugin<OneSignalPluginProps> = (
   });
 };
 
-const withEasManagedCredentials: ConfigPlugin<OneSignalPluginProps> = (config) => {
-  assert(config.ios?.bundleIdentifier, "Missing 'ios.bundleIdentifier' in app config.")
-  config.extra = getEasManagedCredentialsConfigExtra(config as ExpoConfig);
-  return config;
+const withEasManagedCredentials: ConfigPlugin<OneSignalPluginProps> = (config, props) => {
+  if (props?.appGroupName) {
+    config.extra = getEasManagedCredentialsConfigExtra(config as ExpoConfig, props);
+    return config;
+  } else {
+    assert.ok(config.ios?.bundleIdentifier, "Missing 'ios.bundleIdentifier' in app config.")
+    config.extra = getEasManagedCredentialsConfigExtra(config as ExpoConfig);
+    return config;
+  }
 }
 
 const withOneSignalPodfile: ConfigPlugin<OneSignalPluginProps> = (config) => {
@@ -141,7 +147,7 @@ const withOneSignalNSE: ConfigPlugin<OneSignalPluginProps> = (config, props) => 
 
       /* MODIFY COPIED EXTENSION FILES */
       const nseUpdater = new NseUpdaterManager(iosPath);
-      await nseUpdater.updateNSEEntitlements(`group.${config.ios?.bundleIdentifier}.onesignal`)
+      await nseUpdater.updateNSEEntitlements(`group.${props?.appGroupName || config.ios?.bundleIdentifier}.onesignal`)
       await nseUpdater.updateNSEBundleVersion(config.ios?.buildNumber ?? DEFAULT_BUNDLE_VERSION);
       await nseUpdater.updateNSEBundleShortVersion(config?.version ?? DEFAULT_BUNDLE_SHORT_VERSION);
 

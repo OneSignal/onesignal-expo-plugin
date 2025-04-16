@@ -30,6 +30,10 @@ export function validatePluginProps(props: any): void {
     throw new Error("OneSignal Expo Plugin: 'iosNSEFilePath' must be a string.");
   }
 
+  if (props.appGroupName && typeof props.appGroupName !== "string") {
+    throw new Error("OneSignal Expo Plugin: 'appGroupName' must be a string.");
+  }
+
   // check for extra properties
   const inputProps = Object.keys(props);
 
