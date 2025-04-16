@@ -74,6 +74,23 @@ const withRemoteNotificationsPermissions: ConfigPlugin<OneSignalPluginProps> = (
 };
 
 /**
+ * Add custom app group key, if provided
+ * @see https://documentation.onesignal.com/docs/service-extensions#ios-app-group-name
+ */
+const withCustomAppGroupsKey: ConfigPlugin<OneSignalPluginProps> = (
+  config,
+  props
+) => {
+  return withInfoPlist(config, (newConfig) => {
+    if (props?.appGroupName) {
+      newConfig.modResults.OneSignal_app_groups_key = props?.appGroupName;
+    }
+
+    return newConfig;
+  });
+};
+
+/**
  * Add "App Group" permission
  * @see https://documentation.onesignal.com/docs/react-native-sdk-setup#step-4-install-for-ios-using-cocoapods-for-ios-apps (step 4.4)
  */
@@ -232,6 +249,7 @@ const withOneSignalXcodeProject: ConfigPlugin<OneSignalPluginProps> = (config, p
 export const withOneSignalIos: ConfigPlugin<OneSignalPluginProps> = (config, props) => {
   config = withAppEnvironment(config, props);
   config = withRemoteNotificationsPermissions(config, props);
+  config = withCustomAppGroupsKey(config, props);
   config = withAppGroupPermissions(config, props);
   config = withOneSignalPodfile(config, props)
   config = withOneSignalNSE(config, props)
