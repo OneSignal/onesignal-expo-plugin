@@ -1,9 +1,7 @@
 name: 📣 General feedback
 description: Tell us what's on your mind
-title: "[feedback]: "
-labels: ["triage"]
-# assignees:
-#   - assign your sdk team e.g., onesignal/unity
+title: "[Feedback]: "
+labels: ["Feedback"]
 body:
   - type: markdown
     attributes:
