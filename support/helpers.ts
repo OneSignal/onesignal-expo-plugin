@@ -6,10 +6,6 @@ export function validatePluginProps(props: any): void {
     throw new Error("OneSignal Expo Plugin: 'mode' must be a string.");
   }
 
-  if (props.devTeam && typeof props.devTeam !== "string") {
-    throw new Error("OneSignal Expo Plugin: 'devTeam' must be a string.");
-  }
-
   if (props.iPhoneDeploymentTarget && typeof props.iPhoneDeploymentTarget !== "string") {
     throw new Error("OneSignal Expo Plugin: 'iPhoneDeploymentTarget' must be a string.");
   }

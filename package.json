@@ -1,13 +1,11 @@
 {
-  "name": "onesignal-expo-plugin",
+  "name": "@pierrecapo/onesignal-expo-plugin",
   "version": "2.0.3",
   "description": "The OneSignal Expo plugin allows you to use OneSignal without leaving the managed workflow. Developed in collaboration with SweetGreen.",
   "main": "./app.plugin.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "yarn run lint && rm -rf build && tsc && cp -a support/serviceExtensionFiles build/support/",
-    "lint": "eslint . --ext .ts",
-    "prepare": "yarn run build"
+    "build": "expo-module build && cp -a support/serviceExtensionFiles build/support/"
   },
   "repository": {
     "type": "git",
@@ -34,14 +32,10 @@
   },
   "homepage": "https://github.com/OneSignal/onesignal-expo-plugin#readme",
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^5.10.1",
-    "@typescript-eslint/parser": "^5.10.1",
-    "eslint": "^8.8.0",
-    "expo-module-scripts": "^2.0.0",
-    "readme-md-generator": "^1.0.0",
-    "typescript": "^4.5.5"
+    "expo-module-scripts": "^4.0.3"
   },
   "dependencies": {
-    "@expo/image-utils": "^0.3.22"
+    "@expo/image-utils": "^0.3.22",
+    "@expo/config-plugins": "^9.0.12"
   }
 }
