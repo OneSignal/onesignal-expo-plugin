@@ -40,6 +40,11 @@
    * logic required.
    */
    iosNSEFilePath?:       string;
+
+  /**
+   * (optional) The app group name to use for the OneSignal SDK.
+   */
+  appGroupName?: string;
 };
 
 export const ONESIGNAL_PLUGIN_PROPS: string[] = [
@@ -49,7 +54,8 @@ export const ONESIGNAL_PLUGIN_PROPS: string[] = [
   "smallIcons",
   "largeIcons",
   "iosNSEFilePath",
-  "smallIconAccentColor"
+  "smallIconAccentColor",
+  "appGroupName"
 ];
 
 export enum Mode {

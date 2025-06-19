@@ -89,6 +89,7 @@ You can pass props to the plugin config object to configure:
 | `largeIcons`             | optional | An array of local paths to large notification icons for Android.  Image should be white, transparent, and 256x256 in size.  e.g: `["./assets/ic_onesignal_large_icon_default.png"]`. See https://documentation.onesignal.com/docs/customize-notification-icons#large-notification-icons.                                                                                                |
 | `smallIconAccentColor`             | optional | The accent color to use for notification icons on Android. Must be a valid hex value, e.g: `"#FF0000"`  |
 | `iosNSEFilePath`         | optional | The local path to a custom Notification Service Extension (NSE), written in Objective-C. The NSE will typically start as a copy of the [default NSE](https://github.com/OneSignal/onesignal-expo-plugin/blob/main/support/serviceExtensionFiles/NotificationService.m), then altered to support any custom logic required.  e.g: `"./assets/NotificationService.m"`. |
+| `appGroupName`           | optional | Used to configure a custom app group name according to OneSignal's [documentation](https://documentation.onesignal.com/docs/service-extensions#ios-app-group-name). If unused, the plugin will use the value of `group.{ios.bundleIdentifier}.onesignal`. |
 
 ### OneSignal App ID
 Add your OneSignal App ID to your [Expo constants via the `extra` param](https://docs.expo.dev/versions/latest/config/app/#extra):
