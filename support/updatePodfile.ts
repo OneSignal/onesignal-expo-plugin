@@ -10,10 +10,11 @@ export async function updatePodfile(iosPath: string) {
   if (matches) {
     OneSignalLog.log("OneSignalNotificationServiceExtension target already added to Podfile. Skipping...");
   } else {
-    fs.appendFile(`${iosPath}/Podfile`, NSE_PODFILE_SNIPPET, (err) => {
-      if (err) {
-        OneSignalLog.error("Error writing to Podfile");
-      }
-    })
+    try {
+      fs.appendFileSync(`${iosPath}/Podfile`, NSE_PODFILE_SNIPPET);
+      OneSignalLog.log("OneSignalNotificationServiceExtension target added to Podfile.");
+    } catch (err) {
+      OneSignalLog.error("Error writing to Podfile: " + err);
+    }
   }
 }

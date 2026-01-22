@@ -106,9 +106,8 @@ const withOneSignalPodfile: ConfigPlugin<OneSignalPluginProps> = (config) => {
   return withDangerousMod(config, [
     'ios',
     async config => {
-      // not awaiting in order to not block main thread
       const iosRoot = path.join(config.modRequest.projectRoot, "ios")
-      updatePodfile(iosRoot).catch(err => { OneSignalLog.error(err) });
+      await updatePodfile(iosRoot);
 
       return config;
     },
