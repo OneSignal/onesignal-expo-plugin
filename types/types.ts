@@ -40,6 +40,8 @@
    * logic required.
    */
    iosNSEFilePath?:       string;
+
+   iosNSETargetName?: string;
 };
 
 export const ONESIGNAL_PLUGIN_PROPS: string[] = [
@@ -49,7 +51,8 @@ export const ONESIGNAL_PLUGIN_PROPS: string[] = [
   "smallIcons",
   "largeIcons",
   "iosNSEFilePath",
-  "smallIconAccentColor"
+  "smallIconAccentColor",
+  "iosNSETargetName"
 ];
 
 export enum Mode {

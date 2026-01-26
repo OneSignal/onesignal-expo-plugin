@@ -126,17 +126,17 @@ const withOneSignalNSE: ConfigPlugin<OneSignalPluginProps> = (config, props) => 
       const iosPath = path.join(config.modRequest.projectRoot, "ios")
 
       /* COPY OVER EXTENSION FILES */
-      fs.mkdirSync(`${iosPath}/${NSE_TARGET_NAME}`, { recursive: true });
+      fs.mkdirSync(`${iosPath}/${props.iosNSETargetName}`, { recursive: true });
 
       for (let i = 0; i < NSE_EXT_FILES.length; i++) {
         const extFile = NSE_EXT_FILES[i];
-        const targetFile = `${iosPath}/${NSE_TARGET_NAME}/${extFile}`;
+        const targetFile = `${iosPath}/${props.iosNSETargetName}/${extFile}`;
         await FileManager.copyFile(`${sourceDir}${extFile}`, targetFile);
       }
 
       // Copy NSE source file either from configuration-provided location, falling back to the default one.
       const sourcePath = props.iosNSEFilePath ?? `${sourceDir}${NSE_SOURCE_FILE}`
-      const targetFile = `${iosPath}/${NSE_TARGET_NAME}/${NSE_SOURCE_FILE}`;
+      const targetFile = `${iosPath}/${props.iosNSETargetName}/${NSE_SOURCE_FILE}`;
       await FileManager.copyFile(`${sourcePath}`, targetFile);
 
       /* MODIFY COPIED EXTENSION FILES */
@@ -154,13 +154,13 @@ const withOneSignalXcodeProject: ConfigPlugin<OneSignalPluginProps> = (config, p
   return withXcodeProject(config, newConfig => {
     const xcodeProject = newConfig.modResults
 
-    if (!!xcodeProject.pbxTargetByName(NSE_TARGET_NAME)) {
-      OneSignalLog.log(`${NSE_TARGET_NAME} already exists in project. Skipping...`);
+    if (!!xcodeProject.pbxTargetByName(props.iosNSETargetName)) {
+      OneSignalLog.log(`${props.iosNSETargetName} already exists in project. Skipping...`);
       return newConfig;
     }
 
     // Create new PBXGroup for the extension
-    const extGroup = xcodeProject.addPbxGroup([...NSE_EXT_FILES, NSE_SOURCE_FILE], NSE_TARGET_NAME, NSE_TARGET_NAME);
+    const extGroup = xcodeProject.addPbxGroup([...NSE_EXT_FILES, NSE_SOURCE_FILE], props.iosNSETargetName, props.iosNSETargetName);
 
     // Add the new PBXGroup to the top level group. This makes the
     // files / folder appear in the file explorer in Xcode.
@@ -181,7 +181,7 @@ const withOneSignalXcodeProject: ConfigPlugin<OneSignalPluginProps> = (config, p
 
     // Add the NSE target
     // This adds PBXTargetDependency and PBXContainerItemProxy for you
-    const nseTarget = xcodeProject.addTarget(NSE_TARGET_NAME, "app_extension", NSE_TARGET_NAME, `${config.ios?.bundleIdentifier}.${NSE_TARGET_NAME}`);
+    const nseTarget = xcodeProject.addTarget(props.iosNSETargetName, "app_extension", props.iosNSETargetName, `${config.ios?.bundleIdentifier}.${props.iosNSETargetName}`);
 
     // Add build phases to the new target
     xcodeProject.addBuildPhase(
@@ -205,13 +205,13 @@ const withOneSignalXcodeProject: ConfigPlugin<OneSignalPluginProps> = (config, p
     for (const key in configurations) {
       if (
         typeof configurations[key].buildSettings !== "undefined" &&
-        configurations[key].buildSettings.PRODUCT_NAME == `"${NSE_TARGET_NAME}"`
+        configurations[key].buildSettings.PRODUCT_NAME == `"${props.iosNSETargetName}"`
       ) {
         const buildSettingsObj = configurations[key].buildSettings;
         buildSettingsObj.DEVELOPMENT_TEAM = props?.devTeam;
         buildSettingsObj.IPHONEOS_DEPLOYMENT_TARGET = props?.iPhoneDeploymentTarget ?? IPHONEOS_DEPLOYMENT_TARGET;
         buildSettingsObj.TARGETED_DEVICE_FAMILY = TARGETED_DEVICE_FAMILY;
-        buildSettingsObj.CODE_SIGN_ENTITLEMENTS = `${NSE_TARGET_NAME}/${NSE_TARGET_NAME}.entitlements`;
+        buildSettingsObj.CODE_SIGN_ENTITLEMENTS = `${props.iosNSETargetName}/${props.iosNSETargetName}.entitlements`;
         buildSettingsObj.CODE_SIGN_STYLE = "Automatic";
       }
     }
@@ -224,6 +224,9 @@ const withOneSignalXcodeProject: ConfigPlugin<OneSignalPluginProps> = (config, p
 }
 
 export const withOneSignalIos: ConfigPlugin<OneSignalPluginProps> = (config, props) => {
+  if (!props.iosNSETargetName || props.iosNSEFilePath.length === 0) {
+    props.iosNSEFilePath = NSE_TARGET_NAME;
+  }
   config = withAppEnvironment(config, props);
   config = withRemoteNotificationsPermissions(config, props);
   config = withAppGroupPermissions(config, props);
