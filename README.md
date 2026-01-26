@@ -1,3 +1,5 @@
+## This fork allows you to pass the notification file extention name and uses default if none
+
 <h1 align="center">Welcome to the onesignal-expo-plugin 👋</h1>
 <p>
   <a href="https://www.npmjs.com/package/onesignal-expo-plugin" target="_blank">
