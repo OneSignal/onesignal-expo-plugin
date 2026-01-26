@@ -1,5 +1,4 @@
-## This fork allows you to pass the notification file extention name and uses default if none
-
+## This fork allows you to customize the notification service extension name. For cases where Apple Developer portal refuses to create the app ID for it because it exists.
 <h1 align="center">Welcome to the onesignal-expo-plugin 👋</h1>
 <p>
   <a href="https://www.npmjs.com/package/onesignal-expo-plugin" target="_blank">
