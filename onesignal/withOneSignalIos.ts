@@ -224,7 +224,7 @@ const withOneSignalXcodeProject: ConfigPlugin<OneSignalPluginProps> = (config, p
 }
 
 export const withOneSignalIos: ConfigPlugin<OneSignalPluginProps> = (config, props) => {
-  if (!props.iosNSETargetName || props.iosNSEFilePath.length === 0) {
+  if (!props.iosNSETargetName || props.iosNSETargetName.length === 0) {
     props.iosNSEFilePath = NSE_TARGET_NAME;
   }
   config = withAppEnvironment(config, props);
