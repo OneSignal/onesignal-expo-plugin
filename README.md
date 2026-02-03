@@ -33,14 +33,7 @@ This plugin is an [Expo Config Plugin](https://docs.expo.dev/guides/config-plugi
 
 ## Install
 
-You need both the `onesignal-expo-plugin` _and_ the `react-native-onesignal` npm package.
-
-```sh
-npx expo install onesignal-expo-plugin
-
-# npm
-npm install react-native-onesignal
-```
+See the [Setup Guide](https://documentation.onesignal.com/docs/en/react-native-expo-sdk-setup) for setup instructions.
 
 ## Configuration in app.json / app.config.js
 
