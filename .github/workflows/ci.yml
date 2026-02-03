@@ -1,0 +1,13 @@
+name: Run Checks
+on:
+  pull_request:
+    branches:
+      - "**"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  call:
+    uses: OneSignal/sdk-actions/.github/workflows/wrapper-js-ci.yml@main
