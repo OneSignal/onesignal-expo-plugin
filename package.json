@@ -5,8 +5,9 @@
   "main": "./app.plugin.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "bun run lint && rm -rf build && tsc && cp -a support/serviceExtensionFiles build/support/",
-    "lint": "eslint . --ext .ts"
+    "build": "bun run lint && rm -rf build && tsc && cp -a src/support/serviceExtensionFiles build/support/",
+    "lint": "oxlint src examples",
+    "lint:fix": "oxlint src examples --fix"
   },
   "repository": {
     "type": "git",

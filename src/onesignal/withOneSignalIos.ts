@@ -154,7 +154,7 @@ const withOneSignalXcodeProject: ConfigPlugin<OneSignalPluginProps> = (config, p
   return withXcodeProject(config, newConfig => {
     const xcodeProject = newConfig.modResults
 
-    if (!!xcodeProject.pbxTargetByName(NSE_TARGET_NAME)) {
+    if (xcodeProject.pbxTargetByName(NSE_TARGET_NAME)) {
       OneSignalLog.log(`${NSE_TARGET_NAME} already exists in project. Skipping...`);
       return newConfig;
     }
