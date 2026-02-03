@@ -1,107 +1,89 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import { useState } from "react";
+import { Pressable, ScrollView, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
-import { HelloWave } from '@/components/hello-wave';
-import ParallaxScrollView from '@/components/parallax-scroll-view';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { Link, useFocusEffect } from 'expo-router';
-import { LogLevel, OneSignal } from 'react-native-onesignal';
+import { LoginModal } from "@/components/LoginModal";
+import { ThemedText } from "@/components/themed-text";
+import { useFocusEffect } from "expo-router";
+import { LogLevel, OneSignal } from "react-native-onesignal";
+
+const APP_ID = "77e32082-ea27-42e3-a898-c72e141824ef";
 
 export default function HomeScreen() {
+  const [loginModalVisible, setLoginModalVisible] = useState(false);
+
   useFocusEffect(() => {
     const initOneSignal = async () => {
-      OneSignal.initialize("8fbf6c72-4b80-47a8-86ae-68de02259355");
+      console.log("Initializing OneSignal");
       OneSignal.Debug.setLogLevel(LogLevel.Verbose);
+      OneSignal.initialize(APP_ID);
     };
     initOneSignal();
   });
-  
-  return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <Link href="/modal">
-          <Link.Trigger>
-            <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-          </Link.Trigger>
-          <Link.Preview />
-          <Link.Menu>
-            <Link.MenuAction title="Action" icon="cube" onPress={() => alert('Action pressed')} />
-            <Link.MenuAction
-              title="Share"
-              icon="square.and.arrow.up"
-              onPress={() => alert('Share pressed')}
-            />
-            <Link.Menu title="More" icon="ellipsis">
-              <Link.MenuAction
-                title="Delete"
-                icon="trash"
-                destructive
-                onPress={() => alert('Delete pressed')}
-              />
-            </Link.Menu>
-          </Link.Menu>
-        </Link>
 
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+  const handleLogin = (externalId: string) => {
+    OneSignal.login(externalId);
+    setLoginModalVisible(false);
+  };
+
+  return (
+    <SafeAreaView style={{ flex: 1 }}>
+      <ScrollView
+        contentContainerStyle={{
+          flexGrow: 1,
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <ThemedText>OneSignal Example</ThemedText>
+        <ThemedText>App ID: {APP_ID}</ThemedText>
+
+        <View style={{ width: "100%", padding: 16, gap: 8 }}>
+          <ThemedText style={{ fontSize: 18, fontWeight: "600" }}>
+            User
+          </ThemedText>
+          <Pressable
+            onPress={() => setLoginModalVisible(true)}
+            style={{ backgroundColor: "#007AFF", padding: 12, borderRadius: 8 }}
+          >
+            <ThemedText style={{ color: "#fff", textAlign: "center" }}>
+              Login
+            </ThemedText>
+          </Pressable>
+          <Pressable
+            onPress={async () => {
+              const externalId = await OneSignal.User.getExternalId();
+              console.log("External ID: ", externalId);
+            }}
+            style={{ backgroundColor: "#007AFF", padding: 12, borderRadius: 8 }}
+          >
+            <ThemedText style={{ color: "#fff", textAlign: "center" }}>
+              External ID
+            </ThemedText>
+          </Pressable>
+        </View>
+
+        <View style={{ width: "100%", padding: 16, gap: 8 }}>
+          <ThemedText style={{ fontSize: 18, fontWeight: "600" }}>
+            Notifications
+          </ThemedText>
+          <Pressable
+            onPress={() => OneSignal.Notifications.requestPermission(true)}
+            style={{ backgroundColor: "#007AFF", padding: 12, borderRadius: 8 }}
+          >
+            <ThemedText style={{ color: "#fff", textAlign: "center" }}>
+              Request Permission
+            </ThemedText>
+          </Pressable>
+        </View>
+
+        {/* Modals */}
+        <LoginModal
+          visible={loginModalVisible}
+          onClose={() => setLoginModalVisible(false)}
+          onLogin={handleLogin}
+        />
+      </ScrollView>
+    </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
-  },
-});

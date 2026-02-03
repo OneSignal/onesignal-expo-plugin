@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "ExpoExample",
-    "slug": "ExpoExample",
+    "name": "OneSignalExpo",
+    "slug": "OneSignalExpo",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "expoexample",
+    "scheme": "onesignalexpo",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
