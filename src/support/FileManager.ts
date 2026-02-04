@@ -37,6 +37,6 @@ export class FileManager {
   }
 
   static dirExists(path: string): boolean {
-    return fs.existsSync(path)
+    return fs.existsSync(path);
   }
 }
