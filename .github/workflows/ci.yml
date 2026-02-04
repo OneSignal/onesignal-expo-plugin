@@ -1,13 +1,30 @@
-name: Run Checks
-on:
-  pull_request:
-    branches:
-      - "**"
+# CI workflow for JavaScript-based wrapper SDKs (Cordova-Ionic/React Native)
+# Sets up JDK, Homebrew, Clang, Bun, then runs lint and tests
+name: Wrapper JS CI
 
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+on:
+  workflow_call:
+    inputs:
+      bun_version:
+        required: false
+        type: string
+        description: Bun version to use
+        default: latest
 
 jobs:
-  call:
-    uses: OneSignal/sdk-actions/.github/workflows/wrapper-js-ci.yml@main
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: ${{ inputs.bun_version }}
+
+      - name: Install
+        run: bun install --frozen-lockfile
+
+      - name: Linting
+        run: bun run lint
