@@ -5,9 +5,11 @@
   "scripts": {
     "start": "expo start",
     "reset-project": "node ./scripts/reset-project.js",
+    "setup": "./scripts/setup.sh",
+    "preandroid": "bun run setup",
     "android": "expo run:android",
+    "preios": "bun run setup",
     "ios": "expo run:ios",
-    "web": "expo start --web",
     "lint": "expo lint"
   },
   "dependencies": {
@@ -27,7 +29,7 @@
     "expo-symbols": "~1.0.8",
     "expo-system-ui": "~6.0.9",
     "expo-web-browser": "~15.0.10",
-    "onesignal-expo-plugin": "^2.0.3",
+    "onesignal-expo-plugin": "file:../../onesignal-expo-plugin.tgz",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "react-native": "0.81.5",
