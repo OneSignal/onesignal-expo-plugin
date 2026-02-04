@@ -1,6 +1,5 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Button, Modal, StyleSheet, TextInput, View } from "react-native";
-import { OneSignal } from "react-native-onesignal";
 import { ThemedText } from "./themed-text";
 
 interface LoginModalProps {
@@ -11,14 +10,6 @@ interface LoginModalProps {
 
 export function LoginModal({ visible, onClose, onLogin }: LoginModalProps) {
   const [externalId, setExternalId] = useState("");
-
-  useEffect(() => {
-    const getExternalId = async () => {
-      const externalId = await OneSignal.User.getExternalId();
-      setExternalId(externalId || "");
-    };
-    getExternalId();
-  }, [visible]);
 
   const handleLogin = () => {
     if (externalId.trim()) {
