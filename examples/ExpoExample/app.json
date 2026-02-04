@@ -53,7 +53,8 @@
       [
         "onesignal-expo-plugin",
         {
-          "mode": "development"
+          "mode": "development",
+          "smallIcons": ["./assets/images/ic_stat_onesignal_default.png"]
         }
       ]
     ],
