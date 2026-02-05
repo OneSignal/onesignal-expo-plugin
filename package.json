@@ -10,8 +10,10 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "bun run lint && rm -rf build && tsc && cp -a src/support/serviceExtensionFiles build/support/",
-    "lint": "oxlint src examples",
-    "lint:fix": "oxlint src examples --fix"
+    "format:check": "prettier --check \"**/*.{ts,tsx}\" --ignore-path .gitignore",
+    "format:fix": "prettier --write \"**/*.{ts,tsx}\" --ignore-path .gitignore",
+    "lint": "oxlint src examples && bun run format:check",
+    "lint:fix": "oxlint src examples --fix && bun run format:fix"
   },
   "repository": {
     "type": "git",
@@ -40,6 +42,7 @@
   "devDependencies": {
     "expo-module-scripts": "^5.0.8",
     "oxlint": "^1.43.0",
+    "prettier": "^3.8.1",
     "typescript": "^5.9.3"
   },
   "dependencies": {

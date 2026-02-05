@@ -1,6 +1,6 @@
-import { useState } from "react";
-import { Button, Modal, StyleSheet, TextInput, View } from "react-native";
-import { ThemedText } from "./themed-text";
+import { useState } from 'react';
+import { Button, Modal, StyleSheet, TextInput, View } from 'react-native';
+import { ThemedText } from './themed-text';
 
 interface LoginModalProps {
   visible: boolean;
@@ -9,17 +9,17 @@ interface LoginModalProps {
 }
 
 export function LoginModal({ visible, onClose, onLogin }: LoginModalProps) {
-  const [externalId, setExternalId] = useState("");
+  const [externalId, setExternalId] = useState('');
 
   const handleLogin = () => {
     if (externalId.trim()) {
       onLogin(externalId.trim());
-      setExternalId("");
+      setExternalId('');
     }
   };
 
   const handleClose = () => {
-    setExternalId("");
+    setExternalId('');
     onClose();
   };
 
@@ -53,26 +53,26 @@ export function LoginModal({ visible, onClose, onLogin }: LoginModalProps) {
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: "rgba(0,0,0,0.5)",
-    justifyContent: "center",
-    alignItems: "center",
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   content: {
-    backgroundColor: "white",
+    backgroundColor: 'white',
     padding: 20,
     borderRadius: 10,
-    width: "80%",
+    width: '80%',
     gap: 12,
   },
   input: {
     borderWidth: 1,
-    borderColor: "#ccc",
+    borderColor: '#ccc',
     borderRadius: 6,
     padding: 10,
     fontSize: 16,
   },
   buttons: {
-    flexDirection: "row",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
 });

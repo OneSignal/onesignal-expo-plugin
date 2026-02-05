@@ -3,7 +3,11 @@
  * @see https://documentation.onesignal.com/docs/react-native-sdk-setup#step-4-install-for-ios-using-cocoapods-for-ios-apps
  */
 
-import { ConfigPlugin, withDangerousMod, withStringsXml } from '@expo/config-plugins';
+import {
+  ConfigPlugin,
+  withDangerousMod,
+  withStringsXml,
+} from '@expo/config-plugins';
 import { generateImageAsync } from '@expo/image-utils';
 import { OneSignalLog } from '../support/OneSignalLog';
 import { OneSignalPluginProps } from '../types/types';
@@ -14,37 +18,44 @@ const RESOURCE_ROOT_PATH = 'android/app/src/main/res/';
 
 // The name of each small icon folder resource, and the icon size for that folder.
 const SMALL_ICON_DIRS_TO_SIZE: { [name: string]: number } = {
-        'drawable-mdpi': 24,
-        'drawable-hdpi': 36,
-        'drawable-xhdpi': 48,
-        'drawable-xxhdpi': 72,
-        'drawable-xxxhdpi': 96
-  };
+  'drawable-mdpi': 24,
+  'drawable-hdpi': 36,
+  'drawable-xhdpi': 48,
+  'drawable-xxhdpi': 72,
+  'drawable-xxxhdpi': 96,
+};
 
 // The name of each large icon folder resource, and the icon size for that folder.
 const LARGE_ICON_DIRS_TO_SIZE: { [name: string]: number } = {
-        'drawable-xxxhdpi': 256
-  };
+  'drawable-xxxhdpi': 256,
+};
 
 const withSmallIcons: ConfigPlugin<OneSignalPluginProps> = (
   config,
-  onesignalProps
+  onesignalProps,
 ) => {
-
-  if(!onesignalProps.smallIcons && !config.notification?.icon) {
-    return config
+  if (!onesignalProps.smallIcons && !config.notification?.icon) {
+    return config;
   }
 
   // we are modifying the android build (adding files) without a base mod
   return withDangerousMod(config, [
     'android',
     async (config) => {
-      if(config.notification?.icon) {
-        await saveIconAsync(config.notification.icon, config.modRequest.projectRoot, SMALL_ICON_DIRS_TO_SIZE)
+      if (config.notification?.icon) {
+        await saveIconAsync(
+          config.notification.icon,
+          config.modRequest.projectRoot,
+          SMALL_ICON_DIRS_TO_SIZE,
+        );
       }
 
-      if(onesignalProps.smallIcons) {
-        await saveIconsArrayAsync(config.modRequest.projectRoot, onesignalProps.smallIcons, SMALL_ICON_DIRS_TO_SIZE);
+      if (onesignalProps.smallIcons) {
+        await saveIconsArrayAsync(
+          config.modRequest.projectRoot,
+          onesignalProps.smallIcons,
+          SMALL_ICON_DIRS_TO_SIZE,
+        );
       }
       return config;
     },
@@ -53,39 +64,48 @@ const withSmallIcons: ConfigPlugin<OneSignalPluginProps> = (
 
 const withLargeIcons: ConfigPlugin<OneSignalPluginProps> = (
   config,
-  onesignalProps
+  onesignalProps,
 ) => {
-
-  if(!onesignalProps.largeIcons) {
-    return config
+  if (!onesignalProps.largeIcons) {
+    return config;
   }
 
   // we are modifying the android build (adding files) without a base mod
   return withDangerousMod(config, [
     'android',
     async (config) => {
-      if(onesignalProps.largeIcons) {
-        await saveIconsArrayAsync(config.modRequest.projectRoot, onesignalProps.largeIcons, LARGE_ICON_DIRS_TO_SIZE);
+      if (onesignalProps.largeIcons) {
+        await saveIconsArrayAsync(
+          config.modRequest.projectRoot,
+          onesignalProps.largeIcons,
+          LARGE_ICON_DIRS_TO_SIZE,
+        );
       }
       return config;
     },
   ]);
 };
 
-const withSmallIconAccentColor: ConfigPlugin<OneSignalPluginProps> = (config, onesignalProps) => {
-  if(!onesignalProps.smallIconAccentColor) {
-    return config
+const withSmallIconAccentColor: ConfigPlugin<OneSignalPluginProps> = (
+  config,
+  onesignalProps,
+) => {
+  if (!onesignalProps.smallIconAccentColor) {
+    return config;
   }
 
   return withStringsXml(config, (config) => {
-    const colorInARGB = `FF${onesignalProps.smallIconAccentColor?.replace('#', '')}`;
+    const colorInARGB = `FF${onesignalProps.smallIconAccentColor?.replace(
+      '#',
+      '',
+    )}`;
     const strings = config.modResults.resources.string ?? [];
 
     // Check if the accent color entry already exists
     const hasAccentColor = strings.some(
       (stringEntry) =>
         stringEntry.$?.name === 'onesignal_notification_accent_color' &&
-        stringEntry._ === colorInARGB
+        stringEntry._ === colorInARGB,
     );
 
     if (!hasAccentColor) {
@@ -99,23 +119,31 @@ const withSmallIconAccentColor: ConfigPlugin<OneSignalPluginProps> = (config, on
 
     return config;
   });
-}
+};
 
-async function saveIconsArrayAsync(projectRoot: string, icons: string[], dirsToSize: { [name: string]: number }) {
-  for(const icon of icons) {
+async function saveIconsArrayAsync(
+  projectRoot: string,
+  icons: string[],
+  dirsToSize: { [name: string]: number },
+) {
+  for (const icon of icons) {
     await saveIconAsync(icon, projectRoot, dirsToSize);
   }
 }
 
-async function saveIconAsync(icon: string, projectRoot: string, dirsToSize: { [name: string]: number }) {
+async function saveIconAsync(
+  icon: string,
+  projectRoot: string,
+  dirsToSize: { [name: string]: number },
+) {
   const name = parse(icon).name;
 
-  OneSignalLog.log("Saving icon " + icon + " as drawable resource " + name);
+  OneSignalLog.log('Saving icon ' + icon + ' as drawable resource ' + name);
 
-  for(const iconResourceDir in dirsToSize) {
+  for (const iconResourceDir in dirsToSize) {
     const path = resolve(projectRoot, RESOURCE_ROOT_PATH, iconResourceDir);
 
-    if(!existsSync(path)) {
+    if (!existsSync(path)) {
       mkdirSync(path, { recursive: true });
     }
 
@@ -128,7 +156,7 @@ async function saveIconAsync(icon: string, projectRoot: string, dirsToSize: { [n
           height: dirsToSize[iconResourceDir],
           resizeMode: 'cover',
           backgroundColor: 'transparent',
-        }
+        },
       )
     ).source;
 
