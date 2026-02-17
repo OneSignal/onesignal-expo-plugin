@@ -13,7 +13,9 @@
     "format:check": "prettier --check \"**/*.{ts,tsx}\" --ignore-path .gitignore",
     "format:fix": "prettier --write \"**/*.{ts,tsx}\" --ignore-path .gitignore",
     "lint": "oxlint src examples && bun run format:check",
-    "lint:fix": "oxlint src examples --fix && bun run format:fix"
+    "lint:fix": "oxlint src examples --fix && bun run format:fix",
+    "android": "expo run:android",
+    "ios": "expo run:ios"
   },
   "repository": {
     "type": "git",
@@ -46,6 +48,9 @@
     "typescript": "^5.9.3"
   },
   "dependencies": {
-    "@expo/image-utils": "^0.8.8"
+    "@expo/image-utils": "^0.8.8",
+    "expo": "~54.0.33",
+    "react": "19.1.0",
+    "react-native": "0.81.5"
   }
 }
