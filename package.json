@@ -10,8 +10,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "bun run lint && rm -rf build && tsc && cp -a src/support/serviceExtensionFiles build/support/",
-    "format:check": "prettier --check \"**/*.{ts,tsx}\" --ignore-path .gitignore",
-    "format:fix": "prettier --write \"**/*.{ts,tsx}\" --ignore-path .gitignore",
+    "format:check": "prettier --check \"**/*.{ts,tsx}\" --ignore-path .prettierignore",
+    "format:fix": "prettier --write \"**/*.{ts,tsx}\" --ignore-path .prettierignore",
     "lint": "oxlint src examples && bun run format:check",
     "lint:fix": "oxlint src examples --fix && bun run format:fix"
   },
