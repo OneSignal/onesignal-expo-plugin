@@ -10,6 +10,17 @@
     "newArchEnabled": true,
     "ios": {
       "bundleIdentifier": "com.onesignal.example",
+      "infoPlist": {
+        "UIBackgroundModes": [
+          "remote-notification"
+        ]
+      },
+      "entitlements": {
+        "aps-environment": "development",
+        "com.apple.security.application-groups": [
+          "group.${ios.bundleIdentifier}.onesignal"
+        ]
+      },
       "supportsTablet": true
     },
     "android": {
