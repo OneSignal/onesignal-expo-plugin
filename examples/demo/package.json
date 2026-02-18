@@ -9,7 +9,7 @@
     "start": "expo start",
     "reset-project": "node ./scripts/reset-project.js",
     "android": "expo run:android --device",
-    "ios": "expo run:ios --device",
+    "ios": "xcrun simctl shutdown all && expo run:ios --device",
     "lint": "expo lint"
   },
   "dependencies": {

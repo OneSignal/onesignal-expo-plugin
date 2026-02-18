@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "demo",
+    "name": "OneSignal Demo",
     "slug": "demo",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -9,11 +9,10 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
+      "icon": "./assets/images/icon.png",
       "bundleIdentifier": "com.onesignal.example",
       "infoPlist": {
-        "UIBackgroundModes": [
-          "remote-notification"
-        ]
+        "UIBackgroundModes": ["remote-notification"]
       },
       "entitlements": {
         "aps-environment": "development",
