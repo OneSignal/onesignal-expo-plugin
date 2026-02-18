@@ -8,8 +8,8 @@
     "preios": "bun run setup",
     "start": "expo start",
     "reset-project": "node ./scripts/reset-project.js",
-    "android": "expo run:android",
-    "ios": "expo run:ios",
+    "android": "expo run:android --device",
+    "ios": "expo run:ios --device",
     "lint": "expo lint"
   },
   "dependencies": {
