@@ -100,6 +100,9 @@ using the TypeScript template:
 
 Use the Blank (TypeScript) template when prompted.
 Do not use the Expo Router tabs template for this sample.
+If the generated project still contains Expo Router scaffold, remove it:
+  rm -rf examples/demo/app
+Keep `examples/demo/App.tsx` as the only app entry file.
 
 Build the app with:
 - Clean architecture: repository pattern with React Context + reducer-based state management
@@ -147,6 +150,7 @@ Configure app.json with the plugin as the FIRST plugin entry:
   "plugins": [
     ["onesignal-expo-plugin", { "mode": "development" }]
   ]
+Do not include "expo-router" in the plugins list for this sample.
 
 Set OneSignal App ID in app config extra:
   "extra": {
@@ -253,7 +257,7 @@ Required copy set (copy these with minimal edits):
 
 Required Expo adaptations (must complete):
 1. App startup / entry:
-   - Keep a single root entry (App.tsx or router root layout)
+   - Keep a single root entry (App.tsx)
    - Move RN demo bootstrap code into Expo entry
    - Initialize OneSignal with app ID from Expo config (`extra.oneSignalAppId`) or local state
 
@@ -952,7 +956,7 @@ Notification permission is automatically requested when the home screen loads:
 Use React Context for dependency injection and useReducer for state management.
 
 Expo root entry:
-- Use `App.tsx` as root entry OR Expo Router root layout if you choose router
+- Use `App.tsx` as the root entry
 - AppContext.Provider at the root of the component tree
 - Initialize OneSignal SDK before rendering (outside component or in early useEffect)
 - Fetch tooltips in the background (non-blocking)
@@ -1164,8 +1168,8 @@ Implementation:
 ```
 examples/demo/
 ├── app.json                                 # Expo config (plugin, package IDs, extra.oneSignalAppId)
+├── App.tsx                                  # App entry, SDK init, Context setup
 ├── src/
-│   ├── App.tsx                              # App entry, SDK init, Context setup
 │   ├── theme.ts                             # OneSignal theme (colors, StyleSheet constants)
 │   ├── models/
 │   │   ├── UserData.ts                      # UserData interface from API
