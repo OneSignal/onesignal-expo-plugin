@@ -121,10 +121,20 @@ Save it to the demo project at assets/onesignal_logo.svg and render it in the he
 Use the logo as the "OneSignal" wordmark in the header and show only a separate "Sample App" text label next to it.
 Do not inline long SVG path strings in App.tsx.
 
-Download the padded app icon PNG from:
-  https://raw.githubusercontent.com/OneSignal/sdk-shared/refs/heads/main/assets/onesignal_logo_icon_padded.png
-Save it to assets/onesignal_logo_icon_padded.png, generate all platform app icons using:
-  bun examples/generate-icons.ts
+Reset image assets first:
+  rm -f examples/demo/assets/images/*
+
+Download the padded icon source:
+  curl -L "https://raw.githubusercontent.com/OneSignal/sdk-shared/refs/heads/main/assets/onesignal_logo_icon_padded.png" -o "examples/demo/assets/images/icon.png"
+
+Set app icons the Expo way in app config (app.json):
+  "icon": "./assets/images/icon.png"
+Reuse the same image for splash:
+  ["expo-splash-screen", { "image": "./assets/images/icon.png" }]
+If you are not targeting web, omit the "web" block and do not create favicon.png.
+This is enough for the sample app.
+Remove any existing android.adaptiveIcon image entries from app.json and keep only:
+  "android": { "package": "com.onesignal.example" }
 
 Because Bun does not reliably install `file:../../` folder dependencies in this workflow,
 install the local Expo plugin from a packed tarball:
