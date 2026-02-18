@@ -4,7 +4,7 @@ This document contains all the prompts and requirements needed to build the OneS
 
 ---
 
-## Phase 0: Reference Screenshots (REQUIRED)
+## Phase 0: Reference Screenshots (OPTIONAL)
 
 ### Prompt 0.1 - Capture Reference UI
 
@@ -126,10 +126,11 @@ Download the padded app icon PNG from:
 Save it to assets/onesignal_logo_icon_padded.png, generate all platform app icons using:
   bun examples/generate-icons.ts
 
-Reference the local Expo plugin package from the parent repo:
-  "onesignal-expo-plugin": "file:../../"
+Because Bun does not reliably install `file:../../` folder dependencies in this workflow,
+install the local Expo plugin from a packed tarball:
+  "onesignal-expo-plugin": "file:../../onesignal-expo-plugin.tgz"
 
-Also install the OneSignal RN SDK dependency used at runtime:
+Install the OneSignal runtime SDK from npm:
   "react-native-onesignal": "<latest compatible version>"
 
 Configure app.json with the plugin as the FIRST plugin entry:
@@ -148,6 +149,19 @@ Run prebuild any time plugin/native config changes:
 Run the app with:
   npx expo run:android
   npx expo run:ios
+
+A setup.sh script in examples/ handles building, packing, and installing automatically.
+Add/verify the following scripts in package.json:
+  "setup": "../setup.sh",
+  "preandroid": "bun run setup",
+  "preios": "bun run setup",
+
+Before first run, execute:
+  bun run setup
+
+Then use script-based runs so the pre-hooks always run:
+  bun run android
+  bun run ios
 ```
 
 ### Prompt 1.2 - Dependencies (package.json)
@@ -159,7 +173,7 @@ dependencies:
   expo: ~54.x                                   # Expo SDK
   react-native: 0.81.x                          # Expo-compatible RN version
   react-native-onesignal: latest                # OneSignal runtime SDK
-  onesignal-expo-plugin: file:../../            # Local config plugin package
+  onesignal-expo-plugin: file:../../onesignal-expo-plugin.tgz  # Local plugin tarball (Bun-compatible)
   @react-native-async-storage/async-storage: ^2.1.0  # Local persistence
   react-native-svg: ^15.8.0                    # SVG runtime primitives
   @expo/vector-icons: ^15.0.0                  # Icon set for Expo
@@ -203,6 +217,67 @@ Let Expo prebuild + config plugins manage native wiring.
 
 If native folders already exist and deps/plugins changed:
   npx expo prebuild --clean
+```
+
+### Prompt 1.2A - Reuse the RN Demo (Porting Map)
+
+```
+Use the OneSignal React Native demo as the implementation base and port it into
+this Expo project instead of rebuilding every file from scratch:
+https://github.com/OneSignal/react-native-onesignal/tree/main/examples/demo
+
+Goal:
+- Reuse as much TypeScript/UI/business logic as possible
+- Only adapt project bootstrap and native wiring to Expo
+
+High-reuse files (copy with minimal edits):
+- src/models/* (types, enums, parsing models)
+- src/services/* (API client, prefs wrapper, tooltip helper, log manager)
+- src/repositories/* (OneSignalRepository and method signatures)
+- src/context/* (reducer, actions, state shape)
+- src/components/* and src/components/modals/* (UI building blocks)
+- src/components/sections/* (section-level UI and handlers)
+- src/screens/* (home + secondary screen layout)
+
+Expo-specific adaptation points (must review):
+1. App startup / entry:
+   - Keep a single root entry (App.tsx or router root layout)
+   - Move RN demo bootstrap code into Expo entry
+   - Initialize OneSignal with app ID from Expo config (`extra.oneSignalAppId`) or local state
+
+2. Config plugin + app config:
+   - Ensure `onesignal-expo-plugin` is the first plugin in app.json plugins
+   - Keep package/bundle identifiers as `com.onesignal.example`
+   - Run `npx expo prebuild` after plugin/config changes
+
+3. Icon package differences:
+   - Replace direct `react-native-vector-icons` imports with `@expo/vector-icons` exports
+   - Keep icon names and visual behavior the same
+
+4. Navigation shell:
+   - If importing RN demo navigation, keep React Navigation stack behavior identical
+   - If using Expo Router, wrap/bridge screens so visible behavior still matches the RN demo
+
+5. Native folder assumptions:
+   - Remove manual Podfile/Gradle edits from workflow
+   - Let Expo prebuild regenerate iOS/Android native code
+
+Suggested port order:
+1. Copy models/services/repository/context
+2. Copy reusable components + modals
+3. Copy section components + screens
+4. Integrate root app bootstrap and navigation
+5. Adapt icons/imports and any path aliases
+6. Prebuild and run on Android/iOS
+7. Validate against the Phase 0 screenshots
+
+Validation checklist after port:
+- App starts without runtime import errors
+- OneSignal initialize/login/logout/observers work
+- Push permission prompt + push toggle behavior match expected UX
+- IAM, tags, aliases, email, SMS, outcomes, triggers flows work
+- Tooltips load from remote URL
+- Toasts and LogView behave as expected
 ```
 
 ### Prompt 1.3 - OneSignal Repository
