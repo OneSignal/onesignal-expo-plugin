@@ -1,25 +1,15 @@
 {
   "expo": {
-    "name": "OneSignalExpo",
-    "slug": "OneSignalExpo",
+    "name": "demo",
+    "slug": "demo",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "onesignalexpo",
+    "scheme": "demo",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true,
-      "bundleIdentifier": "com.onesignal.example",
-      "infoPlist": {
-        "UIBackgroundModes": ["remote-notification"]
-      },
-      "entitlements": {
-        "aps-environment": "development",
-        "com.apple.security.application-groups": [
-          "group.${ios.bundleIdentifier}.onesignal"
-        ]
-      }
+      "supportsTablet": true
     },
     "android": {
       "adaptiveIcon": {
@@ -29,8 +19,7 @@
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false,
-      "package": "com.onesignal.example"
+      "predictiveBackGestureEnabled": false
     },
     "web": {
       "output": "static",
@@ -48,13 +37,6 @@
           "dark": {
             "backgroundColor": "#000000"
           }
-        }
-      ],
-      [
-        "onesignal-expo-plugin",
-        {
-          "mode": "development",
-          "smallIcons": ["./assets/images/ic_stat_onesignal_default.png"]
         }
       ]
     ],

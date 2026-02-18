@@ -7,17 +7,13 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
 1. Install dependencies
 
    ```bash
-   bun i
+   npm install
    ```
 
-2. Run ios or android
+2. Start the app
 
    ```bash
-   bun run ios
-   ```
-
-   ```bash
-   bun run android
+   npx expo start
    ```
 
 In the output, you'll find options to open the app in a
@@ -34,7 +30,7 @@ You can start developing by editing the files inside the **app** directory. This
 When you're ready, run:
 
 ```bash
-bun run reset-project
+npm run reset-project
 ```
 
 This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
