@@ -219,18 +219,20 @@ If native folders already exist and deps/plugins changed:
   npx expo prebuild --clean
 ```
 
-### Prompt 1.2A - Reuse the RN Demo (Porting Map)
+### Prompt 1.2A - REQUIRED: Reuse and Port the RN Demo
 
 ```
-Use the OneSignal React Native demo as the implementation base and port it into
-this Expo project instead of rebuilding every file from scratch:
+You MUST use the OneSignal React Native demo as the implementation base and port
+it into this Expo project. Do NOT rebuild the app from scratch.
+
+Source of truth for reusable implementation:
 https://github.com/OneSignal/react-native-onesignal/tree/main/examples/demo
 
 Goal:
 - Reuse as much TypeScript/UI/business logic as possible
 - Only adapt project bootstrap and native wiring to Expo
 
-High-reuse files (copy with minimal edits):
+Required copy set (copy these with minimal edits):
 - src/models/* (types, enums, parsing models)
 - src/services/* (API client, prefs wrapper, tooltip helper, log manager)
 - src/repositories/* (OneSignalRepository and method signatures)
@@ -239,7 +241,7 @@ High-reuse files (copy with minimal edits):
 - src/components/sections/* (section-level UI and handlers)
 - src/screens/* (home + secondary screen layout)
 
-Expo-specific adaptation points (must review):
+Required Expo adaptations (must complete):
 1. App startup / entry:
    - Keep a single root entry (App.tsx or router root layout)
    - Move RN demo bootstrap code into Expo entry
@@ -262,7 +264,7 @@ Expo-specific adaptation points (must review):
    - Remove manual Podfile/Gradle edits from workflow
    - Let Expo prebuild regenerate iOS/Android native code
 
-Suggested port order:
+Execution order (required):
 1. Copy models/services/repository/context
 2. Copy reusable components + modals
 3. Copy section components + screens
@@ -271,13 +273,15 @@ Suggested port order:
 6. Prebuild and run on Android/iOS
 7. Validate against the Phase 0 screenshots
 
-Validation checklist after port:
+Completion gate (all must pass):
 - App starts without runtime import errors
 - OneSignal initialize/login/logout/observers work
 - Push permission prompt + push toggle behavior match expected UX
 - IAM, tags, aliases, email, SMS, outcomes, triggers flows work
 - Tooltips load from remote URL
 - Toasts and LogView behave as expected
+
+If any item fails, continue iterating until all checks pass.
 ```
 
 ### Prompt 1.3 - OneSignal Repository
