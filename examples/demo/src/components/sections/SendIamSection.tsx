@@ -24,7 +24,7 @@ const IAM_TYPES: InAppMessageType[] = [
 export default function SendIamSection({ onSendIam, onInfoTap }: Props) {
   return (
     <SectionCard title="Send In-App Message" onInfoTap={onInfoTap}>
-      {IAM_TYPES.map(type => (
+      {IAM_TYPES.map((type) => (
         <TouchableOpacity
           key={type}
           style={styles.button}

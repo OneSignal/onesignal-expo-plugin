@@ -41,23 +41,23 @@ export default function MultiPairInputModal({
 }: Props) {
   const [rows, setRows] = useState<Row[]>([makeRow()]);
 
-  const allFilled = rows.every(r => r.key.trim() && r.value.trim());
+  const allFilled = rows.every((r) => r.key.trim() && r.value.trim());
 
   const updateRow = useCallback(
     (id: number, field: 'key' | 'value', text: string) => {
-      setRows(prev =>
-        prev.map(r => (r.id === id ? { ...r, [field]: text } : r)),
+      setRows((prev) =>
+        prev.map((r) => (r.id === id ? { ...r, [field]: text } : r)),
       );
     },
     [],
   );
 
   const addRow = useCallback(() => {
-    setRows(prev => [...prev, makeRow()]);
+    setRows((prev) => [...prev, makeRow()]);
   }, []);
 
   const removeRow = useCallback((id: number) => {
-    setRows(prev => prev.filter(r => r.id !== id));
+    setRows((prev) => prev.filter((r) => r.id !== id));
   }, []);
 
   const handleConfirm = () => {
@@ -105,7 +105,7 @@ export default function MultiPairInputModal({
                     placeholder={keyPlaceholder}
                     placeholderTextColor="#9E9E9E"
                     value={row.key}
-                    onChangeText={t => updateRow(row.id, 'key', t)}
+                    onChangeText={(t) => updateRow(row.id, 'key', t)}
                     autoFocus={idx === 0}
                     testID={idx === 0 ? 'multi_pair_key_0' : undefined}
                   />
@@ -114,7 +114,7 @@ export default function MultiPairInputModal({
                     placeholder={valuePlaceholder}
                     placeholderTextColor="#9E9E9E"
                     value={row.value}
-                    onChangeText={t => updateRow(row.id, 'value', t)}
+                    onChangeText={(t) => updateRow(row.id, 'value', t)}
                     testID={idx === 0 ? 'multi_pair_value_0' : undefined}
                   />
                   {rows.length > 1 && (

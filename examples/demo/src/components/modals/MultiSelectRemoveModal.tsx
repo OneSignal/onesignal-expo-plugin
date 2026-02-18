@@ -30,7 +30,7 @@ export default function MultiSelectRemoveModal({
   const [selected, setSelected] = useState<Set<string>>(new Set());
 
   const toggle = (key: string) => {
-    setSelected(prev => {
+    setSelected((prev) => {
       const next = new Set(prev);
       if (next.has(key)) {
         next.delete(key);

@@ -36,7 +36,7 @@ export default function TooltipModal({ visible, tooltip, onClose }: Props) {
           <Text style={styles.title}>{tooltip.title}</Text>
           <ScrollView>
             <Text style={styles.description}>{tooltip.description}</Text>
-            {tooltip.options?.map(opt => (
+            {tooltip.options?.map((opt) => (
               <View key={opt.name} style={styles.optionRow}>
                 <Text style={styles.optionName}>{opt.name}</Text>
                 <Text style={styles.optionDescription}>{opt.description}</Text>

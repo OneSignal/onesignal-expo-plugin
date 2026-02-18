@@ -35,8 +35,8 @@ export default function ActionButton({
     variant === 'primary'
       ? Colors.oneSignalRed
       : variant === 'destructive'
-        ? Colors.destructiveRed
-        : 'transparent';
+      ? Colors.destructiveRed
+      : 'transparent';
 
   const borderStyle =
     variant === 'outlined'

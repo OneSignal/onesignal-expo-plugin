@@ -1,3 +1,6 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
 ORIGINAL_DIR=$(pwd)
 
 # Build root package

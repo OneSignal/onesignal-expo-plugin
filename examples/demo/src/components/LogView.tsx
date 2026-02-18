@@ -26,7 +26,7 @@ export default function LogView() {
   const horizScrollRef = useRef<ScrollView>(null);
 
   useEffect(() => {
-    const unsub = LogManager.getInstance().subscribe(updated => {
+    const unsub = LogManager.getInstance().subscribe((updated) => {
       setEntries(updated);
       // auto-scroll to end
       setTimeout(() => {
@@ -46,7 +46,7 @@ export default function LogView() {
       {/* Header */}
       <TouchableOpacity
         style={styles.header}
-        onPress={() => setExpanded(prev => !prev)}
+        onPress={() => setExpanded((prev) => !prev)}
         testID="log_view_header"
       >
         <Text style={styles.headerText}>
@@ -75,7 +75,7 @@ export default function LogView() {
           horizontal
           testID="log_view_list"
           style={styles.horizScroll}
-          onLayout={e => setContainerWidth(e.nativeEvent.layout.width)}
+          onLayout={(e) => setContainerWidth(e.nativeEvent.layout.width)}
         >
           <ScrollView
             ref={vertScrollRef}

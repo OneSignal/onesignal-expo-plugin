@@ -161,7 +161,9 @@ function appReducer(state: AppState, action: AppAction): AppState {
     case 'REMOVE_EMAIL':
       return {
         ...state,
-        emailsList: state.emailsList.filter(email => email !== action.payload),
+        emailsList: state.emailsList.filter(
+          (email) => email !== action.payload,
+        ),
       };
     case 'ADD_SMS':
       return {
@@ -172,7 +174,7 @@ function appReducer(state: AppState, action: AppAction): AppState {
       return {
         ...state,
         smsNumbersList: state.smsNumbersList.filter(
-          sms => sms !== action.payload,
+          (sms) => sms !== action.payload,
         ),
       };
     case 'ADD_TAG': {
@@ -392,7 +394,7 @@ export function AppContextProvider({ children }: Props) {
       }
     };
 
-    load().catch(err => {
+    load().catch((err) => {
       log.e(TAG, `Initial load error: ${String(err)}`);
       if (mountedRef.current) {
         dispatch({ type: 'SET_LOADING', payload: false });

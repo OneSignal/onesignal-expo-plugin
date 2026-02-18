@@ -38,7 +38,7 @@ export default function TagsSection({
           <PairList
             items={tags}
             layout="stacked"
-            onDelete={key => onRemoveSelected([key])}
+            onDelete={(key) => onRemoveSelected([key])}
           />
         </View>
       )}
