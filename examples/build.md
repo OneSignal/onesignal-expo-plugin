@@ -50,7 +50,7 @@ Pay close attention to:
   - List item layout (stacked vs inline key-value)
   - Icon choices (delete, close, info, etc.)
   - Typography, spacing, and colors
-  - Spacing: 12px gap between sections, 8px gap between cards/buttons within a section
+  - Spacing and sizing should follow the shared style tokens in styles.md
 
 You can also interact with the reference app to observe specific flows:
 
@@ -453,7 +453,7 @@ App Section layout:
 2. Sticky guidance banner below App ID:
    - Text: "Add your own App ID, then rebuild to fully test all functionality."
    - Link text: "Get your keys at onesignal.com" (clickable, opens browser via Linking.openURL)
-   - Light background color to stand out
+   - Use the shared guidance-banner style token from `src/theme.ts`
 
 3. Consent card with up to two toggles:
    a. "Consent Required" toggle (always visible):
@@ -475,7 +475,7 @@ App Section layout:
      - Status shows "Anonymous"
      - External ID shows "–" (dash)
    - When logged in:
-     - Status shows "Logged In" with green styling (#2E7D32)
+    - Status shows "Logged In" using the success text style from the shared theme
      - External ID shows the actual external user ID
 
 5. LOGIN USER button:
@@ -523,18 +523,15 @@ In-App Messaging Section (placed right after Send Push):
 
 Send In-App Message Section (placed right after In-App Messaging):
 - Section title: "Send In-App Message" with info icon for tooltip
-- Four FULL-WIDTH buttons (not a grid):
+- Four action buttons stacked vertically (not a grid):
   1. TOP BANNER - icon: arrow-up-bold-box-outline, trigger: "iam_type" = "top_banner"
   2. BOTTOM BANNER - icon: arrow-down-bold-box-outline, trigger: "iam_type" = "bottom_banner"
   3. CENTER MODAL - icon: crop-square, trigger: "iam_type" = "center_modal"
   4. FULL SCREEN - icon: fullscreen, trigger: "iam_type" = "full_screen"
 - Button styling:
-  - RED background color (#E9444E)
-  - WHITE text
-  - Type-specific icon on LEFT side only (no right side icon)
-  - Full width of the card
-  - Left-aligned text and icon content (not centered)
-  - UPPERCASE button text
+  - Use theme button tokens from `src/theme.ts` mapped from `styles.md`
+  - Type-specific icon on the left side only (no right side icon)
+  - Keep alignment, casing, and spacing consistent with shared style tokens
 - On tap: adds trigger and shows Toast "Sent In-App Message: {type}"
   - Also upserts `iam_type` in the Triggers list immediately so UI reflects the sent IAM type
 
@@ -644,7 +641,7 @@ Location Section:
 
 Secondary Screen (launched by "Next Activity" button at bottom of main screen):
 - Screen title: "Secondary Activity" (set via React Navigation header options)
-- Screen content: centered text "Secondary Activity" using a large font style
+- Screen content: show "Secondary Activity" using the shared heading text style
 - Simple screen, no additional functionality needed
 
 Naming note for Expo:
@@ -658,7 +655,7 @@ Naming note for Expo:
 ### Prompt 3.1 - Data Loading Flow
 
 Loading indicator overlay:
-- Full-screen semi-transparent overlay with centered ActivityIndicator
+- Full-screen loading overlay with ActivityIndicator, styled from shared theme tokens
 - isLoading flag in app state
 - Show/hide via absolute positioned View based on isLoading state
 - IMPORTANT: Add 100ms delay after populating data before dismissing loading indicator
@@ -914,46 +911,44 @@ SectionCard.tsx:
 - Card View with title Text and optional info TouchableOpacity
 - Children slot
 - onInfoTap callback for tooltips
-- Consistent padding and styling via StyleSheet
+- Uses shared card layout tokens from `src/theme.ts`
 
 ToggleRow.tsx:
 - Label, optional description, Switch
-- Row layout with justifyContent: 'space-between'
+- Row layout should follow shared component spacing/alignment tokens
 
 ActionButton.tsx:
-- PrimaryButton (filled, primary color background, TouchableOpacity)
-- DestructiveButton (outlined, red accent, TouchableOpacity)
-- Full-width buttons with width: '100%'
+- PrimaryButton and DestructiveButton variants using shared theme tokens
+- Width, alignment, and typography come from shared button style tokens
 
 ListWidgets.tsx:
 - PairItem (key-value with optional X-icon remove TouchableOpacity)
 - SingleItem (single value with optional X-icon remove TouchableOpacity)
-- EmptyState (centered "No items" Text)
+- EmptyState ("No items" Text using shared empty-state style)
 - CollapsibleList (shows 5 items, expandable)
 - PairList (simple list of key-value pairs)
 
 LoadingOverlay.tsx:
-- Semi-transparent full-screen overlay using absolute positioned View + StyleSheet
+- Full-screen overlay using shared loading overlay style tokens
 - Centered ActivityIndicator
 - Shown via isLoading state from app context
 
 LogView.tsx:
 - Sticky at the top of the screen (always visible while ScrollView content scrolls below)
-- Full width, no horizontal margin, no rounded corners, no top margin (touches header)
-- Background color: #1A1B1E
+- Use the log container style tokens from `src/theme.ts` (mapped from `styles.md`)
 - Single horizontal ScrollView on the entire log list (not per-row), no text truncation
 - Use onLayout + minWidth so content is at least screen-wide
-- Vertical ScrollView + mapped entries instead of FlatList (100dp container is small)
-- Fixed 100dp height
+- Vertical ScrollView + mapped entries instead of FlatList (compact container)
+- Use the shared log-view height token from theme
 - Default expanded
 - Trash icon button (delete icon from @expo/vector-icons) for clearing logs
 - Auto-scroll to newest using scrollToEnd on ScrollView ref
 
 Modals (src/components/modals/):
-- All modals use a full-width Modal component with padding: 16 and width: '100%' inner container
+- All modals use a shared modal container style from `src/theme.ts`
 - SingleInputModal (one TextInput)
 - PairInputModal (key-value TextInputs on the same row, single pair)
-- MultiPairInputModal (dynamic rows with dividers, X icon to delete a row, full-width, batch submit)
+- MultiPairInputModal (dynamic rows with dividers, X icon to delete a row, batch submit)
 - MultiSelectRemoveModal (Checkbox per item for batch remove)
 - LoginModal, OutcomeModal, TrackEventModal
 - CustomNotificationModal, TooltipModal
@@ -964,7 +959,7 @@ Tags, Aliases, and Triggers all share a reusable MultiPairInputModal component
 for adding multiple key-value pairs at once.
 
 Behavior:
-- Modal opens full-width (width: '100%' with horizontal padding 16)
+- Modal uses the shared modal layout tokens from `src/theme.ts`
 - Starts with one empty key-value row (Key and Value TextInputs side by side)
 - "Add Row" TextButton below the rows adds another empty row
 - Dividers separate each row for visual clarity
@@ -999,28 +994,21 @@ Used by:
 
 ### Prompt 8.5 - Theme
 
-Create OneSignal theme in src/theme.ts:
+Create OneSignal theme in `src/theme.ts`.
 
-Colors:
-- oneSignalRed = '#E54B4D' (primary)
-- oneSignalGreen = '#34A853' (success)
-- oneSignalGreenLight = '#E6F4EA' (success background)
-- lightBackground = '#F8F9FA'
-- cardBackground = '#FFFFFF'
-- dividerColor = '#E8EAED'
-- warningBackground = '#FFF8E1'
+All colors, spacing, typography, button styles, card styles, and component
+specs are defined in the shared style reference:
+  https://raw.githubusercontent.com/OneSignal/sdk-shared/refs/heads/main/demo/styles.md
 
-Spacing constants:
-- cardGap = 8    // gap between a card/banner and its action buttons within a section
-- sectionGap = 12 // gap between sections (SectionCard wrapper marginBottom)
+Implement an `AppTheme` object that maps the style reference values to Expo
+and React Native primitives (`StyleSheet.create`, text style objects, reusable
+view/button style tokens, and shared shadow/elevation styles for iOS/Android).
 
-AppTheme object with:
-- Reusable StyleSheet base styles for cards (borderRadius: 12, backgroundColor: cardBackground)
-- Reusable button style with borderRadius: 8
-- Consistent font sizes, weights, and colors exported as constants
-- Shadow/elevation styles for card depth
+Also define `AppColors` and `AppSpacing` convenience exports that expose the
+tokens from `styles.md` as typed constants for use throughout the app.
 
-Apply theme colors and Spacing constants consistently across all components using StyleSheet.create.
+Apply these tokens consistently across all components. Avoid hardcoded visual
+values in feature components unless explicitly required by the prompt.
 
 ### Prompt 8.6 - Log View (Appium-Ready)
 
@@ -1037,12 +1025,11 @@ LogManager Features:
 
 LogView Features:
 - STICKY at the top of the screen (always visible while ScrollView content scrolls below)
-- Full width, no horizontal margin, no rounded corners, no top margin (touches header)
-- Background color: #1A1B1E
+- Use the shared log container style tokens from `src/theme.ts`
 - Single horizontal ScrollView on the entire log list (not per-row), no text truncation
 - Use onLayout + minWidth so content is at least screen-wide
-- Vertical ScrollView + mapped entries instead of FlatList (100dp container is small)
-- Fixed 100dp height
+- Vertical ScrollView + mapped entries instead of FlatList (compact container)
+- Use the shared log-view height token from theme
 - Default expanded
 - Trash icon button (delete icon) for clearing logs, not a text button
 - Auto-scroll to newest using scrollToEnd on ScrollView ref
@@ -1095,7 +1082,7 @@ examples/demo/
 ├── app.json                                 # Expo config (plugin, package IDs, extra.oneSignalAppId)
 ├── App.tsx                                  # App entry, SDK init, Context setup
 ├── src/
-│   ├── theme.ts                             # OneSignal theme (colors, StyleSheet constants)
+│   ├── theme.ts                             # Shared visual tokens and reusable style objects
 │   ├── models/
 │   │   ├── UserData.ts                      # UserData interface from API
 │   │   ├── NotificationType.ts              # Enum with bigPicture and iosAttachments
@@ -1211,7 +1198,7 @@ If you change the identifier, you must also update these files with your own Fir
 - **testID** props on interactive elements for Appium test automation
 - **async/await** over raw Promise chaining for readability
 - **Immutable state** updates using spread/map/filter rather than direct mutation
-- **Consistent theming** via a shared theme.ts with StyleSheet constants
+- **Consistent theming** via shared design tokens in `src/theme.ts`
 - **Minimal re-renders** by splitting context or using useMemo/useCallback where appropriate
 - **Error handling** with try/catch on all network and SDK async calls
 - **Expo config plugin first** in app config plugins array (`onesignal-expo-plugin`)
