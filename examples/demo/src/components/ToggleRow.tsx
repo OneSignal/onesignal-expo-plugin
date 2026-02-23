@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, Switch, StyleSheet } from 'react-native';
-import { Colors } from '../theme';
+import { AppColors, AppTextStyles } from '../theme';
 
 interface Props {
   label: string;
@@ -29,8 +29,8 @@ export default function ToggleRow({
         value={value}
         onValueChange={onValueChange}
         disabled={disabled}
-        trackColor={{ false: '#E0E0E0', true: Colors.oneSignalRed }}
-        thumbColor={Colors.white}
+        trackColor={{ false: '#E0E0E0', true: AppColors.osPrimary }}
+        thumbColor={AppColors.white}
         testID={testID}
       />
     </View>
@@ -49,13 +49,12 @@ const styles = StyleSheet.create({
     marginRight: 12,
   },
   label: {
-    fontSize: 15,
+    ...AppTextStyles.bodyMedium,
     color: '#212121',
-    fontWeight: '500',
   },
   description: {
-    fontSize: 12,
-    color: Colors.textSecondary,
+    ...AppTextStyles.bodySmall,
+    color: AppColors.osGrey600,
     marginTop: 2,
   },
 });

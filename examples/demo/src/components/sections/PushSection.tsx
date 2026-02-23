@@ -1,9 +1,9 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import { AppTheme, Colors, Spacing } from '../../theme';
-import ActionButton from '../ActionButton';
+import { View, Text, StyleSheet } from 'react-native';
 import SectionCard from '../SectionCard';
 import ToggleRow from '../ToggleRow';
+import ActionButton from '../ActionButton';
+import { AppColors, AppTextStyles, AppTheme, AppSpacing } from '../../theme';
 
 interface Props {
   pushSubscriptionId: string | undefined;
@@ -60,13 +60,13 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   idLabel: {
-    fontSize: 14,
-    color: Colors.textSecondary,
+    ...AppTextStyles.bodyMedium,
+    color: AppColors.osGrey600,
     minWidth: 60,
   },
   idValue: {
-    fontSize: 13,
-    color: Colors.textPrimary,
+    ...AppTextStyles.bodySmall,
+    color: AppColors.osGrey700,
     flex: 1,
     textAlign: 'right',
     marginLeft: 8,
@@ -74,10 +74,10 @@ const styles = StyleSheet.create({
   },
   divider: {
     height: 1,
-    backgroundColor: Colors.dividerColor,
+    backgroundColor: AppColors.osDivider,
     marginVertical: 8,
   },
   promptButtonWrap: {
-    marginTop: Spacing.cardGap,
+    marginTop: AppSpacing.gap,
   },
 });

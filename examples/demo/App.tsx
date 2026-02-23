@@ -24,7 +24,7 @@ import LogManager from './src/services/LogManager';
 import OneSignalApiService from './src/services/OneSignalApiService';
 import PreferencesService from './src/services/PreferencesService';
 import TooltipHelper from './src/services/TooltipHelper';
-import { Colors } from './src/theme';
+import { AppColors } from './src/theme';
 
 const Stack = createNativeStackNavigator();
 const log = LogManager.getInstance();
@@ -136,16 +136,17 @@ function App() {
   return (
     <SafeAreaProvider>
       <StatusBar
-        backgroundColor={Colors.oneSignalRed}
+        backgroundColor={AppColors.osPrimary}
         barStyle="light-content"
       />
       <AppContextProvider>
         <NavigationContainer>
           <Stack.Navigator
             screenOptions={{
-              headerStyle: { backgroundColor: Colors.oneSignalRed },
-              headerTintColor: Colors.white,
+              headerStyle: { backgroundColor: AppColors.osPrimary },
+              headerTintColor: AppColors.white,
               headerTitleAlign: 'center',
+              headerShadowVisible: false,
             }}
           >
             <Stack.Screen
@@ -159,7 +160,7 @@ function App() {
                       width={99}
                       style={headerStyles.logo}
                     />
-                    <Text style={headerStyles.subtitle}>Sample App</Text>
+                    <Text style={headerStyles.subtitle}>Expo</Text>
                   </View>
                 ),
               }}
@@ -188,8 +189,7 @@ const headerStyles = StyleSheet.create({
   subtitle: {
     fontSize: 14,
     fontWeight: '400',
-    color: Colors.white,
-    opacity: 0.9,
+    color: AppColors.white,
   },
 });
 

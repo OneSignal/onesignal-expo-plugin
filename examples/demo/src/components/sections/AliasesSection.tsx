@@ -5,7 +5,7 @@ import ActionButton from '../ActionButton';
 import PairInputModal from '../modals/PairInputModal';
 import MultiPairInputModal from '../modals/MultiPairInputModal';
 import { PairList, EmptyState } from '../ListWidgets';
-import { AppTheme, Spacing } from '../../theme';
+import { AppTheme, AppSpacing } from '../../theme';
 
 const FILTERED_KEYS = ['external_id', 'onesignal_id'];
 
@@ -35,7 +35,7 @@ export default function AliasesSection({
         </View>
       ) : (
         <View style={styles.listCard}>
-          <PairList items={filtered} />
+          <PairList items={filtered} layout="stacked" />
         </View>
       )}
       <ActionButton
@@ -72,6 +72,6 @@ export default function AliasesSection({
 
 const styles = StyleSheet.create({
   listCard: {
-    marginBottom: Spacing.cardGap,
+    marginBottom: AppSpacing.gap,
   },
 });

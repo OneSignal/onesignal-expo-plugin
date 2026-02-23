@@ -7,7 +7,7 @@ export interface LogEntry {
   message: string;
 }
 
-type Listener = (entries: LogEntry[]) => void;
+type Listener = (entry: LogEntry | null) => void;
 
 class LogManager {
   private static _instance: LogManager;
@@ -27,7 +27,7 @@ class LogManager {
       now.getMinutes(),
     ).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
     const entry: LogEntry = { timestamp, level, tag, message };
-    this.entries = [...this.entries, entry];
+    this.entries.push(entry);
 
     switch (level) {
       case 'W':
@@ -40,7 +40,7 @@ class LogManager {
         console.log(`[${level}][${tag}] ${message}`);
     }
 
-    this.notify();
+    this.notify(entry);
   }
 
   d(tag: string, message: string): void {
@@ -61,7 +61,7 @@ class LogManager {
 
   clear(): void {
     this.entries = [];
-    this.notify();
+    this.notify(null);
   }
 
   getEntries(): LogEntry[] {
@@ -73,9 +73,9 @@ class LogManager {
     return () => this.listeners.delete(listener);
   }
 
-  private notify(): void {
+  private notify(entry: LogEntry | null): void {
     for (const listener of this.listeners) {
-      listener(this.entries);
+      listener(entry);
     }
   }
 }

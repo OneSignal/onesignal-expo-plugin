@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useAppContext } from '../context/AppContext';
 import { InAppMessageType } from '../models/InAppMessageType';
@@ -7,10 +7,9 @@ import TooltipHelper, { TooltipData } from '../services/TooltipHelper';
 import LogView from '../components/LogView';
 import LoadingOverlay from '../components/LoadingOverlay';
 import ActionButton from '../components/ActionButton';
-import SectionCard from '../components/SectionCard';
 import TooltipModal from '../components/modals/TooltipModal';
-import LoginModal from '../components/modals/LoginModal';
 import AppSection from '../components/sections/AppSection';
+import UserSection from '../components/sections/UserSection';
 import PushSection from '../components/sections/PushSection';
 import SendPushSection from '../components/sections/SendPushSection';
 import InAppSection from '../components/sections/InAppSection';
@@ -23,7 +22,7 @@ import OutcomesSection from '../components/sections/OutcomesSection';
 import TriggersSection from '../components/sections/TriggersSection';
 import TrackEventSection from '../components/sections/TrackEventSection';
 import LocationSection from '../components/sections/LocationSection';
-import { AppTheme, Colors, Spacing } from '../theme';
+import { AppColors } from '../theme';
 
 export default function HomeScreen() {
   const navigation = useNavigation();
@@ -32,9 +31,6 @@ export default function HomeScreen() {
 
   const [tooltipVisible, setTooltipVisible] = useState(false);
   const [activeTooltip, setActiveTooltip] = useState<TooltipData | null>(null);
-  const [loginVisible, setLoginVisible] = useState(false);
-
-  const isLoggedIn = !!state.externalUserId;
 
   // Auto-request push permission on load
   useEffect(() => {
@@ -70,44 +66,11 @@ export default function HomeScreen() {
           onSetConsentGiven={app.setConsentGiven}
         />
 
-        <SectionCard title="User">
-          <View style={[AppTheme.card, styles.userCard]}>
-            <View style={styles.statusRow}>
-              <Text style={styles.statusLabel}>Status</Text>
-              <Text
-                style={[styles.statusValue, isLoggedIn && styles.loggedInText]}
-              >
-                {isLoggedIn ? 'Logged In' : 'Anonymous'}
-              </Text>
-            </View>
-            <View style={styles.divider} />
-            <View style={styles.statusRow}>
-              <Text style={styles.statusLabel}>External ID</Text>
-              <Text style={styles.statusValue} numberOfLines={1}>
-                {state.externalUserId ?? '–'}
-              </Text>
-            </View>
-          </View>
-          <ActionButton
-            label={isLoggedIn ? 'SWITCH USER' : 'LOGIN USER'}
-            onPress={() => setLoginVisible(true)}
-            testID="login_user_button"
-          />
-          {isLoggedIn && (
-            <ActionButton
-              label="LOGOUT USER"
-              onPress={app.logoutUser}
-              variant="outlined"
-              testID="logout_user_button"
-            />
-          )}
-          <LoginModal
-            visible={loginVisible}
-            isLoggedIn={isLoggedIn}
-            onConfirm={app.loginUser}
-            onClose={() => setLoginVisible(false)}
-          />
-        </SectionCard>
+        <UserSection
+          externalUserId={state.externalUserId}
+          onLogin={app.loginUser}
+          onLogout={app.logoutUser}
+        />
 
         <PushSection
           pushSubscriptionId={state.pushSubscriptionId}
@@ -121,18 +84,18 @@ export default function HomeScreen() {
         <SendPushSection
           onSendNotification={app.sendNotification}
           onSendCustomNotification={app.sendCustomNotification}
-          onInfoTap={() => showTooltipModal('send_push')}
+          onInfoTap={() => showTooltipModal('sendPushNotification')}
         />
 
         <InAppSection
           inAppMessagesPaused={state.inAppMessagesPaused}
           onSetPaused={app.setIamPaused}
-          onInfoTap={() => showTooltipModal('in_app_messaging')}
+          onInfoTap={() => showTooltipModal('inAppMessaging')}
         />
 
         <SendIamSection
           onSendIam={(type: InAppMessageType) => app.sendIamTrigger(type)}
-          onInfoTap={() => showTooltipModal('send_iam')}
+          onInfoTap={() => showTooltipModal('sendInAppMessage')}
         />
 
         <AliasesSection
@@ -168,7 +131,7 @@ export default function HomeScreen() {
           onSendNormal={app.sendOutcome}
           onSendUnique={app.sendUniqueOutcome}
           onSendWithValue={app.sendOutcomeWithValue}
-          onInfoTap={() => showTooltipModal('outcome_events')}
+          onInfoTap={() => showTooltipModal('outcomes')}
         />
 
         <TriggersSection
@@ -182,7 +145,7 @@ export default function HomeScreen() {
 
         <TrackEventSection
           onTrackEvent={app.trackEvent}
-          onInfoTap={() => showTooltipModal('track_event')}
+          onInfoTap={() => showTooltipModal('trackEvent')}
         />
 
         <LocationSection
@@ -218,13 +181,13 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: Colors.lightBackground,
+    backgroundColor: AppColors.osLightBackground,
   },
   scroll: {
     flex: 1,
   },
   content: {
-    paddingBottom: 16,
+    paddingBottom: 24,
   },
   spacer: {
     height: 16,
@@ -235,31 +198,5 @@ const styles = StyleSheet.create({
   },
   bottomSpacer: {
     height: 32,
-  },
-  userCard: {
-    marginBottom: Spacing.cardGap,
-  },
-  statusRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: 4,
-  },
-  statusLabel: {
-    fontSize: 14,
-    color: Colors.textSecondary,
-  },
-  statusValue: {
-    fontSize: 14,
-    color: Colors.textPrimary,
-    fontWeight: '500',
-  },
-  loggedInText: {
-    color: '#2E7D32',
-  },
-  divider: {
-    height: 1,
-    backgroundColor: Colors.dividerColor,
-    marginVertical: 8,
   },
 });

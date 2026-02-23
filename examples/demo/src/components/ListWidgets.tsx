@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { MaterialIcons as Icon } from '@expo/vector-icons';
-import { Colors, AppTheme } from '../theme';
+import { AppColors, AppTextStyles, AppTheme } from '../theme';
 
 // PairItem
 interface PairItemProps {
@@ -46,7 +46,7 @@ export function PairItem({
           onPress={onDelete}
           hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
         >
-          <Icon name="close" size={18} color={Colors.textSecondary} />
+          <Icon name="close" size={18} color={AppColors.osPrimary} />
         </TouchableOpacity>
       )}
     </View>
@@ -71,7 +71,7 @@ export function SingleItem({ value, onDelete, testID }: SingleItemProps) {
           onPress={onDelete}
           hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
         >
-          <Icon name="close" size={18} color={Colors.textSecondary} />
+          <Icon name="close" size={18} color={AppColors.osPrimary} />
         </TouchableOpacity>
       )}
     </View>
@@ -187,69 +187,68 @@ const styles = StyleSheet.create({
   pairRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 8,
+    paddingVertical: 4,
+    paddingHorizontal: 4,
   },
   pairStackedContent: {
     flex: 1,
     marginRight: 8,
   },
   pairStackedKey: {
-    fontSize: 15,
-    color: Colors.textPrimary,
-    fontWeight: '500',
+    ...AppTextStyles.bodyMedium,
     marginBottom: 2,
   },
   pairStackedValue: {
-    fontSize: 14,
-    color: Colors.textSecondary,
+    ...AppTextStyles.bodySmall,
+    color: AppColors.osGrey600,
   },
   pairKey: {
+    ...AppTextStyles.bodyMedium,
     flex: 1,
-    fontSize: 14,
-    color: Colors.textSecondary,
+    color: AppColors.osGrey600,
   },
   pairSeparator: {
     fontSize: 14,
-    color: Colors.dividerColor,
+    color: AppColors.osDivider,
     marginHorizontal: 8,
   },
   pairValue: {
+    ...AppTextStyles.bodyMedium,
     flex: 1,
-    fontSize: 14,
-    color: Colors.textPrimary,
+    color: AppColors.osGrey700,
     textAlign: 'right',
     marginRight: 8,
   },
   singleRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 8,
+    paddingVertical: 4,
+    paddingHorizontal: 4,
   },
   singleValue: {
+    ...AppTextStyles.bodyMedium,
     flex: 1,
-    fontSize: 14,
-    color: Colors.textPrimary,
+    color: AppColors.osGrey700,
   },
   emptyContainer: {
-    paddingVertical: 8,
+    paddingVertical: 12,
     alignItems: 'center',
   },
   emptyText: {
-    fontSize: 14,
-    color: Colors.textSecondary,
-    fontStyle: 'italic',
+    ...AppTextStyles.bodyMedium,
+    color: AppColors.osGrey600,
   },
   divider: {
     height: 1,
-    backgroundColor: Colors.dividerColor,
+    backgroundColor: AppColors.osDivider,
   },
   moreButton: {
-    paddingVertical: 8,
+    paddingVertical: 4,
     alignItems: 'center',
   },
   moreText: {
-    fontSize: 13,
-    color: Colors.oneSignalRed,
+    fontSize: 14,
+    color: AppColors.osPrimary,
     fontWeight: '500',
   },
 });

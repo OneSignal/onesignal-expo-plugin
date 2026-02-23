@@ -106,7 +106,7 @@ Build the app with:
 - TypeScript with strict mode enabled
 - OneSignal brand colors and a consistent stylesheet-based theme
 - App name: "OneSignal Demo"
-- Top navigation header: centered title with OneSignal logo SVG + "Sample App" text
+- Top navigation header: centered title with OneSignal logo SVG + "Expo" text
 - Support for both Android and iOS
 - Android package name: com.onesignal.example
 - iOS bundle identifier: com.onesignal.example

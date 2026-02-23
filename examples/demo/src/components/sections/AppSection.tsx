@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import SectionCard from '../SectionCard';
 import ToggleRow from '../ToggleRow';
-import { Colors, AppTheme, Spacing } from '../../theme';
+import { AppColors, AppTextStyles, AppTheme, AppSpacing } from '../../theme';
 
 interface Props {
   appId: string;
@@ -77,7 +77,7 @@ export default function AppSection({
 
 const styles = StyleSheet.create({
   appIdCard: {
-    marginBottom: Spacing.cardGap,
+    marginBottom: AppSpacing.gap,
   },
   idRow: {
     flexDirection: 'row',
@@ -85,31 +85,29 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   idLabel: {
-    fontSize: 14,
-    color: Colors.textSecondary,
+    ...AppTextStyles.bodyMedium,
+    color: AppColors.osGrey600,
   },
   idValue: {
-    fontSize: 13,
-    color: Colors.textPrimary,
+    ...AppTextStyles.bodySmall,
+    color: AppColors.osGrey700,
     flex: 1,
     textAlign: 'right',
     marginLeft: 8,
     fontFamily: 'monospace',
   },
   banner: {
-    backgroundColor: Colors.warningBackground,
-    borderRadius: 8,
-    padding: 12,
-    marginBottom: Spacing.cardGap,
+    ...AppTheme.card,
+    backgroundColor: AppColors.osWarningBackground,
+    marginBottom: AppSpacing.gap,
   },
   bannerText: {
-    fontSize: 13,
-    color: Colors.textPrimary,
-    marginBottom: 4,
+    ...AppTextStyles.bodySmall,
+    color: AppColors.osGrey700,
   },
   bannerLink: {
-    fontSize: 13,
-    color: Colors.oneSignalRed,
-    fontWeight: '500',
+    ...AppTextStyles.bodySmall,
+    color: AppColors.osPrimary,
+    fontWeight: '600',
   },
 });

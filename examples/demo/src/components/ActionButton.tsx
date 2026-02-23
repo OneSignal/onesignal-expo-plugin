@@ -6,7 +6,7 @@ import {
   View,
   ActivityIndicator,
 } from 'react-native';
-import { Colors, Spacing } from '../theme';
+import { AppColors, AppSpacing } from '../theme';
 
 interface Props {
   label: string;
@@ -31,19 +31,17 @@ export default function ActionButton({
   iconPosition = 'left',
   leftAligned,
 }: Props) {
-  const bgColor =
-    variant === 'primary'
-      ? Colors.oneSignalRed
-      : variant === 'destructive'
-      ? Colors.destructiveRed
-      : 'transparent';
+  const bgColor = variant === 'primary' ? AppColors.osPrimary : 'transparent';
 
   const borderStyle =
-    variant === 'outlined'
-      ? { borderWidth: 1, borderColor: Colors.oneSignalRed }
+    variant === 'outlined' || variant === 'destructive'
+      ? { borderWidth: 1, borderColor: AppColors.osPrimary }
       : {};
 
-  const textColor = variant === 'outlined' ? Colors.oneSignalRed : Colors.white;
+  const textColor =
+    variant === 'outlined' || variant === 'destructive'
+      ? AppColors.osPrimary
+      : AppColors.white;
 
   return (
     <TouchableOpacity
@@ -78,10 +76,11 @@ export default function ActionButton({
 const styles = StyleSheet.create({
   button: {
     borderRadius: 8,
-    paddingVertical: 14,
+    height: 48,
+    justifyContent: 'center',
     paddingHorizontal: 16,
     width: '100%',
-    marginBottom: Spacing.cardGap,
+    marginBottom: AppSpacing.gap,
   },
   inner: {
     flexDirection: 'row',
@@ -94,8 +93,6 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 14,
     fontWeight: '600',
-    letterSpacing: 0.5,
-    textTransform: 'uppercase',
   },
   iconLeft: {
     marginRight: 8,
