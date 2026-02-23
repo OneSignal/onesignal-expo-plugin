@@ -8,7 +8,6 @@ This document contains all the prompts and requirements needed to build the OneS
 
 ### Prompt 0.1 - Capture Reference UI
 
-```
 Before building anything, an Android emulator MUST be running with the
 reference OneSignal demo app installed. These screenshots are the source
 of truth for the UI you are building. Do NOT proceed to Phase 1 without them.
@@ -84,7 +83,6 @@ button placement, spacing, and validation behavior.
 Refer back to these screenshots throughout all remaining phases whenever
 you need to decide on layout, spacing, section order, dialog flows, or
 overall look and feel.
-```
 
 ---
 
@@ -92,7 +90,6 @@ overall look and feel.
 
 ### Prompt 1.1 - Project Foundation
 
-```
 Create a new Expo project at examples/demo/ (relative to the SDK repo root)
 using the TypeScript template:
 
@@ -176,11 +173,9 @@ Before first run, execute:
 Then use script-based runs so the pre-hooks always run:
   bun run android
   bun run ios
-```
 
 ### Prompt 1.2 - Dependencies (package.json)
 
-```
 Add these dependencies to package.json:
 
 dependencies:
@@ -231,11 +226,9 @@ Let Expo prebuild + config plugins manage native wiring.
 
 If native folders already exist and deps/plugins changed:
   npx expo prebuild --clean
-```
 
 ### Prompt 1.2A - REQUIRED: Reuse and Port the RN Demo
 
-```
 You MUST use the OneSignal React Native demo as the implementation base and port
 it into this Expo project. Do NOT rebuild the app from scratch.
 
@@ -296,11 +289,9 @@ Completion gate (all must pass):
 - Toasts and LogView behave as expected
 
 If any item fails, continue iterating until all checks pass.
-```
 
 ### Prompt 1.3 - OneSignal Repository
 
-```
 Create a OneSignalRepository class that centralizes all OneSignal SDK calls.
 This is a plain TypeScript class (not a Context) used inside AppContextProvider.
 
@@ -368,11 +359,9 @@ Notification sending (via REST API, delegated to OneSignalApiService):
 - sendNotification(type: NotificationType): Promise<boolean>
 - sendCustomNotification(title: string, body: string): Promise<boolean>
 - fetchUser(onesignalId: string): Promise<UserData | null>
-```
 
 ### Prompt 1.4 - OneSignalApiService (REST API Client)
 
-```
 Create OneSignalApiService class for REST API calls using the built-in fetch API:
 
 Properties:
@@ -396,11 +385,9 @@ fetchUser endpoint:
 - GET https://api.onesignal.com/apps/{app_id}/users/by/onesignal_id/{onesignal_id}
 - NO Authorization header needed (public endpoint)
 - Returns UserData with aliases, tags, emails, smsNumbers, externalId
-```
 
 ### Prompt 1.5 - SDK Observers
 
-```
 In app startup code (App.tsx or root layout), set up OneSignal initialization
 and listeners before rendering the main screen:
 
@@ -435,7 +422,6 @@ Always remove listeners on cleanup (useEffect return function):
 If using Expo config for app ID:
   import Constants from 'expo-constants';
   const appId = Constants.expoConfig?.extra?.oneSignalAppId ?? '';
-```
 
 ---
 
@@ -460,7 +446,6 @@ If using Expo config for app ID:
 
 ### Prompt 2.1 - App Section
 
-```
 App Section layout:
 
 1. App ID display (readonly Text showing the OneSignal App ID)
@@ -499,11 +484,9 @@ App Section layout:
    - Opens modal with empty "External User Id" field
 
 6. LOGOUT USER button (only visible when a user is logged in)
-```
 
 ### Prompt 2.2 - Push Section
 
-```
 Push Section:
 - Section title: "Push" with info icon for tooltip
 - Push Subscription ID display (readonly)
@@ -514,11 +497,9 @@ Push Section:
   - Only visible when notification permission is NOT granted (fallback if user denied)
   - Requests notification permission when clicked
   - Hidden once permission is granted
-```
 
 ### Prompt 2.3 - Send Push Notification Section
 
-```
 Send Push Notification Section (placed right after Push Section):
 - Section title: "Send Push Notification" with info icon for tooltip
 - Three buttons:
@@ -529,21 +510,17 @@ Send Push Notification Section (placed right after Push Section):
   3. CUSTOM - opens modal for custom title and body
 
 Tooltip should explain each button type.
-```
 
 ### Prompt 2.4 - In-App Messaging Section
 
-```
 In-App Messaging Section (placed right after Send Push):
 - Section title: "In-App Messaging" with info icon for tooltip
 - Pause In-App Messages toggle switch:
   - Label: "Pause In-App Messages"
   - Description: "Toggle in-app message display"
-```
 
 ### Prompt 2.5 - Send In-App Message Section
 
-```
 Send In-App Message Section (placed right after In-App Messaging):
 - Section title: "Send In-App Message" with info icon for tooltip
 - Four FULL-WIDTH buttons (not a grid):
@@ -563,11 +540,9 @@ Send In-App Message Section (placed right after In-App Messaging):
 
 Use @expo/vector-icons (MaterialCommunityIcons or MaterialIcons) for icons.
 Tooltip should explain each IAM type.
-```
 
 ### Prompt 2.6 - Aliases Section
 
-```
 Aliases Section (placed after Send In-App Message):
 - Section title: "Aliases" with info icon for tooltip
 - List showing key-value pairs (read-only, no delete icons)
@@ -577,11 +552,9 @@ Aliases Section (placed after Send In-App Message):
 - ADD button -> PairInputModal with empty Label and ID fields on the same row (single add)
 - ADD MULTIPLE button -> MultiPairInputModal (dynamic rows, add/remove)
 - No remove/delete functionality (aliases are add-only from the UI)
-```
 
 ### Prompt 2.7 - Emails Section
 
-```
 Emails Section:
 - Section title: "Emails" with info icon for tooltip
 - List showing email addresses
@@ -592,11 +565,9 @@ Emails Section:
   - Show first 5 items
   - Show "X more" text (tappable)
   - Expand to show all when tapped
-```
 
 ### Prompt 2.8 - SMS Section
 
-```
 SMS Section:
 - Section title: "SMS" with info icon for tooltip
 - List showing phone numbers
@@ -604,11 +575,9 @@ SMS Section:
 - "No SMS Added" text when empty
 - ADD SMS button -> modal with empty SMS field
 - Collapse behavior when >5 items (same as Emails)
-```
 
 ### Prompt 2.9 - Tags Section
 
-```
 Tags Section:
 - Section title: "Tags" with info icon for tooltip
 - List showing key-value pairs
@@ -619,22 +588,18 @@ Tags Section:
 - REMOVE SELECTED button:
   - Only visible when at least one tag exists
   - Opens MultiSelectRemoveModal with checkboxes
-```
 
 ### Prompt 2.10 - Outcome Events Section
 
-```
 Outcome Events Section:
 - Section title: "Outcome Events" with info icon for tooltip
 - SEND OUTCOME button -> opens modal with 3 radio options:
   1. Normal Outcome -> shows name input field
   2. Unique Outcome -> shows name input field
   3. Outcome with Value -> shows name and value (number) input fields
-```
 
 ### Prompt 2.11 - Triggers Section (IN MEMORY ONLY)
 
-```
 Triggers Section:
 - Section title: "Triggers" with info icon for tooltip
 - List showing key-value pairs
@@ -652,11 +617,9 @@ IMPORTANT: Triggers are stored IN MEMORY ONLY during the app session.
 - Triggers are NOT persisted to AsyncStorage
 - Triggers are cleared when the app is killed/restarted
 - This is intentional - triggers are transient test data for IAM testing
-```
 
 ### Prompt 2.12 - Track Event Section
 
-```
 Track Event Section:
 - Section title: "Track Event" with info icon for tooltip
 - TRACK EVENT button -> opens TrackEventModal with:
@@ -667,22 +630,18 @@ Track Event Section:
     - If empty, passes undefined
   - TRACK button disabled until name is filled AND JSON is valid (or empty)
 - Calls OneSignal.User.trackEvent(name, properties)
-```
 
 ### Prompt 2.13 - Location Section
 
-```
 Location Section:
 - Section title: "Location" with info icon for tooltip
 - Location Shared toggle switch:
   - Label: "Location Shared"
   - Description: "Share device location with OneSignal"
 - PROMPT LOCATION button
-```
 
 ### Prompt 2.14 - Secondary Screen
 
-```
 Secondary Screen (launched by "Next Activity" button at bottom of main screen):
 - Screen title: "Secondary Activity" (set via React Navigation header options)
 - Screen content: centered text "Secondary Activity" using a large font style
@@ -691,7 +650,6 @@ Secondary Screen (launched by "Next Activity" button at bottom of main screen):
 Naming note for Expo:
 - Keep the UI label as "Next Activity" to match the reference app
 - Internally this is just a second screen/route in Expo
-```
 
 ---
 
@@ -699,7 +657,6 @@ Naming note for Expo:
 
 ### Prompt 3.1 - Data Loading Flow
 
-```
 Loading indicator overlay:
 - Full-screen semi-transparent overlay with centered ActivityIndicator
 - isLoading flag in app state
@@ -732,7 +689,6 @@ On onUserStateChange callback:
 - Update UI with new data (aliases, tags, emails, sms)
 
 Note: REST API key is NOT required for fetchUser endpoint.
-```
 
 ### Prompt 3.2 - UserData Model
 
@@ -754,14 +710,12 @@ function userDataFromJson(json: Record<string, unknown>): UserData { ... }
 
 ### Prompt 4.1 - Tooltip Content (Remote)
 
-```
 Tooltip content is fetched at runtime from the sdk-shared repo. Do NOT bundle a local copy.
 
 URL:
 https://raw.githubusercontent.com/OneSignal/sdk-shared/main/demo/tooltip_content.json
 
 This file is maintained in the sdk-shared repo and shared across all platform demo apps.
-```
 
 ### Prompt 4.2 - Tooltip Helper
 
@@ -807,7 +761,6 @@ interface TooltipOption {
 
 ### Prompt 4.3 - Tooltip UI Integration
 
-```
 For each section, pass an onInfoTap callback to SectionCard:
 - SectionCard has an optional info icon that calls onInfoTap when tapped
 - In HomeScreen, wire onInfoTap to show a TooltipModal
@@ -826,7 +779,6 @@ function showTooltipModal(key: string) {
         setTooltipVisible(true);
     }
 }
-```
 
 ---
 
@@ -834,7 +786,6 @@ function showTooltipModal(key: string) {
 
 ### What IS Persisted (AsyncStorage)
 
-```
 PreferencesService stores:
 - OneSignal App ID
 - Consent required status
@@ -842,11 +793,9 @@ PreferencesService stores:
 - External user ID (for login state restoration)
 - Location shared status
 - In-app messaging paused status
-```
 
 ### Initialization Flow
 
-```
 On app startup, state is restored in two layers:
 
 1. App.tsx restores SDK state from AsyncStorage cache BEFORE initialize:
@@ -870,11 +819,9 @@ This two-layer approach ensures:
 - The SDK is configured with the user's last preferences before anything else runs
 - AppContextProvider exposes one state object and action API for screens
 - Reducer transitions keep state updates predictable
-```
 
 ### What is NOT Persisted (In-Memory Only)
 
-```
 App state holds in memory:
 - triggersList: [string, string][]
   - Triggers are session-only
@@ -894,13 +841,11 @@ App state holds in memory:
 - tagsList:
   - Can be read from SDK via getTags()
   - Also fetched from API for consistency
-```
 
 ---
 
 ## Phase 6: Testing Values (Appium Compatibility)
 
-```
 All modal input fields should be EMPTY by default.
 The test automation framework (Appium) will enter these values:
 
@@ -916,7 +861,6 @@ The test automation framework (Appium) will enter these values:
 - Outcome Modal: Name = "test_outcome", Value = "1.5"
 - Track Event Modal: Name = "test_event", Properties = "{\"key\": \"value\"}"
 - Custom Notification Modal: Title = "Test Title", Body = "Test Body"
-```
 
 ---
 
@@ -924,7 +868,6 @@ The test automation framework (Appium) will enter these values:
 
 ### Alias Management
 
-```
 Aliases are managed with a hybrid approach:
 
 1. On app start/login: Fetched from REST API via fetchUserDataFromApi()
@@ -933,18 +876,15 @@ Aliases are managed with a hybrid approach:
    - Immediately add to local aliasesList (don't wait for API)
    - This ensures instant UI feedback while SDK syncs in background
 3. On next app launch: Fresh data from API includes the synced alias
-```
 
 ### Notification Permission
 
-```
 Notification permission is automatically requested when the home screen loads:
 - Call appContext.promptPush() in a useEffect with an empty dependency array in HomeScreen
 - This ensures prompt appears after user sees the app UI
 - PROMPT PUSH button remains as fallback if user initially denied
 - Button hidden once permission is granted
 - Keep Push "Enabled" toggle disabled until permission is granted
-```
 
 ---
 
@@ -952,7 +892,6 @@ Notification permission is automatically requested when the home screen loads:
 
 ### Prompt 8.1 - State Management with Context + Reducer
 
-```
 Use React Context for dependency injection and useReducer for state management.
 
 Expo root entry:
@@ -966,11 +905,9 @@ AppContextProvider:
 - Exposes state and action functions through useAppContext
 - Uses OneSignalRepository and PreferencesService internally
 - Handles observer lifecycle and initialization effects
-```
 
 ### Prompt 8.2 - Reusable Components
 
-```
 Create reusable components in src/components/:
 
 SectionCard.tsx:
@@ -1020,11 +957,9 @@ Modals (src/components/modals/):
 - MultiSelectRemoveModal (Checkbox per item for batch remove)
 - LoginModal, OutcomeModal, TrackEventModal
 - CustomNotificationModal, TooltipModal
-```
 
 ### Prompt 8.3 - Reusable Multi-Pair Modal
 
-```
 Tags, Aliases, and Triggers all share a reusable MultiPairInputModal component
 for adding multiple key-value pairs at once.
 
@@ -1044,11 +979,9 @@ Used by:
 - ADD MULTIPLE button (Aliases section) -> calls viewModel.addAliases(pairs)
 - ADD MULTIPLE button (Tags section) -> calls viewModel.addTags(pairs)
 - ADD MULTIPLE button (Triggers section) -> calls viewModel.addTriggers(pairs)
-```
 
 ### Prompt 8.4 - Reusable Remove Multi Modal
 
-```
 Tags and Triggers share a reusable MultiSelectRemoveModal component
 for selectively removing items from the current list.
 
@@ -1063,11 +996,9 @@ Behavior:
 Used by:
 - REMOVE SELECTED button (Tags section) -> calls viewModel.removeSelectedTags(keys)
 - REMOVE SELECTED button (Triggers section) -> calls viewModel.removeSelectedTriggers(keys)
-```
 
 ### Prompt 8.5 - Theme
 
-```
 Create OneSignal theme in src/theme.ts:
 
 Colors:
@@ -1090,11 +1021,9 @@ AppTheme object with:
 - Shadow/elevation styles for card depth
 
 Apply theme colors and Spacing constants consistently across all components using StyleSheet.create.
-```
 
 ### Prompt 8.6 - Log View (Appium-Ready)
 
-```
 Add collapsible log view at top of screen for debugging and Appium testing.
 
 Files:
@@ -1134,11 +1063,9 @@ Appium testID Labels:
 
 Use the testID prop for Appium accessibility:
 <Text testID={`log_entry_${index}_message`}>{entry.message}</Text>
-```
 
 ### Prompt 8.7 - Toast Messages
 
-```
 All user actions should display Toast messages via react-native-toast-message:
 
 - Login: "Logged in as: {userId}"
@@ -1159,13 +1086,11 @@ Implementation:
 - Call Toast.show({ type: 'info', text1: message }) from action handlers
 - All Toast messages are also logged via LogManager.getInstance().i()
 - Hide previous toast before showing new one via Toast.hide() if needed
-```
 
 ---
 
 ## Key Files Structure
 
-```
 examples/demo/
 ├── app.json                                 # Expo config (plugin, package IDs, extra.oneSignalAppId)
 ├── App.tsx                                  # App entry, SDK init, Context setup
@@ -1222,7 +1147,6 @@ examples/demo/
 ├── metro.config.js                          # Expo Metro + SVG transformer config
 ├── tsconfig.json                            # TypeScript config (strict mode)
 └── .eslintrc.js                             # ESLint config
-```
 
 Note:
 
