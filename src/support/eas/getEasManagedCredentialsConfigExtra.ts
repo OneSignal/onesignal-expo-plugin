@@ -1,8 +1,9 @@
-import { NSE_TARGET_NAME } from '../iosConstants';
+import { NSE_TARGET_NAME, getAppGroupIdentifier } from '../iosConstants';
 import { ExpoConfig } from '@expo/config-types';
 
 export default function getEasManagedCredentialsConfigExtra(
   config: ExpoConfig,
+  appGroupName?: string,
 ): { [k: string]: any } {
   return {
     ...config.extra,
@@ -23,7 +24,10 @@ export default function getEasManagedCredentialsConfigExtra(
                 bundleIdentifier: `${config?.ios?.bundleIdentifier}.${NSE_TARGET_NAME}`,
                 entitlements: {
                   'com.apple.security.application-groups': [
-                    `group.${config?.ios?.bundleIdentifier}.onesignal`,
+                    getAppGroupIdentifier(
+                      config?.ios?.bundleIdentifier ?? '',
+                      appGroupName,
+                    ),
                   ],
                 },
               },
