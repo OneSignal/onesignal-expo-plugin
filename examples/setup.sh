@@ -13,6 +13,5 @@ mv onesignal-expo-plugin-*.tgz onesignal-expo-plugin.tgz
 
 # Use fresh install of the package
 cd "$ORIGINAL_DIR"
-bun pm cache rm
-rm -rf node_modules/onesignal-expo-plugin
-bun i
+bun remove onesignal-expo-plugin
+bun add file:../../onesignal-expo-plugin.tgz

@@ -5,3 +5,6 @@ build/
 
 # Builds
 *.tgz
+
+# Coverage
+coverage/

@@ -9,6 +9,7 @@
   ],
   "scripts": {
     "test": "bun test",
+    "test:coverage": "bun test --coverage",
     "build": "bun run lint && rm -rf build && tsc && cp -a src/support/serviceExtensionFiles build/support/",
     "format:check": "prettier --check \"**/*.{ts,tsx}\" --ignore-path .prettierignore",
     "format:fix": "prettier --write \"**/*.{ts,tsx}\" --ignore-path .prettierignore",

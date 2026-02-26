@@ -28,3 +28,6 @@ jobs:
 
       - name: Linting
         run: bun run lint
+
+      - name: Test
+        run: bun run test:coverage
