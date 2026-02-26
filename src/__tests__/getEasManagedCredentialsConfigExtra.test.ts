@@ -2,9 +2,7 @@ import { describe, expect, test } from 'bun:test';
 import getEasManagedCredentialsConfigExtra from '../support/eas/getEasManagedCredentialsConfigExtra';
 import type { ExpoConfig } from '@expo/config-types';
 
-function makeConfig(
-  overrides: Partial<ExpoConfig> = {},
-): ExpoConfig {
+function makeConfig(overrides: Partial<ExpoConfig> = {}): ExpoConfig {
   return {
     name: 'TestApp',
     slug: 'test-app',
@@ -16,12 +14,11 @@ function makeConfig(
 describe('getEasManagedCredentialsConfigExtra', () => {
   test('uses default app group when no custom name provided', () => {
     const result = getEasManagedCredentialsConfigExtra(makeConfig());
-    const appExtension =
-      result.eas.build.experimental.ios.appExtensions[0];
+    const appExtension = result.eas.build.experimental.ios.appExtensions[0];
 
-    expect(appExtension.entitlements['com.apple.security.application-groups']).toEqual([
-      'group.com.example.app.onesignal',
-    ]);
+    expect(
+      appExtension.entitlements['com.apple.security.application-groups'],
+    ).toEqual(['group.com.example.app.onesignal']);
   });
 
   test('uses custom app group when provided', () => {
@@ -29,12 +26,11 @@ describe('getEasManagedCredentialsConfigExtra', () => {
       makeConfig(),
       'group.com.example.custom',
     );
-    const appExtension =
-      result.eas.build.experimental.ios.appExtensions[0];
+    const appExtension = result.eas.build.experimental.ios.appExtensions[0];
 
-    expect(appExtension.entitlements['com.apple.security.application-groups']).toEqual([
-      'group.com.example.custom',
-    ]);
+    expect(
+      appExtension.entitlements['com.apple.security.application-groups'],
+    ).toEqual(['group.com.example.custom']);
   });
 
   test('preserves existing extra config', () => {
@@ -46,8 +42,7 @@ describe('getEasManagedCredentialsConfigExtra', () => {
 
   test('sets correct NSE target name and bundle identifier', () => {
     const result = getEasManagedCredentialsConfigExtra(makeConfig());
-    const appExtension =
-      result.eas.build.experimental.ios.appExtensions[0];
+    const appExtension = result.eas.build.experimental.ios.appExtensions[0];
 
     expect(appExtension.targetName).toBe(
       'OneSignalNotificationServiceExtension',

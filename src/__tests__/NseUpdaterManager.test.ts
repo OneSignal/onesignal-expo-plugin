@@ -1,6 +1,5 @@
-import { describe, expect, test, mock, beforeEach } from 'bun:test';
+import { beforeEach, describe, expect, mock, test } from 'bun:test';
 import NseUpdaterManager from '../support/NseUpdaterManager';
-import { FileManager } from '../support/FileManager';
 
 const NSE_ENTITLEMENTS_TEMPLATE = `<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
