@@ -40,6 +40,12 @@ export type OneSignalPluginProps = {
    * logic required.
    */
   iosNSEFilePath?: string;
+
+  /**
+   * (optional) Used to configure a custom iOS app group name. If not provided, defaults to "group.{ios.bundleIdentifier}.onesignal".
+   * @see https://documentation.onesignal.com/docs/ios-sdk-setup#step-3-create-an-app-group
+   */
+  appGroupName?: string;
 };
 
 export const ONESIGNAL_PLUGIN_PROPS: string[] = [
@@ -50,6 +56,7 @@ export const ONESIGNAL_PLUGIN_PROPS: string[] = [
   'largeIcons',
   'iosNSEFilePath',
   'smallIconAccentColor',
+  'appGroupName',
 ];
 
 export enum Mode {

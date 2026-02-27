@@ -1,14 +1,15 @@
 {
   "name": "onesignal-expo-plugin",
   "version": "2.0.4",
-  "description": "The OneSignal Expo plugin allows you to use OneSignal without leaving the managed workflow. Developed in collaboration with SweetGreen.",
+  "description": "Some Changez",
   "main": "./app.plugin.js",
   "files": [
     "build",
     "app.plugin.js"
   ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "bun test",
+    "test:coverage": "bun test --coverage",
     "build": "bun run lint && rm -rf build && tsc && cp -a src/support/serviceExtensionFiles build/support/",
     "format:check": "prettier --check \"**/*.{ts,tsx}\" --ignore-path .prettierignore",
     "format:fix": "prettier --write \"**/*.{ts,tsx}\" --ignore-path .prettierignore",
@@ -40,6 +41,7 @@
   },
   "homepage": "https://github.com/OneSignal/onesignal-expo-plugin#readme",
   "devDependencies": {
+    "@types/bun": "^1.3.9",
     "expo-module-scripts": "^5.0.8",
     "oxlint": "^1.43.0",
     "prettier": "^3.8.1",

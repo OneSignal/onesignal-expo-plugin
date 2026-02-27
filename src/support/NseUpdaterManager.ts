@@ -40,4 +40,12 @@ export default class NseUpdaterManager {
     plistFile = plistFile.replace(BUNDLE_SHORT_VERSION_TEMPLATE_REGEX, version);
     await FileManager.writeFile(plistFilePath, plistFile);
   }
+
+  async updateNSEInfoPlistAppGroupKey(appGroupName: string): Promise<void> {
+    const plistFilePath = `${this.nsePath}/${plistFileName}`;
+    let plistFile = await FileManager.readFile(plistFilePath);
+    const appGroupEntry = `\t<key>OneSignal_app_groups_key</key>\n\t<string>${appGroupName}</string>\n</dict>\n</plist>`;
+    plistFile = plistFile.replace('</dict>\n</plist>', appGroupEntry);
+    await FileManager.writeFile(plistFilePath, plistFile);
+  }
 }

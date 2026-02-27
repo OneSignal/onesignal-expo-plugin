@@ -20,6 +20,7 @@ import {
   NSE_SOURCE_FILE,
   NSE_EXT_FILES,
   TARGETED_DEVICE_FAMILY,
+  getAppGroupIdentifier,
 } from '../support/iosConstants';
 import { updatePodfile } from '../support/updatePodfile';
 import NseUpdaterManager from '../support/NseUpdaterManager';
@@ -78,6 +79,7 @@ const withRemoteNotificationsPermissions: ConfigPlugin<OneSignalPluginProps> = (
  */
 const withAppGroupPermissions: ConfigPlugin<OneSignalPluginProps> = (
   config,
+  props,
 ) => {
   const APP_GROUP_KEY = 'com.apple.security.application-groups';
   return withEntitlementsPlist(config, (newConfig) => {
@@ -85,9 +87,10 @@ const withAppGroupPermissions: ConfigPlugin<OneSignalPluginProps> = (
       newConfig.modResults[APP_GROUP_KEY] = [];
     }
     const modResultsArray = newConfig.modResults[APP_GROUP_KEY] as Array<any>;
-    const entitlement = `group.${
-      newConfig?.ios?.bundleIdentifier || ''
-    }.onesignal`;
+    const entitlement = getAppGroupIdentifier(
+      newConfig?.ios?.bundleIdentifier || '',
+      props?.appGroupName,
+    );
     if (modResultsArray.indexOf(entitlement) !== -1) {
       return newConfig;
     }
@@ -97,14 +100,34 @@ const withAppGroupPermissions: ConfigPlugin<OneSignalPluginProps> = (
   });
 };
 
+/**
+ * Add OneSignal_app_groups_key to Info.plist when a custom app group name is provided.
+ * @see https://documentation.onesignal.com/docs/ios-sdk-setup#step-3-create-an-app-group
+ */
+const withCustomAppGroupsKey: ConfigPlugin<OneSignalPluginProps> = (
+  config,
+  props,
+) => {
+  return withInfoPlist(config, (newConfig) => {
+    if (props?.appGroupName) {
+      newConfig.modResults.OneSignal_app_groups_key = props.appGroupName;
+    }
+    return newConfig;
+  });
+};
+
 const withEasManagedCredentials: ConfigPlugin<OneSignalPluginProps> = (
   config,
+  props,
 ) => {
   assert(
     config.ios?.bundleIdentifier,
     "Missing 'ios.bundleIdentifier' in app config.",
   );
-  config.extra = getEasManagedCredentialsConfigExtra(config as ExpoConfig);
+  config.extra = getEasManagedCredentialsConfigExtra(
+    config as ExpoConfig,
+    props?.appGroupName,
+  );
   return config;
 };
 
@@ -156,9 +179,14 @@ const withOneSignalNSE: ConfigPlugin<OneSignalPluginProps> = (
 
       /* MODIFY COPIED EXTENSION FILES */
       const nseUpdater = new NseUpdaterManager(iosPath);
-      await nseUpdater.updateNSEEntitlements(
-        `group.${config.ios?.bundleIdentifier}.onesignal`,
+      const appGroupId = getAppGroupIdentifier(
+        config.ios?.bundleIdentifier ?? '',
+        props.appGroupName,
       );
+      await nseUpdater.updateNSEEntitlements(appGroupId);
+      if (props.appGroupName) {
+        await nseUpdater.updateNSEInfoPlistAppGroupKey(props.appGroupName);
+      }
       await nseUpdater.updateNSEBundleVersion(
         config.ios?.buildNumber ?? DEFAULT_BUNDLE_VERSION,
       );
@@ -280,6 +308,7 @@ export const withOneSignalIos: ConfigPlugin<OneSignalPluginProps> = (
 ) => {
   config = withAppEnvironment(config, props);
   config = withRemoteNotificationsPermissions(config, props);
+  config = withCustomAppGroupsKey(config, props);
   config = withAppGroupPermissions(config, props);
   config = withOneSignalPodfile(config, props);
   config = withOneSignalNSE(config, props);
