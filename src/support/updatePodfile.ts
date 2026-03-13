@@ -1,21 +1,23 @@
 import fs from 'fs/promises';
-import { NSE_PODFILE_REGEX, NSE_PODFILE_SNIPPET } from './iosConstants';
+import {
+  NSE_TARGET_NAME,
+  getNsePodfileRegex,
+  getNsePodfileSnippet,
+} from './iosConstants';
 import { OneSignalLog } from './OneSignalLog';
 import { FileManager } from './FileManager';
 
-export async function updatePodfile(iosPath: string) {
+export async function updatePodfile(iosPath: string, nseTargetName = NSE_TARGET_NAME) {
   const podfile = await FileManager.readFile(`${iosPath}/Podfile`);
-  const matches = podfile.match(NSE_PODFILE_REGEX);
+  const matches = podfile.match(getNsePodfileRegex(nseTargetName));
 
   if (matches) {
     OneSignalLog.log(
-      'OneSignalNotificationServiceExtension target already added to Podfile. Skipping...',
+      `${nseTargetName} target already added to Podfile. Skipping...`,
     );
     return;
   }
 
-  await fs.appendFile(`${iosPath}/Podfile`, NSE_PODFILE_SNIPPET);
-  OneSignalLog.log(
-    'OneSignalNotificationServiceExtension target added to Podfile.',
-  );
+  await fs.appendFile(`${iosPath}/Podfile`, getNsePodfileSnippet(nseTargetName));
+  OneSignalLog.log(`${nseTargetName} target added to Podfile.`);
 }

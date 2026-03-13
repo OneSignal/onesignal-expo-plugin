@@ -46,6 +46,12 @@ export type OneSignalPluginProps = {
    * @see https://documentation.onesignal.com/docs/ios-sdk-setup#step-3-create-an-app-group
    */
   appGroupName?: string;
+
+  /**
+   * (optional) Used to configure a custom iOS Notification Service Extension target name.
+   * If not provided, defaults to "OneSignalNotificationServiceExtension".
+   */
+  nseTargetName?: string;
 };
 
 export const ONESIGNAL_PLUGIN_PROPS: string[] = [
@@ -57,6 +63,7 @@ export const ONESIGNAL_PLUGIN_PROPS: string[] = [
   'iosNSEFilePath',
   'smallIconAccentColor',
   'appGroupName',
+  'nseTargetName',
 ];
 
 export enum Mode {

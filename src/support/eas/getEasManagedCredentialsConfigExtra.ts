@@ -4,7 +4,9 @@ import { ExpoConfig } from '@expo/config-types';
 export default function getEasManagedCredentialsConfigExtra(
   config: ExpoConfig,
   appGroupName?: string,
+  nseTargetName?: string,
 ): { [k: string]: any } {
+  const targetName = nseTargetName ?? NSE_TARGET_NAME;
   return {
     ...config.extra,
     eas: {
@@ -20,8 +22,8 @@ export default function getEasManagedCredentialsConfigExtra(
                 []),
               {
                 // keep in sync with native changes in NSE
-                targetName: NSE_TARGET_NAME,
-                bundleIdentifier: `${config?.ios?.bundleIdentifier}.${NSE_TARGET_NAME}`,
+                targetName,
+                bundleIdentifier: `${config?.ios?.bundleIdentifier}.${targetName}`,
                 entitlements: {
                   'com.apple.security.application-groups': [
                     getAppGroupIdentifier(

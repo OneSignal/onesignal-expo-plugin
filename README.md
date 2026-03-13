@@ -88,6 +88,7 @@ You can pass props to the plugin config object to configure:
 | `smallIconAccentColor`   | optional     | The accent color to use for notification icons on Android. Must be a valid hex value, e.g: `"#FF0000"`                                                                                                                                                                                                                                                                        |
 | `iosNSEFilePath`         | optional     | The local path to a custom Notification Service Extension (NSE), written in Objective-C. The NSE will typically start as a copy of the [default NSE](https://github.com/OneSignal/onesignal-expo-plugin/blob/main/support/serviceExtensionFiles/NotificationService.m), then altered to support any custom logic required. e.g: `"./assets/NotificationService.m"`.           |
 | `appGroupName`           | optional     | Used to configure a custom iOS [App Group](https://documentation.onesignal.com/docs/ios-sdk-setup#step-3-create-an-app-group) name. If not provided, defaults to `"group.{ios.bundleIdentifier}.onesignal"`. e.g: `"group.com.example.myapp.onesignal2"`. |
+| `nseTargetName`          | optional     | Used to configure a custom iOS Notification Service Extension target name. If not provided, defaults to `"OneSignalNotificationServiceExtension"`. The NSE bundle identifier will be `"{ios.bundleIdentifier}.{nseTargetName}"`. |
 
 ### OneSignal App ID
 
