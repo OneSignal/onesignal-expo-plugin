@@ -6,12 +6,12 @@ import {
   NSE_TARGET_NAME,
 } from './iosConstants';
 
-// project `ios/OneSignalNotificationServiceExtension` directory
-const entitlementsFileName = `OneSignalNotificationServiceExtension.entitlements`;
-const plistFileName = `OneSignalNotificationServiceExtension-Info.plist`;
+const entitlementsFileName = `${NSE_TARGET_NAME}.entitlements`;
+const plistFileName = `${NSE_TARGET_NAME}-Info.plist`;
 
 export default class NseUpdaterManager {
-  private nsePath = '';
+  private nsePath: string;
+
   constructor(iosPath: string) {
     this.nsePath = `${iosPath}/${NSE_TARGET_NAME}`;
   }

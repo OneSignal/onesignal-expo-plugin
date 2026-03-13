@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test';
-import { getAppGroupIdentifier } from '../support/iosConstants';
+import { getAppGroupIdentifier } from '../support/helpers';
 
 describe('getAppGroupIdentifier', () => {
   test('returns default group name when no custom name provided', () => {

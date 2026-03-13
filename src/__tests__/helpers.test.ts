@@ -32,4 +32,19 @@ describe('validatePluginProps', () => {
   test('allows appGroupName to be omitted', () => {
     expect(() => validatePluginProps(validProps)).not.toThrow();
   });
+
+  test('accepts valid nseBundleIdentifier string', () => {
+    expect(() =>
+      validatePluginProps({
+        ...validProps,
+        nseBundleIdentifier: 'ExpoNSE',
+      }),
+    ).not.toThrow();
+  });
+
+  test('rejects non-string nseBundleIdentifier', () => {
+    expect(() =>
+      validatePluginProps({ ...validProps, nseBundleIdentifier: 123 }),
+    ).toThrow("'nseBundleIdentifier' must be a string");
+  });
 });

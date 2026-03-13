@@ -46,6 +46,15 @@ export function validatePluginProps(props: any): void {
     throw new Error("OneSignal Expo Plugin: 'appGroupName' must be a string.");
   }
 
+  if (
+    props.nseBundleIdentifier &&
+    typeof props.nseBundleIdentifier !== 'string'
+  ) {
+    throw new Error(
+      "OneSignal Expo Plugin: 'nseBundleIdentifier' must be a string.",
+    );
+  }
+
   // check for extra properties
   const inputProps = Object.keys(props);
 
@@ -56,4 +65,11 @@ export function validatePluginProps(props: any): void {
       );
     }
   }
+}
+
+export function getAppGroupIdentifier(
+  bundleIdentifier: string,
+  customAppGroupName?: string,
+): string {
+  return customAppGroupName ?? `group.${bundleIdentifier}.onesignal`;
 }

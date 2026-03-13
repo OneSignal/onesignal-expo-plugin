@@ -20,8 +20,8 @@ import {
   NSE_SOURCE_FILE,
   NSE_EXT_FILES,
   TARGETED_DEVICE_FAMILY,
-  getAppGroupIdentifier,
 } from '../support/iosConstants';
+import { getAppGroupIdentifier } from '../support/helpers';
 import { updatePodfile } from '../support/updatePodfile';
 import NseUpdaterManager from '../support/NseUpdaterManager';
 import { OneSignalLog } from '../support/OneSignalLog';
@@ -127,6 +127,7 @@ const withEasManagedCredentials: ConfigPlugin<OneSignalPluginProps> = (
   config.extra = getEasManagedCredentialsConfigExtra(
     config as ExpoConfig,
     props?.appGroupName,
+    props?.nseBundleIdentifier,
   );
   return config;
 };
@@ -157,17 +158,16 @@ const withOneSignalNSE: ConfigPlugin<OneSignalPluginProps> = (
     'ios',
     async (config) => {
       const iosPath = path.join(config.modRequest.projectRoot, 'ios');
-
       /* COPY OVER EXTENSION FILES */
-      fs.mkdirSync(`${iosPath}/${NSE_TARGET_NAME}`, { recursive: true });
+      fs.mkdirSync(`${iosPath}/${NSE_TARGET_NAME}`, {
+        recursive: true,
+      });
 
-      for (let i = 0; i < NSE_EXT_FILES.length; i++) {
-        const extFile = NSE_EXT_FILES[i];
-        const targetFile = `${iosPath}/${NSE_TARGET_NAME}/${extFile}`;
-        await FileManager.copyFile(`${sourceDir}${extFile}`, targetFile);
+      for (const file of NSE_EXT_FILES) {
+        const targetFile = `${iosPath}/${NSE_TARGET_NAME}/${file}`;
+        await FileManager.copyFile(`${sourceDir}${file}`, targetFile);
       }
 
-      // Copy NSE source file either from configuration-provided location, falling back to the default one.
       const sourcePath =
         props.iosNSEFilePath ?? `${sourceDir}${NSE_SOURCE_FILE}`;
       const targetFile = `${iosPath}/${NSE_TARGET_NAME}/${NSE_SOURCE_FILE}`;
@@ -201,6 +201,9 @@ const withOneSignalXcodeProject: ConfigPlugin<OneSignalPluginProps> = (
 ) => {
   return withXcodeProject(config, (newConfig) => {
     const xcodeProject = newConfig.modResults;
+    const nseBundleId = `${config.ios?.bundleIdentifier}.${
+      props.nseBundleIdentifier ?? NSE_TARGET_NAME
+    }`;
 
     if (xcodeProject.pbxTargetByName(NSE_TARGET_NAME)) {
       OneSignalLog.log(
@@ -245,7 +248,7 @@ const withOneSignalXcodeProject: ConfigPlugin<OneSignalPluginProps> = (
       NSE_TARGET_NAME,
       'app_extension',
       NSE_TARGET_NAME,
-      `${config.ios?.bundleIdentifier}.${NSE_TARGET_NAME}`,
+      nseBundleId,
     );
 
     // Add build phases to the new target

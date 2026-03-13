@@ -40,8 +40,9 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       'onesignal-expo-plugin',
       {
         mode: 'development',
-        devTeam: '99SW8E36CT', // For setting the Notification Service Extension's development team
-        appGroupName: 'group.expoCustom', // If you had your own app group name, you can set it here
+        devTeam: '99SW8E36CT', // Optional: For setting the Notification Service Extension's development team
+        appGroupName: 'group.expoCustom', // Optional: If you had your own app group name, you can set it here
+        nseBundleIdentifier: 'ExpoNSE', // Optional: Custom bundle identifier for the Notification Service Extension
       },
     ],
     'expo-router',

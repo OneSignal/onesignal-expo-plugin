@@ -46,6 +46,13 @@ export type OneSignalPluginProps = {
    * @see https://documentation.onesignal.com/docs/ios-sdk-setup#step-3-create-an-app-group
    */
   appGroupName?: string;
+
+  /**
+   * (optional) Used to configure a custom bundle identifier suffix for the iOS Notification Service Extension.
+   * The full bundle identifier will be "{ios.bundleIdentifier}.{nseBundleIdentifier}".
+   * If not provided, defaults to "OneSignalNotificationServiceExtension".
+   */
+  nseBundleIdentifier?: string;
 };
 
 export const ONESIGNAL_PLUGIN_PROPS: string[] = [
@@ -57,6 +64,7 @@ export const ONESIGNAL_PLUGIN_PROPS: string[] = [
   'iosNSEFilePath',
   'smallIconAccentColor',
   'appGroupName',
+  'nseBundleIdentifier',
 ];
 
 export enum Mode {
