@@ -1,10 +1,5 @@
 import { describe, expect, test } from 'bun:test';
-import {
-  validatePluginProps,
-  getNsePodfileSnippet,
-  getNsePodfileRegex,
-  getNseExtFiles,
-} from '../support/helpers';
+import { validatePluginProps } from '../support/helpers';
 
 describe('validatePluginProps', () => {
   const validProps = { mode: 'development' };
@@ -42,38 +37,14 @@ describe('validatePluginProps', () => {
     expect(() =>
       validatePluginProps({
         ...validProps,
-        nseBundleIdentifier: 'com.example.app.MyNSE',
+        nseBundleIdentifier: 'ExpoNSE',
       }),
     ).not.toThrow();
   });
-});
 
-describe('getNsePodfileSnippet', () => {
-  test('contains default target name and OneSignal pod', () => {
-    const snippet = getNsePodfileSnippet();
-    expect(snippet).toContain(
-      "target 'OneSignalNotificationServiceExtension' do",
-    );
-    expect(snippet).toContain("pod 'OneSignalXCFramework'");
-  });
-});
-
-describe('getNsePodfileRegex', () => {
-  test('matches default target name', () => {
-    const regex = getNsePodfileRegex();
-    expect(regex.test("target 'OneSignalNotificationServiceExtension'")).toBe(
-      true,
-    );
-  });
-});
-
-describe('getNseExtFiles', () => {
-  test('returns default extension files', () => {
-    const files = getNseExtFiles();
-    expect(files).toEqual([
-      'NotificationService.h',
-      'OneSignalNotificationServiceExtension.entitlements',
-      'OneSignalNotificationServiceExtension-Info.plist',
-    ]);
+  test('rejects non-string nseBundleIdentifier', () => {
+    expect(() =>
+      validatePluginProps({ ...validProps, nseBundleIdentifier: 123 }),
+    ).toThrow("'nseBundleIdentifier' must be a string");
   });
 });

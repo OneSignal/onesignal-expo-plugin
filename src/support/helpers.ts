@@ -1,5 +1,4 @@
 import { ONESIGNAL_PLUGIN_PROPS } from '../types/types';
-import { NSE_TARGET_NAME } from './iosConstants';
 
 export function validatePluginProps(props: any): void {
   // check the type of each property
@@ -47,6 +46,15 @@ export function validatePluginProps(props: any): void {
     throw new Error("OneSignal Expo Plugin: 'appGroupName' must be a string.");
   }
 
+  if (
+    props.nseBundleIdentifier &&
+    typeof props.nseBundleIdentifier !== 'string'
+  ) {
+    throw new Error(
+      "OneSignal Expo Plugin: 'nseBundleIdentifier' must be a string.",
+    );
+  }
+
   // check for extra properties
   const inputProps = Object.keys(props);
 
@@ -59,29 +67,9 @@ export function validatePluginProps(props: any): void {
   }
 }
 
-export function getNsePodfileSnippet(): string {
-  return `
-target '${NSE_TARGET_NAME}' do
-  pod 'OneSignalXCFramework', '>= 5.0', '< 6.0'
-  use_frameworks! :linkage => podfile_properties['ios.useFrameworks'].to_sym if podfile_properties['ios.useFrameworks']
-end`;
-}
-
-export function getNsePodfileRegex(): RegExp {
-  return new RegExp(`target '${NSE_TARGET_NAME}'`);
-}
-
 export function getAppGroupIdentifier(
   bundleIdentifier: string,
   customAppGroupName?: string,
 ): string {
   return customAppGroupName ?? `group.${bundleIdentifier}.onesignal`;
-}
-
-export function getNseExtFiles(): string[] {
-  return [
-    'NotificationService.h',
-    `${NSE_TARGET_NAME}.entitlements`,
-    `${NSE_TARGET_NAME}-Info.plist`,
-  ];
 }

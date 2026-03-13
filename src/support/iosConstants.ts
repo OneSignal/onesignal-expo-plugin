@@ -10,3 +10,17 @@ export const DEFAULT_BUNDLE_SHORT_VERSION = '1.0';
 
 export const NSE_TARGET_NAME = 'OneSignalNotificationServiceExtension';
 export const NSE_SOURCE_FILE = 'NotificationService.m';
+
+export const NSE_PODFILE_SNIPPET = `
+target '${NSE_TARGET_NAME}' do
+  pod 'OneSignalXCFramework', '>= 5.0', '< 6.0'
+  use_frameworks! :linkage => podfile_properties['ios.useFrameworks'].to_sym if podfile_properties['ios.useFrameworks']
+end`;
+
+export const NSE_PODFILE_REGEX = new RegExp(`target '${NSE_TARGET_NAME}'`);
+
+export const NSE_EXT_FILES = [
+  'NotificationService.h',
+  `${NSE_TARGET_NAME}.entitlements`,
+  `${NSE_TARGET_NAME}-Info.plist`,
+];
