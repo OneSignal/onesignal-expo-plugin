@@ -47,6 +47,9 @@
     "prettier": "^3.8.1",
     "typescript": "^5.9.3"
   },
+  "peerDependencies": {
+    "react-native-onesignal": ">=5.0.0"
+  },
   "dependencies": {
     "@expo/image-utils": "^0.8.8"
   }
