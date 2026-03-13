@@ -1,4 +1,5 @@
-import { NSE_TARGET_NAME, getAppGroupIdentifier } from '../iosConstants';
+import { DEFAULT_NSE_TARGET_NAME } from '../iosConstants';
+import { getAppGroupIdentifier } from '../helpers';
 import { ExpoConfig } from '@expo/config-types';
 
 export default function getEasManagedCredentialsConfigExtra(
@@ -6,7 +7,7 @@ export default function getEasManagedCredentialsConfigExtra(
   appGroupName?: string,
   nseTargetName?: string,
 ): { [k: string]: any } {
-  const targetName = nseTargetName ?? NSE_TARGET_NAME;
+  const targetName = nseTargetName ?? DEFAULT_NSE_TARGET_NAME;
   return {
     ...config.extra,
     eas: {

@@ -51,4 +51,16 @@ describe('getEasManagedCredentialsConfigExtra', () => {
       'com.example.app.OneSignalNotificationServiceExtension',
     );
   });
+
+  test('uses custom NSE target name when provided', () => {
+    const result = getEasManagedCredentialsConfigExtra(
+      makeConfig(),
+      undefined,
+      'MyNSE',
+    );
+    const appExtension = result.eas.build.experimental.ios.appExtensions[0];
+
+    expect(appExtension.targetName).toBe('MyNSE');
+    expect(appExtension.bundleIdentifier).toBe('com.example.app.MyNSE');
+  });
 });

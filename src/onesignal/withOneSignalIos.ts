@@ -16,12 +16,14 @@ import {
   DEFAULT_BUNDLE_SHORT_VERSION,
   DEFAULT_BUNDLE_VERSION,
   IPHONEOS_DEPLOYMENT_TARGET,
-  NSE_TARGET_NAME,
+  DEFAULT_NSE_TARGET_NAME,
   NSE_SOURCE_FILE,
-  getNseExtFiles,
   TARGETED_DEVICE_FAMILY,
-  getAppGroupIdentifier,
 } from '../support/iosConstants';
+import {
+  getNseExtFiles,
+  getAppGroupIdentifier,
+} from '../support/helpers';
 import { updatePodfile } from '../support/updatePodfile';
 import NseUpdaterManager from '../support/NseUpdaterManager';
 import { OneSignalLog } from '../support/OneSignalLog';
@@ -158,13 +160,13 @@ const withOneSignalNSE: ConfigPlugin<OneSignalPluginProps> = (
     'ios',
     async (config) => {
       const iosPath = path.join(config.modRequest.projectRoot, 'ios');
-      const targetName = props.nseTargetName ?? NSE_TARGET_NAME;
+      const targetName = props.nseTargetName ?? DEFAULT_NSE_TARGET_NAME;
       const nseExtFiles = getNseExtFiles(targetName);
 
       /* COPY OVER EXTENSION FILES */
       fs.mkdirSync(`${iosPath}/${targetName}`, { recursive: true });
 
-      const sourceExtFiles = getNseExtFiles(NSE_TARGET_NAME);
+      const sourceExtFiles = getNseExtFiles(DEFAULT_NSE_TARGET_NAME);
       for (let i = 0; i < nseExtFiles.length; i++) {
         const targetFile = `${iosPath}/${targetName}/${nseExtFiles[i]}`;
         await FileManager.copyFile(`${sourceDir}${sourceExtFiles[i]}`, targetFile);
@@ -203,7 +205,7 @@ const withOneSignalXcodeProject: ConfigPlugin<OneSignalPluginProps> = (
 ) => {
   return withXcodeProject(config, (newConfig) => {
     const xcodeProject = newConfig.modResults;
-    const targetName = props.nseTargetName ?? NSE_TARGET_NAME;
+    const targetName = props.nseTargetName ?? DEFAULT_NSE_TARGET_NAME;
     const nseExtFiles = getNseExtFiles(targetName);
 
     if (xcodeProject.pbxTargetByName(targetName)) {

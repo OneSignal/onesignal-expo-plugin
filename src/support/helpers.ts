@@ -1,4 +1,5 @@
 import { ONESIGNAL_PLUGIN_PROPS } from '../types/types';
+import { DEFAULT_NSE_TARGET_NAME } from './iosConstants';
 
 export function validatePluginProps(props: any): void {
   // check the type of each property
@@ -56,4 +57,31 @@ export function validatePluginProps(props: any): void {
       );
     }
   }
+}
+
+export function getNsePodfileSnippet(targetName = DEFAULT_NSE_TARGET_NAME): string {
+  return `
+target '${targetName}' do
+  pod 'OneSignalXCFramework', '>= 5.0', '< 6.0'
+  use_frameworks! :linkage => podfile_properties['ios.useFrameworks'].to_sym if podfile_properties['ios.useFrameworks']
+end`;
+}
+
+export function getNsePodfileRegex(targetName = DEFAULT_NSE_TARGET_NAME): RegExp {
+  return new RegExp(`target '${targetName}'`);
+}
+
+export function getAppGroupIdentifier(
+  bundleIdentifier: string,
+  customAppGroupName?: string,
+): string {
+  return customAppGroupName ?? `group.${bundleIdentifier}.onesignal`;
+}
+
+export function getNseExtFiles(targetName = DEFAULT_NSE_TARGET_NAME): string[] {
+  return [
+    'NotificationService.h',
+    `${targetName}.entitlements`,
+    `${targetName}-Info.plist`,
+  ];
 }

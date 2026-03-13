@@ -1,13 +1,10 @@
 import fs from 'fs/promises';
-import {
-  NSE_TARGET_NAME,
-  getNsePodfileRegex,
-  getNsePodfileSnippet,
-} from './iosConstants';
+import { DEFAULT_NSE_TARGET_NAME } from './iosConstants';
+import { getNsePodfileRegex, getNsePodfileSnippet } from './helpers';
 import { OneSignalLog } from './OneSignalLog';
 import { FileManager } from './FileManager';
 
-export async function updatePodfile(iosPath: string, nseTargetName = NSE_TARGET_NAME) {
+export async function updatePodfile(iosPath: string, nseTargetName = DEFAULT_NSE_TARGET_NAME) {
   const podfile = await FileManager.readFile(`${iosPath}/Podfile`);
   const matches = podfile.match(getNsePodfileRegex(nseTargetName));
 
