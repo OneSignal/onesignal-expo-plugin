@@ -1,6 +1,11 @@
 # OneSignal Expo Sample App - Build Guide
 
-This document covers Expo-specific setup and adaptations. For the full feature spec, UI sections, architecture, and shared implementation details, see the [generic build guide](https://github.com/OneSignal/sdk-shared/blob/main/demo/build.md).
+This document extends the shared build guide with Expo-specific details.
+
+**Read the shared guide first:**
+https://raw.githubusercontent.com/OneSignal/sdk-shared/refs/heads/main/demo/build.md
+
+Replace `{{PLATFORM}}` with `Expo` everywhere in that guide. Everything below either overrides or supplements sections from the shared guide.
 
 ---
 

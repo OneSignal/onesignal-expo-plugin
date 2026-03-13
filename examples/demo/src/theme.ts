@@ -1,4 +1,4 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, TextInputProps } from 'react-native';
 
 export const AppColors = {
   osPrimary: '#E54B4D',
@@ -33,6 +33,12 @@ export const AppTextStyles = StyleSheet.create({
   bodySmall: { fontSize: 12, fontWeight: '400' },
   labelSmall: { fontSize: 11, fontWeight: '500' },
 });
+
+export const AppInputProps: TextInputProps = {
+  autoCorrect: false,
+  autoCapitalize: 'none',
+  autoComplete: 'off',
+};
 
 export const AppTheme = StyleSheet.create({
   card: {

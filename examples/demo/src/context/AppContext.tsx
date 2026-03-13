@@ -257,6 +257,7 @@ type AppContextValue = {
   setPushEnabled: (enabled: boolean) => void;
   sendNotification: (type: NotificationType) => Promise<void>;
   sendCustomNotification: (title: string, body: string) => Promise<void>;
+  clearAllNotifications: () => void;
   setIamPaused: (paused: boolean) => Promise<void>;
   sendIamTrigger: (iamType: string) => void;
   addAlias: (label: string, id: string) => void;
@@ -551,6 +552,12 @@ export function AppContextProvider({ children }: Props) {
     [],
   );
 
+  const clearAllNotifications = useCallback(() => {
+    repository.clearAllNotifications();
+    log.i(TAG, 'All notifications cleared');
+    Toast.show({ type: 'info', text1: 'All notifications cleared' });
+  }, []);
+
   const setIamPaused = useCallback(async (paused: boolean) => {
     dispatch({ type: 'SET_IAM_PAUSED', payload: paused });
     repository.setPaused(paused);
@@ -727,6 +734,7 @@ export function AppContextProvider({ children }: Props) {
       setPushEnabled,
       sendNotification,
       sendCustomNotification,
+      clearAllNotifications,
       setIamPaused,
       sendIamTrigger,
       addAlias,
@@ -759,6 +767,7 @@ export function AppContextProvider({ children }: Props) {
       setPushEnabled,
       sendNotification,
       sendCustomNotification,
+      clearAllNotifications,
       setIamPaused,
       sendIamTrigger,
       addAlias,
