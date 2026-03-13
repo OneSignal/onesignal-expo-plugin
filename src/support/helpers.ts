@@ -59,7 +59,9 @@ export function validatePluginProps(props: any): void {
   }
 }
 
-export function getNsePodfileSnippet(targetName = DEFAULT_NSE_TARGET_NAME): string {
+export function getNsePodfileSnippet(
+  targetName = DEFAULT_NSE_TARGET_NAME,
+): string {
   return `
 target '${targetName}' do
   pod 'OneSignalXCFramework', '>= 5.0', '< 6.0'
@@ -67,7 +69,9 @@ target '${targetName}' do
 end`;
 }
 
-export function getNsePodfileRegex(targetName = DEFAULT_NSE_TARGET_NAME): RegExp {
+export function getNsePodfileRegex(
+  targetName = DEFAULT_NSE_TARGET_NAME,
+): RegExp {
   return new RegExp(`target '${targetName}'`);
 }
 

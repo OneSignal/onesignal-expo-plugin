@@ -20,10 +20,7 @@ import {
   NSE_SOURCE_FILE,
   TARGETED_DEVICE_FAMILY,
 } from '../support/iosConstants';
-import {
-  getNseExtFiles,
-  getAppGroupIdentifier,
-} from '../support/helpers';
+import { getNseExtFiles, getAppGroupIdentifier } from '../support/helpers';
 import { updatePodfile } from '../support/updatePodfile';
 import NseUpdaterManager from '../support/NseUpdaterManager';
 import { OneSignalLog } from '../support/OneSignalLog';
@@ -134,7 +131,10 @@ const withEasManagedCredentials: ConfigPlugin<OneSignalPluginProps> = (
   return config;
 };
 
-const withOneSignalPodfile: ConfigPlugin<OneSignalPluginProps> = (config, props) => {
+const withOneSignalPodfile: ConfigPlugin<OneSignalPluginProps> = (
+  config,
+  props,
+) => {
   return withDangerousMod(config, [
     'ios',
     async (config) => {
@@ -169,7 +169,10 @@ const withOneSignalNSE: ConfigPlugin<OneSignalPluginProps> = (
       const sourceExtFiles = getNseExtFiles(DEFAULT_NSE_TARGET_NAME);
       for (let i = 0; i < nseExtFiles.length; i++) {
         const targetFile = `${iosPath}/${targetName}/${nseExtFiles[i]}`;
-        await FileManager.copyFile(`${sourceDir}${sourceExtFiles[i]}`, targetFile);
+        await FileManager.copyFile(
+          `${sourceDir}${sourceExtFiles[i]}`,
+          targetFile,
+        );
       }
 
       const sourcePath =
@@ -209,9 +212,7 @@ const withOneSignalXcodeProject: ConfigPlugin<OneSignalPluginProps> = (
     const nseExtFiles = getNseExtFiles(targetName);
 
     if (xcodeProject.pbxTargetByName(targetName)) {
-      OneSignalLog.log(
-        `${targetName} already exists in project. Skipping...`,
-      );
+      OneSignalLog.log(`${targetName} already exists in project. Skipping...`);
       return newConfig;
     }
 

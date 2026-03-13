@@ -72,9 +72,9 @@ describe('getNsePodfileRegex', () => {
   test('matches custom target name', () => {
     const regex = getNsePodfileRegex('MyNSE');
     expect(regex.test("target 'MyNSE'")).toBe(true);
-    expect(
-      regex.test("target 'OneSignalNotificationServiceExtension'"),
-    ).toBe(false);
+    expect(regex.test("target 'OneSignalNotificationServiceExtension'")).toBe(
+      false,
+    );
   });
 });
 
