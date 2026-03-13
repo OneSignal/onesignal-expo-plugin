@@ -145,16 +145,15 @@ const withOneSignalNSE: ConfigPlugin<OneSignalPluginProps> = (
   config,
   props,
 ) => {
-  // support for monorepos where node_modules can be above the project directory.
-  const pluginDir = require.resolve('onesignal-expo-plugin/package.json');
-  const sourceDir = path.join(
-    pluginDir,
-    '../build/support/serviceExtensionFiles/',
-  );
-
   return withDangerousMod(config, [
     'ios',
     async (config) => {
+      // support for monorepos where node_modules can be above the project directory.
+      const pluginDir = require.resolve('onesignal-expo-plugin/package.json');
+      const sourceDir = path.join(
+        pluginDir,
+        '../build/support/serviceExtensionFiles/',
+      );
       const iosPath = path.join(config.modRequest.projectRoot, 'ios');
       /* COPY OVER EXTENSION FILES */
       fs.mkdirSync(`${iosPath}/${NSE_TARGET_NAME}`, {
