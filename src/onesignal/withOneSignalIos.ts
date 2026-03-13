@@ -27,7 +27,6 @@ import NseUpdaterManager from '../support/NseUpdaterManager';
 import { OneSignalLog } from '../support/OneSignalLog';
 import { FileManager } from '../support/FileManager';
 import { OneSignalPluginProps } from '../types/types';
-import assert from 'assert';
 import getEasManagedCredentialsConfigExtra from '../support/eas/getEasManagedCredentialsConfigExtra';
 import { ExpoConfig } from '@expo/config-types';
 
@@ -120,10 +119,9 @@ const withEasManagedCredentials: ConfigPlugin<OneSignalPluginProps> = (
   config,
   props,
 ) => {
-  assert(
-    config.ios?.bundleIdentifier,
-    "Missing 'ios.bundleIdentifier' in app config.",
-  );
+  if (!config.ios?.bundleIdentifier) {
+    return config;
+  }
   config.extra = getEasManagedCredentialsConfigExtra(
     config as ExpoConfig,
     props?.appGroupName,
@@ -147,16 +145,15 @@ const withOneSignalNSE: ConfigPlugin<OneSignalPluginProps> = (
   config,
   props,
 ) => {
-  // support for monorepos where node_modules can be above the project directory.
-  const pluginDir = require.resolve('onesignal-expo-plugin/package.json');
-  const sourceDir = path.join(
-    pluginDir,
-    '../build/support/serviceExtensionFiles/',
-  );
-
   return withDangerousMod(config, [
     'ios',
     async (config) => {
+      // support for monorepos where node_modules can be above the project directory.
+      const pluginDir = require.resolve('onesignal-expo-plugin/package.json');
+      const sourceDir = path.join(
+        pluginDir,
+        '../build/support/serviceExtensionFiles/',
+      );
       const iosPath = path.join(config.modRequest.projectRoot, 'ios');
       /* COPY OVER EXTENSION FILES */
       fs.mkdirSync(`${iosPath}/${NSE_TARGET_NAME}`, {
