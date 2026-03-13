@@ -3,7 +3,7 @@ import {
   BUNDLE_SHORT_VERSION_TEMPLATE_REGEX,
   BUNDLE_VERSION_TEMPLATE_REGEX,
   GROUP_IDENTIFIER_TEMPLATE_REGEX,
-  DEFAULT_NSE_TARGET_NAME,
+  NSE_TARGET_NAME,
 } from './iosConstants';
 
 export default class NseUpdaterManager {
@@ -11,10 +11,10 @@ export default class NseUpdaterManager {
   private entitlementsFileName: string;
   private plistFileName: string;
 
-  constructor(iosPath: string, nseTargetName = DEFAULT_NSE_TARGET_NAME) {
-    this.nsePath = `${iosPath}/${nseTargetName}`;
-    this.entitlementsFileName = `${nseTargetName}.entitlements`;
-    this.plistFileName = `${nseTargetName}-Info.plist`;
+  constructor(iosPath: string) {
+    this.nsePath = `${iosPath}/${NSE_TARGET_NAME}`;
+    this.entitlementsFileName = `${NSE_TARGET_NAME}.entitlements`;
+    this.plistFileName = `${NSE_TARGET_NAME}-Info.plist`;
   }
 
   async updateNSEEntitlements(groupIdentifier: string): Promise<void> {

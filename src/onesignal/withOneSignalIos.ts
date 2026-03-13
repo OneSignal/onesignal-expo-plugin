@@ -16,7 +16,7 @@ import {
   DEFAULT_BUNDLE_SHORT_VERSION,
   DEFAULT_BUNDLE_VERSION,
   IPHONEOS_DEPLOYMENT_TARGET,
-  DEFAULT_NSE_TARGET_NAME,
+  NSE_TARGET_NAME,
   NSE_SOURCE_FILE,
   TARGETED_DEVICE_FAMILY,
 } from '../support/iosConstants';
@@ -126,20 +126,17 @@ const withEasManagedCredentials: ConfigPlugin<OneSignalPluginProps> = (
   config.extra = getEasManagedCredentialsConfigExtra(
     config as ExpoConfig,
     props?.appGroupName,
-    props?.nseTargetName,
+    props?.nseBundleIdentifier,
   );
   return config;
 };
 
-const withOneSignalPodfile: ConfigPlugin<OneSignalPluginProps> = (
-  config,
-  props,
-) => {
+const withOneSignalPodfile: ConfigPlugin<OneSignalPluginProps> = (config) => {
   return withDangerousMod(config, [
     'ios',
     async (config) => {
       const iosRoot = path.join(config.modRequest.projectRoot, 'ios');
-      await updatePodfile(iosRoot, props.nseTargetName);
+      await updatePodfile(iosRoot);
       return config;
     },
   ]);
@@ -160,28 +157,25 @@ const withOneSignalNSE: ConfigPlugin<OneSignalPluginProps> = (
     'ios',
     async (config) => {
       const iosPath = path.join(config.modRequest.projectRoot, 'ios');
-      const targetName = props.nseTargetName ?? DEFAULT_NSE_TARGET_NAME;
-      const nseExtFiles = getNseExtFiles(targetName);
+      const nseExtFiles = getNseExtFiles();
 
       /* COPY OVER EXTENSION FILES */
-      fs.mkdirSync(`${iosPath}/${targetName}`, { recursive: true });
+      fs.mkdirSync(`${iosPath}/${NSE_TARGET_NAME}`, {
+        recursive: true,
+      });
 
-      const sourceExtFiles = getNseExtFiles(DEFAULT_NSE_TARGET_NAME);
-      for (let i = 0; i < nseExtFiles.length; i++) {
-        const targetFile = `${iosPath}/${targetName}/${nseExtFiles[i]}`;
-        await FileManager.copyFile(
-          `${sourceDir}${sourceExtFiles[i]}`,
-          targetFile,
-        );
+      for (const file of nseExtFiles) {
+        const targetFile = `${iosPath}/${NSE_TARGET_NAME}/${file}`;
+        await FileManager.copyFile(`${sourceDir}${file}`, targetFile);
       }
 
       const sourcePath =
         props.iosNSEFilePath ?? `${sourceDir}${NSE_SOURCE_FILE}`;
-      const targetFile = `${iosPath}/${targetName}/${NSE_SOURCE_FILE}`;
+      const targetFile = `${iosPath}/${NSE_TARGET_NAME}/${NSE_SOURCE_FILE}`;
       await FileManager.copyFile(`${sourcePath}`, targetFile);
 
       /* MODIFY COPIED EXTENSION FILES */
-      const nseUpdater = new NseUpdaterManager(iosPath, targetName);
+      const nseUpdater = new NseUpdaterManager(iosPath);
       const appGroupId = getAppGroupIdentifier(
         config.ios?.bundleIdentifier ?? '',
         props.appGroupName,
@@ -208,19 +202,23 @@ const withOneSignalXcodeProject: ConfigPlugin<OneSignalPluginProps> = (
 ) => {
   return withXcodeProject(config, (newConfig) => {
     const xcodeProject = newConfig.modResults;
-    const targetName = props.nseTargetName ?? DEFAULT_NSE_TARGET_NAME;
-    const nseExtFiles = getNseExtFiles(targetName);
+    const nseExtFiles = getNseExtFiles();
+    const nseBundleId = `${config.ios?.bundleIdentifier}.${
+      props.nseBundleIdentifier ?? NSE_TARGET_NAME
+    }`;
 
-    if (xcodeProject.pbxTargetByName(targetName)) {
-      OneSignalLog.log(`${targetName} already exists in project. Skipping...`);
+    if (xcodeProject.pbxTargetByName(NSE_TARGET_NAME)) {
+      OneSignalLog.log(
+        `${NSE_TARGET_NAME} already exists in project. Skipping...`,
+      );
       return newConfig;
     }
 
     // Create new PBXGroup for the extension
     const extGroup = xcodeProject.addPbxGroup(
       [...nseExtFiles, NSE_SOURCE_FILE],
-      targetName,
-      targetName,
+      NSE_TARGET_NAME,
+      NSE_TARGET_NAME,
     );
 
     // Add the new PBXGroup to the top level group. This makes the
@@ -249,10 +247,10 @@ const withOneSignalXcodeProject: ConfigPlugin<OneSignalPluginProps> = (
     // Add the NSE target
     // This adds PBXTargetDependency and PBXContainerItemProxy for you
     const nseTarget = xcodeProject.addTarget(
-      targetName,
+      NSE_TARGET_NAME,
       'app_extension',
-      targetName,
-      `${config.ios?.bundleIdentifier}.${targetName}`,
+      NSE_TARGET_NAME,
+      nseBundleId,
     );
 
     // Add build phases to the new target
@@ -282,14 +280,14 @@ const withOneSignalXcodeProject: ConfigPlugin<OneSignalPluginProps> = (
     for (const key in configurations) {
       if (
         typeof configurations[key].buildSettings !== 'undefined' &&
-        configurations[key].buildSettings.PRODUCT_NAME == `"${targetName}"`
+        configurations[key].buildSettings.PRODUCT_NAME == `"${NSE_TARGET_NAME}"`
       ) {
         const buildSettingsObj = configurations[key].buildSettings;
         buildSettingsObj.DEVELOPMENT_TEAM = props?.devTeam;
         buildSettingsObj.IPHONEOS_DEPLOYMENT_TARGET =
           props?.iPhoneDeploymentTarget ?? IPHONEOS_DEPLOYMENT_TARGET;
         buildSettingsObj.TARGETED_DEVICE_FAMILY = TARGETED_DEVICE_FAMILY;
-        buildSettingsObj.CODE_SIGN_ENTITLEMENTS = `${targetName}/${targetName}.entitlements`;
+        buildSettingsObj.CODE_SIGN_ENTITLEMENTS = `${NSE_TARGET_NAME}/${NSE_TARGET_NAME}.entitlements`;
         buildSettingsObj.CODE_SIGN_STYLE = 'Automatic';
       }
     }

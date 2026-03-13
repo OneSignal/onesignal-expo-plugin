@@ -74,11 +74,13 @@ describe('NseUpdaterManager', () => {
     expect(written).toContain('</dict>\n</plist>');
   });
 
-  test('uses custom target name for file paths', async () => {
-    const updater = new NseUpdaterManager('/ios', 'MyNSE');
+  test('uses default target name for file paths', async () => {
+    const updater = new NseUpdaterManager('/ios');
     await updater.updateNSEEntitlements('group.com.example.app.onesignal');
 
     const paths = Object.keys(writtenFiles);
-    expect(paths[0]).toBe('/ios/MyNSE/MyNSE.entitlements');
+    expect(paths[0]).toBe(
+      '/ios/OneSignalNotificationServiceExtension/OneSignalNotificationServiceExtension.entitlements',
+    );
   });
 });

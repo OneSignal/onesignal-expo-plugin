@@ -1,26 +1,20 @@
 import fs from 'fs/promises';
-import { DEFAULT_NSE_TARGET_NAME } from './iosConstants';
+import { NSE_TARGET_NAME } from './iosConstants';
 import { getNsePodfileRegex, getNsePodfileSnippet } from './helpers';
 import { OneSignalLog } from './OneSignalLog';
 import { FileManager } from './FileManager';
 
-export async function updatePodfile(
-  iosPath: string,
-  nseTargetName = DEFAULT_NSE_TARGET_NAME,
-) {
+export async function updatePodfile(iosPath: string) {
   const podfile = await FileManager.readFile(`${iosPath}/Podfile`);
-  const matches = podfile.match(getNsePodfileRegex(nseTargetName));
+  const matches = podfile.match(getNsePodfileRegex());
 
   if (matches) {
     OneSignalLog.log(
-      `${nseTargetName} target already added to Podfile. Skipping...`,
+      `${NSE_TARGET_NAME} target already added to Podfile. Skipping...`,
     );
     return;
   }
 
-  await fs.appendFile(
-    `${iosPath}/Podfile`,
-    getNsePodfileSnippet(nseTargetName),
-  );
-  OneSignalLog.log(`${nseTargetName} target added to Podfile.`);
+  await fs.appendFile(`${iosPath}/Podfile`, getNsePodfileSnippet());
+  OneSignalLog.log(`${NSE_TARGET_NAME} target added to Podfile.`);
 }

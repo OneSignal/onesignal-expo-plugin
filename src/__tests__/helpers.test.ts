@@ -38,26 +38,23 @@ describe('validatePluginProps', () => {
     expect(() => validatePluginProps(validProps)).not.toThrow();
   });
 
-  test('accepts valid nseTargetName string', () => {
+  test('accepts valid nseBundleIdentifier string', () => {
     expect(() =>
-      validatePluginProps({ ...validProps, nseTargetName: 'MyNSE' }),
+      validatePluginProps({
+        ...validProps,
+        nseBundleIdentifier: 'com.example.app.MyNSE',
+      }),
     ).not.toThrow();
   });
 });
 
 describe('getNsePodfileSnippet', () => {
-  test('uses default target name', () => {
+  test('contains default target name and OneSignal pod', () => {
     const snippet = getNsePodfileSnippet();
     expect(snippet).toContain(
       "target 'OneSignalNotificationServiceExtension' do",
     );
     expect(snippet).toContain("pod 'OneSignalXCFramework'");
-  });
-
-  test('uses custom target name', () => {
-    const snippet = getNsePodfileSnippet('MyNSE');
-    expect(snippet).toContain("target 'MyNSE' do");
-    expect(snippet).not.toContain('OneSignalNotificationServiceExtension');
   });
 });
 
@@ -68,32 +65,15 @@ describe('getNsePodfileRegex', () => {
       true,
     );
   });
-
-  test('matches custom target name', () => {
-    const regex = getNsePodfileRegex('MyNSE');
-    expect(regex.test("target 'MyNSE'")).toBe(true);
-    expect(regex.test("target 'OneSignalNotificationServiceExtension'")).toBe(
-      false,
-    );
-  });
 });
 
 describe('getNseExtFiles', () => {
-  test('uses default target name', () => {
+  test('returns default extension files', () => {
     const files = getNseExtFiles();
     expect(files).toEqual([
       'NotificationService.h',
       'OneSignalNotificationServiceExtension.entitlements',
       'OneSignalNotificationServiceExtension-Info.plist',
-    ]);
-  });
-
-  test('uses custom target name', () => {
-    const files = getNseExtFiles('MyNSE');
-    expect(files).toEqual([
-      'NotificationService.h',
-      'MyNSE.entitlements',
-      'MyNSE-Info.plist',
     ]);
   });
 });
