@@ -1,0 +1,28 @@
+{
+  "name": "disable-nse",
+  "main": "expo/AppEntry",
+  "version": "1.0.0",
+  "scripts": {
+    "setup": "../setup.sh",
+    "preandroid": "bun run setup",
+    "preios": "bun run setup",
+    "start": "expo start",
+    "android": "expo run:android --device",
+    "ios": "expo run:ios --device",
+    "open:ios": "open ios/DisableNSEExample.xcworkspace"
+  },
+  "dependencies": {
+    "expo": "~54.0.33",
+    "expo-constants": "~18.0.13",
+    "expo-status-bar": "~3.0.9",
+    "onesignal-expo-plugin": "file:../../onesignal-expo-plugin.tgz",
+    "react": "19.1.0",
+    "react-native": "0.81.5",
+    "react-native-onesignal": "^5.3.1"
+  },
+  "devDependencies": {
+    "@types/react": "~19.1.0",
+    "typescript": "~5.9.2"
+  },
+  "private": true
+}

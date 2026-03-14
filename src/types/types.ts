@@ -53,6 +53,13 @@ export type OneSignalPluginProps = {
    * If not provided, defaults to "OneSignalNotificationServiceExtension".
    */
   nseBundleIdentifier?: string;
+
+  /**
+   * (optional) If true, the iOS Notification Service Extension (NSE) will not be added to the project.
+   * The NSE is required for badges, confirmed delivery, media attachments, and action buttons.
+   * Only disable if you only need basic push notifications.
+   */
+  disableNSE?: boolean;
 };
 
 export const ONESIGNAL_PLUGIN_PROPS: string[] = [
@@ -65,6 +72,7 @@ export const ONESIGNAL_PLUGIN_PROPS: string[] = [
   'smallIconAccentColor',
   'appGroupName',
   'nseBundleIdentifier',
+  'disableNSE',
 ];
 
 export enum Mode {
