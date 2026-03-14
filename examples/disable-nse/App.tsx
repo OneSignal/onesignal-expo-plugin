@@ -23,7 +23,12 @@ export default function App() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: 24 },
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 24,
+  },
   title: { fontSize: 20, fontWeight: '600', marginBottom: 8 },
   subtitle: { fontSize: 14, color: '#666', textAlign: 'center' },
 });

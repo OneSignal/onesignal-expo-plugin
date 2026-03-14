@@ -55,13 +55,8 @@ export function validatePluginProps(props: any): void {
     );
   }
 
-  if (
-    props.disableNSE !== undefined &&
-    typeof props.disableNSE !== 'boolean'
-  ) {
-    throw new Error(
-      "OneSignal Expo Plugin: 'disableNSE' must be a boolean.",
-    );
+  if (props.disableNSE !== undefined && typeof props.disableNSE !== 'boolean') {
+    throw new Error("OneSignal Expo Plugin: 'disableNSE' must be a boolean.");
   }
 
   // check for extra properties
