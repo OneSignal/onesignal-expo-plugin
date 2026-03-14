@@ -31,6 +31,8 @@ const LARGE_ICON_DIRS_TO_SIZE: { [name: string]: number } = {
   'drawable-xxxhdpi': 256,
 };
 
+const SMALL_ICON_DEFAULT_NAME = 'ic_stat_onesignal_default';
+
 const withSmallIcons: ConfigPlugin<OneSignalPluginProps> = (
   config,
   onesignalProps,
@@ -39,7 +41,6 @@ const withSmallIcons: ConfigPlugin<OneSignalPluginProps> = (
     return config;
   }
 
-  // we are modifying the android build (adding files) without a base mod
   return withDangerousMod(config, [
     'android',
     async (config) => {
@@ -48,6 +49,7 @@ const withSmallIcons: ConfigPlugin<OneSignalPluginProps> = (
           config.notification.icon,
           config.modRequest.projectRoot,
           SMALL_ICON_DIRS_TO_SIZE,
+          SMALL_ICON_DEFAULT_NAME,
         );
       }
 
@@ -56,12 +58,15 @@ const withSmallIcons: ConfigPlugin<OneSignalPluginProps> = (
           config.modRequest.projectRoot,
           onesignalProps.smallIcons,
           SMALL_ICON_DIRS_TO_SIZE,
+          SMALL_ICON_DEFAULT_NAME,
         );
       }
       return config;
     },
   ]);
 };
+
+const LARGE_ICON_DEFAULT_NAME = 'ic_onesignal_large_icon_default';
 
 const withLargeIcons: ConfigPlugin<OneSignalPluginProps> = (
   config,
@@ -71,7 +76,6 @@ const withLargeIcons: ConfigPlugin<OneSignalPluginProps> = (
     return config;
   }
 
-  // we are modifying the android build (adding files) without a base mod
   return withDangerousMod(config, [
     'android',
     async (config) => {
@@ -80,6 +84,7 @@ const withLargeIcons: ConfigPlugin<OneSignalPluginProps> = (
           config.modRequest.projectRoot,
           onesignalProps.largeIcons,
           LARGE_ICON_DIRS_TO_SIZE,
+          LARGE_ICON_DEFAULT_NAME,
         );
       }
       return config;
@@ -126,9 +131,11 @@ async function saveIconsArrayAsync(
   projectRoot: string,
   icons: string[],
   dirsToSize: { [name: string]: number },
+  defaultName: string,
 ) {
-  for (const icon of icons) {
-    await saveIconAsync(icon, projectRoot, dirsToSize);
+  for (let i = 0; i < icons.length; i++) {
+    const outputName = i === 0 ? defaultName : undefined;
+    await saveIconAsync(icons[i], projectRoot, dirsToSize, outputName);
   }
 }
 
@@ -136,8 +143,9 @@ async function saveIconAsync(
   icon: string,
   projectRoot: string,
   dirsToSize: { [name: string]: number },
+  outputName?: string,
 ) {
-  const name = parse(icon).name;
+  const name = outputName ?? parse(icon).name;
 
   OneSignalLog.log('Saving icon ' + icon + ' as drawable resource ' + name);
 
