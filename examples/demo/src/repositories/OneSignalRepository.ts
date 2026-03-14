@@ -122,8 +122,8 @@ class OneSignalRepository {
   }
 
   // Notifications
-  hasPermission(): boolean {
-    return OneSignal.Notifications.hasPermission();
+  async hasPermission(): Promise<boolean> {
+    return OneSignal.Notifications.getPermissionAsync();
   }
 
   async requestPermission(fallbackToSettings: boolean): Promise<boolean> {
