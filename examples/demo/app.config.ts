@@ -43,7 +43,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
         devTeam: '99SW8E36CT', // Optional: For setting the Notification Service Extension's development team
         appGroupName: 'group.expoCustom', // Optional: If you had your own app group name, you can set it here
         nseBundleIdentifier: 'ExpoNSE', // Optional: Custom bundle identifier for the Notification Service Extension
-        smallIcons: ['./assets/images/icon.png'],
+        smallIcons: ['./assets/images/small_icon.png'],
       },
     ],
     'expo-router',
