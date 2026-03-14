@@ -8,10 +8,10 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   orientation: 'portrait',
   newArchEnabled: true,
   ios: {
-    bundleIdentifier: 'com.onesignal.example.disablense',
+    bundleIdentifier: 'com.onesignal.example',
   },
   android: {
-    package: 'com.onesignal.example.disablense',
+    package: 'com.onesignal.example',
   },
   plugins: [
     [

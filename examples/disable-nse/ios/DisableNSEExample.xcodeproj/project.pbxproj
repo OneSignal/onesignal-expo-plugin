@@ -8,25 +8,25 @@
 
 /* Begin PBXBuildFile section */
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
-		18F6771EB358BCA7B4B0BEC3 /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = A76450CD13F86EB8EB2ACB14 /* ExpoModulesProvider.swift */; };
+		3C69D065CA9445FE8DE6ED16 /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CB2340C8D1FF549B6B87417 /* ExpoModulesProvider.swift */; };
 		3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */; };
-		5D8488735451DB4FEFD4B0C9 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 3AA222B08A048EA18C6A923A /* PrivacyInfo.xcprivacy */; };
-		8C6AD42C998E27202B9033F0 /* libPods-DisableNSEExample.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6813946A979435D4ECA90F7B /* libPods-DisableNSEExample.a */; };
+		7048CC20093988BD60EADE5D /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 9B3523A8600E2C523CDF5A63 /* PrivacyInfo.xcprivacy */; };
+		9C670C331485068ED02A4F03 /* libPods-DisableNSEExample.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DAE1BD8D37352C71AEEACB39 /* libPods-DisableNSEExample.a */; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
 		F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F11748412D0307B40044C1D9 /* AppDelegate.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		033164041A981AC57443E13C /* Pods-DisableNSEExample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DisableNSEExample.debug.xcconfig"; path = "Target Support Files/Pods-DisableNSEExample/Pods-DisableNSEExample.debug.xcconfig"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* DisableNSEExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DisableNSEExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = DisableNSEExample/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = DisableNSEExample/Info.plist; sourceTree = "<group>"; };
-		30F08D6C76A65DB7BE32645C /* Pods-DisableNSEExample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DisableNSEExample.debug.xcconfig"; path = "Target Support Files/Pods-DisableNSEExample/Pods-DisableNSEExample.debug.xcconfig"; sourceTree = "<group>"; };
-		3768E2E4E21F94C0F4F35C7F /* Pods-DisableNSEExample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DisableNSEExample.release.xcconfig"; path = "Target Support Files/Pods-DisableNSEExample/Pods-DisableNSEExample.release.xcconfig"; sourceTree = "<group>"; };
-		3AA222B08A048EA18C6A923A /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; name = PrivacyInfo.xcprivacy; path = DisableNSEExample/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
-		6813946A979435D4ECA90F7B /* libPods-DisableNSEExample.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-DisableNSEExample.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		A76450CD13F86EB8EB2ACB14 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-DisableNSEExample/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
+		1CB2340C8D1FF549B6B87417 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-DisableNSEExample/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
+		9B3523A8600E2C523CDF5A63 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; name = PrivacyInfo.xcprivacy; path = DisableNSEExample/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = DisableNSEExample/SplashScreen.storyboard; sourceTree = "<group>"; };
 		BB2F792C24A3F905000567C9 /* Expo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Expo.plist; sourceTree = "<group>"; };
+		D901B36DA3DA1796F1CED2AA /* Pods-DisableNSEExample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DisableNSEExample.release.xcconfig"; path = "Target Support Files/Pods-DisableNSEExample/Pods-DisableNSEExample.release.xcconfig"; sourceTree = "<group>"; };
+		DAE1BD8D37352C71AEEACB39 /* libPods-DisableNSEExample.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-DisableNSEExample.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		F11748412D0307B40044C1D9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = DisableNSEExample/AppDelegate.swift; sourceTree = "<group>"; };
 		F11748442D0722820044C1D9 /* DisableNSEExample-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "DisableNSEExample-Bridging-Header.h"; path = "DisableNSEExample/DisableNSEExample-Bridging-Header.h"; sourceTree = "<group>"; };
@@ -37,21 +37,13 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8C6AD42C998E27202B9033F0 /* libPods-DisableNSEExample.a in Frameworks */,
+				9C670C331485068ED02A4F03 /* libPods-DisableNSEExample.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		0E78F50579556600084BB923 /* ExpoModulesProviders */ = {
-			isa = PBXGroup;
-			children = (
-				C4C33EC2B0FC7ACEEC911EED /* DisableNSEExample */,
-			);
-			name = ExpoModulesProviders;
-			sourceTree = "<group>";
-		};
 		13B07FAE1A68108700A75B9A /* DisableNSEExample */ = {
 			isa = PBXGroup;
 			children = (
@@ -61,7 +53,7 @@
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */,
-				3AA222B08A048EA18C6A923A /* PrivacyInfo.xcprivacy */,
+				9B3523A8600E2C523CDF5A63 /* PrivacyInfo.xcprivacy */,
 			);
 			name = DisableNSEExample;
 			sourceTree = "<group>";
@@ -70,7 +62,7 @@
 			isa = PBXGroup;
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
-				6813946A979435D4ECA90F7B /* libPods-DisableNSEExample.a */,
+				DAE1BD8D37352C71AEEACB39 /* libPods-DisableNSEExample.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -89,8 +81,8 @@
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
-				9CA9D5827029A35D4C2A100A /* Pods */,
-				0E78F50579556600084BB923 /* ExpoModulesProviders */,
+				8896413E3D889B0022A43509 /* Pods */,
+				F70D814E615070B23C998AA8 /* ExpoModulesProviders */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -105,11 +97,11 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		9CA9D5827029A35D4C2A100A /* Pods */ = {
+		8896413E3D889B0022A43509 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				30F08D6C76A65DB7BE32645C /* Pods-DisableNSEExample.debug.xcconfig */,
-				3768E2E4E21F94C0F4F35C7F /* Pods-DisableNSEExample.release.xcconfig */,
+				033164041A981AC57443E13C /* Pods-DisableNSEExample.debug.xcconfig */,
+				D901B36DA3DA1796F1CED2AA /* Pods-DisableNSEExample.release.xcconfig */,
 			);
 			name = Pods;
 			path = Pods;
@@ -124,12 +116,20 @@
 			path = DisableNSEExample/Supporting;
 			sourceTree = "<group>";
 		};
-		C4C33EC2B0FC7ACEEC911EED /* DisableNSEExample */ = {
+		C18352F7B5EB725C0CCA3D7D /* DisableNSEExample */ = {
 			isa = PBXGroup;
 			children = (
-				A76450CD13F86EB8EB2ACB14 /* ExpoModulesProvider.swift */,
+				1CB2340C8D1FF549B6B87417 /* ExpoModulesProvider.swift */,
 			);
 			name = DisableNSEExample;
+			sourceTree = "<group>";
+		};
+		F70D814E615070B23C998AA8 /* ExpoModulesProviders */ = {
+			isa = PBXGroup;
+			children = (
+				C18352F7B5EB725C0CCA3D7D /* DisableNSEExample */,
+			);
+			name = ExpoModulesProviders;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -140,13 +140,13 @@
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "DisableNSEExample" */;
 			buildPhases = (
 				08A4A3CD28434E44B6B9DE2E /* [CP] Check Pods Manifest.lock */,
-				E3BE21EED05234C1C1BA6626 /* [Expo] Configure project */,
+				8E2E529392343CAE746FFAB3 /* [Expo] Configure project */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */,
-				328D855E9A57F8E1A65C1244 /* [CP] Embed Pods Frameworks */,
+				D6AB16B4E86A40C322E00C8C /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -196,7 +196,7 @@
 				BB2F792D24A3F905000567C9 /* Expo.plist in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */,
-				5D8488735451DB4FEFD4B0C9 /* PrivacyInfo.xcprivacy in Resources */,
+				7048CC20093988BD60EADE5D /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -242,7 +242,57 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		328D855E9A57F8E1A65C1244 /* [CP] Embed Pods Frameworks */ = {
+		800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-DisableNSEExample/Pods-DisableNSEExample-resources.sh",
+				"${PODS_CONFIGURATION_BUILD_DIR}/EXConstants/EXConstants.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/EXConstants/ExpoConstants_privacy.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/ExpoFileSystem/ExpoFileSystem_privacy.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/React-Core/React-Core_privacy.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/React-cxxreact/React-cxxreact_privacy.bundle",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/EXConstants.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ExpoConstants_privacy.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ExpoFileSystem_privacy.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/React-Core_privacy.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/React-cxxreact_privacy.bundle",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-DisableNSEExample/Pods-DisableNSEExample-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		8E2E529392343CAE746FFAB3 /* [Expo] Configure project */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/.xcode.env",
+				"$(SRCROOT)/.xcode.env.local",
+				"$(SRCROOT)/DisableNSEExample/DisableNSEExample.entitlements",
+				"$(SRCROOT)/Pods/Target Support Files/Pods-DisableNSEExample/expo-configure-project.sh",
+			);
+			name = "[Expo] Configure project";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(SRCROOT)/Pods/Target Support Files/Pods-DisableNSEExample/ExpoModulesProvider.swift",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# This script configures Expo modules and generates the modules provider file.\nbash -l -c \"./Pods/Target\\ Support\\ Files/Pods-DisableNSEExample/expo-configure-project.sh\"\n";
+		};
+		D6AB16B4E86A40C322E00C8C /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -284,56 +334,6 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-DisableNSEExample/Pods-DisableNSEExample-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-DisableNSEExample/Pods-DisableNSEExample-resources.sh",
-				"${PODS_CONFIGURATION_BUILD_DIR}/EXConstants/EXConstants.bundle",
-				"${PODS_CONFIGURATION_BUILD_DIR}/EXConstants/ExpoConstants_privacy.bundle",
-				"${PODS_CONFIGURATION_BUILD_DIR}/ExpoFileSystem/ExpoFileSystem_privacy.bundle",
-				"${PODS_CONFIGURATION_BUILD_DIR}/React-Core/React-Core_privacy.bundle",
-				"${PODS_CONFIGURATION_BUILD_DIR}/React-cxxreact/React-cxxreact_privacy.bundle",
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/EXConstants.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ExpoConstants_privacy.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ExpoFileSystem_privacy.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/React-Core_privacy.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/React-cxxreact_privacy.bundle",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-DisableNSEExample/Pods-DisableNSEExample-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		E3BE21EED05234C1C1BA6626 /* [Expo] Configure project */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"$(SRCROOT)/.xcode.env",
-				"$(SRCROOT)/.xcode.env.local",
-				"$(SRCROOT)/DisableNSEExample/DisableNSEExample.entitlements",
-				"$(SRCROOT)/Pods/Target Support Files/Pods-DisableNSEExample/expo-configure-project.sh",
-			);
-			name = "[Expo] Configure project";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(SRCROOT)/Pods/Target Support Files/Pods-DisableNSEExample/ExpoModulesProvider.swift",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# This script configures Expo modules and generates the modules provider file.\nbash -l -c \"./Pods/Target\\ Support\\ Files/Pods-DisableNSEExample/expo-configure-project.sh\"\n";
-		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -342,7 +342,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */,
-				18F6771EB358BCA7B4B0BEC3 /* ExpoModulesProvider.swift in Sources */,
+				3C69D065CA9445FE8DE6ED16 /* ExpoModulesProvider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -351,7 +351,7 @@
 /* Begin XCBuildConfiguration section */
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 30F08D6C76A65DB7BE32645C /* Pods-DisableNSEExample.debug.xcconfig */;
+			baseConfigurationReference = 033164041A981AC57443E13C /* Pods-DisableNSEExample.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -375,7 +375,7 @@
 					"-lc++",
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_DEBUG";
-				PRODUCT_BUNDLE_IDENTIFIER = com.onesignal.example.disablense;
+				PRODUCT_BUNDLE_IDENTIFIER = com.onesignal.example;
 				PRODUCT_NAME = DisableNSEExample;
 				SWIFT_OBJC_BRIDGING_HEADER = "DisableNSEExample/DisableNSEExample-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -387,7 +387,7 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3768E2E4E21F94C0F4F35C7F /* Pods-DisableNSEExample.release.xcconfig */;
+			baseConfigurationReference = D901B36DA3DA1796F1CED2AA /* Pods-DisableNSEExample.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -406,7 +406,7 @@
 					"-lc++",
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_RELEASE";
-				PRODUCT_BUNDLE_IDENTIFIER = com.onesignal.example.disablense;
+				PRODUCT_BUNDLE_IDENTIFIER = com.onesignal.example;
 				PRODUCT_NAME = DisableNSEExample;
 				SWIFT_OBJC_BRIDGING_HEADER = "DisableNSEExample/DisableNSEExample-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
