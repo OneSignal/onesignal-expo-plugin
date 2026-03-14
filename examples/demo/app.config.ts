@@ -44,6 +44,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
         appGroupName: 'group.expoCustom', // Optional: If you had your own app group name, you can set it here
         nseBundleIdentifier: 'ExpoNSE', // Optional: Custom bundle identifier for the Notification Service Extension
         smallIcons: ['./assets/images/small_icon.png'],
+        smallIconAccentColor: '#C0FFEE',
       },
     ],
     'expo-router',
