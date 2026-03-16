@@ -304,11 +304,13 @@ export const withOneSignalIos: ConfigPlugin<OneSignalPluginProps> = (
 ) => {
   config = withAppEnvironment(config, props);
   config = withRemoteNotificationsPermissions(config, props);
-  config = withCustomAppGroupsKey(config, props);
-  config = withAppGroupPermissions(config, props);
-  config = withOneSignalPodfile(config, props);
-  config = withOneSignalNSE(config, props);
-  config = withOneSignalXcodeProject(config, props);
-  config = withEasManagedCredentials(config, props);
+  if (!props.disableNSE) {
+    config = withCustomAppGroupsKey(config, props);
+    config = withAppGroupPermissions(config, props);
+    config = withOneSignalPodfile(config, props);
+    config = withOneSignalNSE(config, props);
+    config = withOneSignalXcodeProject(config, props);
+    config = withEasManagedCredentials(config, props);
+  }
   return config;
 };

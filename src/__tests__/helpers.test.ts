@@ -47,4 +47,26 @@ describe('validatePluginProps', () => {
       validatePluginProps({ ...validProps, nseBundleIdentifier: 123 }),
     ).toThrow("'nseBundleIdentifier' must be a string");
   });
+
+  test('accepts disableNSE as true', () => {
+    expect(() =>
+      validatePluginProps({ ...validProps, disableNSE: true }),
+    ).not.toThrow();
+  });
+
+  test('accepts disableNSE as false', () => {
+    expect(() =>
+      validatePluginProps({ ...validProps, disableNSE: false }),
+    ).not.toThrow();
+  });
+
+  test('rejects non-boolean disableNSE', () => {
+    expect(() =>
+      validatePluginProps({ ...validProps, disableNSE: 'true' }),
+    ).toThrow("'disableNSE' must be a boolean");
+  });
+
+  test('allows disableNSE to be omitted', () => {
+    expect(() => validatePluginProps(validProps)).not.toThrow();
+  });
 });
