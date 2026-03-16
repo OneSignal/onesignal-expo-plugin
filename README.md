@@ -14,7 +14,7 @@
   </a>
 </p>
 
-> The OneSignal Expo plugin allows you to use OneSignal without leaving the managed workflow. Developed in collaboration with SweetGreen.
+> The OneSignal Expo plugin allows you to use OneSignal without leaving the managed workflow. Developed in collaboration with SweetGreen
 
 - 🏠 [Homepage](https://github.com/OneSignal/onesignal-expo-plugin#readme)
 - 🖤 [npm](https://www.npmjs.com/package/onesignal-expo-plugin)
@@ -87,8 +87,8 @@ You can pass props to the plugin config object to configure:
 | `largeIcons`             | optional     | An array of local paths to large notification icons for Android. Image should be white, transparent, and 256x256 in size. e.g: `["./assets/ic_onesignal_large_icon_default.png"]`. See https://documentation.onesignal.com/docs/customize-notification-icons#large-notification-icons.                                                                                        |
 | `smallIconAccentColor`   | optional     | The accent color to use for notification icons on Android. Must be a valid hex value, e.g: `"#FF0000"`                                                                                                                                                                                                                                                                        |
 | `iosNSEFilePath`         | optional     | The local path to a custom Notification Service Extension (NSE), written in Objective-C. The NSE will typically start as a copy of the [default NSE](https://github.com/OneSignal/onesignal-expo-plugin/blob/main/support/serviceExtensionFiles/NotificationService.m), then altered to support any custom logic required. e.g: `"./assets/NotificationService.m"`.           |
-| `appGroupName`           | optional     | Used to configure a custom iOS [App Group](https://documentation.onesignal.com/docs/ios-sdk-setup#step-3-create-an-app-group) name. If not provided, defaults to `"group.{ios.bundleIdentifier}.onesignal"`. e.g: `"group.com.example.myapp.onesignal2"`. |
-| `nseBundleIdentifier`    | optional     | Used to configure a custom bundle identifier suffix for the iOS Notification Service Extension. The full bundle identifier will be `"{ios.bundleIdentifier}.{nseBundleIdentifier}"`. If not provided, defaults to `"OneSignalNotificationServiceExtension"`. |
+| `appGroupName`           | optional     | Used to configure a custom iOS [App Group](https://documentation.onesignal.com/docs/ios-sdk-setup#step-3-create-an-app-group) name. If not provided, defaults to `"group.{ios.bundleIdentifier}.onesignal"`. e.g: `"group.com.example.myapp.onesignal2"`.                                                                                                                     |
+| `nseBundleIdentifier`    | optional     | Used to configure a custom bundle identifier suffix for the iOS Notification Service Extension. The full bundle identifier will be `"{ios.bundleIdentifier}.{nseBundleIdentifier}"`. If not provided, defaults to `"OneSignalNotificationServiceExtension"`.                                                                                                                  |
 
 ### OneSignal App ID
 
@@ -107,15 +107,15 @@ Add your OneSignal App ID to your [Expo constants via the `extra` param](https:/
 You can then access the value to pass to the `initialize` function:
 
 ```js
-import { OneSignal } from "react-native-onesignal";
-import Constants from "expo-constants";
+import { OneSignal } from 'react-native-onesignal';
+import Constants from 'expo-constants';
 OneSignal.initialize(Constants.expoConfig.extra.oneSignalAppId);
 ```
 
 Alternatively, pass the app ID directly to the function:
 
 ```js
-OneSignal.initialize("YOUR-ONESIGNAL-APP-ID");
+OneSignal.initialize('YOUR-ONESIGNAL-APP-ID');
 ```
 
 ### Versioning
