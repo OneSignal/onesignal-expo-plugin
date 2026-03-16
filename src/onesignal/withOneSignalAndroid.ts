@@ -134,6 +134,7 @@ async function saveIconsArrayAsync(
   defaultName: string,
 ) {
   for (let i = 0; i < icons.length; i++) {
+    // the first icon should use OneSignal’s required default drawable name; others keep their file-derived names.
     const outputName = i === 0 ? defaultName : undefined;
     await saveIconAsync(icons[i], projectRoot, dirsToSize, outputName);
   }
