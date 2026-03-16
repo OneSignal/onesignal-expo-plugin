@@ -10,4 +10,4 @@ jobs:
     with:
       release_body: ${{ github.event.release.body }}
     secrets:
-      LINEAR_API_KEY: ${{ secrets.LINEAR_GITHUB_API_KEY }}
+      LINEAR_GITHUB_API_KEY: ${{ secrets.LINEAR_GITHUB_API_KEY }}
