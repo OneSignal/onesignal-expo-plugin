@@ -21,7 +21,7 @@ class PreferencesService {
 
   async getAppId(): Promise<string> {
     const value = await AsyncStorage.getItem(KEYS.APP_ID);
-    return value ?? '77e32082-ea27-42e3-a898-c72e141824ef';
+    return value ?? 'b79087eb-8531-4d2d-a6f5-726f797891c7';
   }
 
   async setAppId(appId: string): Promise<void> {

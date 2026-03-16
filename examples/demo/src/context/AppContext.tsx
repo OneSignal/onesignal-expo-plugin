@@ -9,11 +9,11 @@ import React, {
 } from 'react';
 import { OneSignal } from 'react-native-onesignal';
 import Toast from 'react-native-toast-message';
-import OneSignalRepository from '../repositories/OneSignalRepository';
-import PreferencesService from '../services/PreferencesService';
-import OneSignalApiService from '../services/OneSignalApiService';
 import { NotificationType } from '../models/NotificationType';
+import OneSignalRepository from '../repositories/OneSignalRepository';
 import LogManager from '../services/LogManager';
+import OneSignalApiService from '../services/OneSignalApiService';
+import PreferencesService from '../services/PreferencesService';
 
 const TAG = 'AppContext';
 const log = LogManager.getInstance();
@@ -40,7 +40,7 @@ export interface AppState {
 }
 
 const initialState: AppState = {
-  appId: '77e32082-ea27-42e3-a898-c72e141824ef',
+  appId: 'b79087eb-8531-4d2d-a6f5-726f797891c7',
   consentRequired: false,
   privacyConsentGiven: false,
   externalUserId: undefined,

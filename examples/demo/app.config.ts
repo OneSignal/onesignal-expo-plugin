@@ -67,6 +67,6 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     reactCompiler: true,
   },
   extra: {
-    oneSignalAppId: '77e32082-ea27-42e3-a898-c72e141824ef',
+    oneSignalAppId: 'b79087eb-8531-4d2d-a6f5-726f797891c7',
   },
 });
