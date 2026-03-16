@@ -363,7 +363,7 @@ export function AppContextProvider({ children }: Props) {
         repository.getPushSubscriptionIdAsync(),
         repository.isPushOptedInAsync(),
       ]);
-      const hasPerm = repository.hasPermission();
+      const hasPerm = await repository.hasPermission();
 
       if (!mountedRef.current) {
         return;
@@ -424,13 +424,17 @@ export function AppContextProvider({ children }: Props) {
       });
     };
 
-    const permissionHandler = () => {
+    const permissionHandler = async () => {
+      if (!mountedRef.current) {
+        return;
+      }
+      const hasPerm = await repository.hasPermission();
       if (!mountedRef.current) {
         return;
       }
       dispatch({
         type: 'SET_HAS_NOTIFICATION_PERMISSION',
-        payload: repository.hasPermission(),
+        payload: hasPerm,
       });
     };
 

@@ -6,6 +6,7 @@
 import {
   ConfigPlugin,
   withDangerousMod,
+  withProjectBuildGradle,
   withStringsXml,
 } from '@expo/config-plugins';
 import { generateImageAsync } from '@expo/image-utils';
@@ -164,6 +165,28 @@ async function saveIconAsync(
   }
 }
 
+const OKHTTP_FORCE_FIX = `
+subprojects {
+    project.configurations.all {
+        resolutionStrategy.force 'com.squareup.okhttp3:okhttp:4.12.0'
+    }
+}`;
+
+const withOkHttpFix: ConfigPlugin = (config) => {
+  return withProjectBuildGradle(config, (config) => {
+    if (
+      config.modResults.contents.includes(
+        "force 'com.squareup.okhttp3:okhttp:4.12.0'",
+      )
+    ) {
+      return config;
+    }
+
+    config.modResults.contents += OKHTTP_FORCE_FIX;
+    return config;
+  });
+};
+
 export const withOneSignalAndroid: ConfigPlugin<OneSignalPluginProps> = (
   config,
   props,
@@ -171,5 +194,6 @@ export const withOneSignalAndroid: ConfigPlugin<OneSignalPluginProps> = (
   config = withSmallIcons(config, props);
   config = withLargeIcons(config, props);
   config = withSmallIconAccentColor(config, props);
+  config = withOkHttpFix(config);
   return config;
 };
