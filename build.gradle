@@ -35,6 +35,7 @@ spotless {
 
   format 'xml', {
     target '**/*.xml'
+    targetExclude '**/node_modules/**', '**/build/**'
     trimTrailingWhitespace()
     indentWithSpaces(4)
     endWithNewline()
