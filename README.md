@@ -89,6 +89,7 @@ You can pass props to the plugin config object to configure:
 | `iosNSEFilePath`         | optional     | The local path to a custom Notification Service Extension (NSE), written in Objective-C. The NSE will typically start as a copy of the [default NSE](https://github.com/OneSignal/onesignal-expo-plugin/blob/main/support/serviceExtensionFiles/NotificationService.m), then altered to support any custom logic required. e.g: `"./assets/NotificationService.m"`.           |
 | `appGroupName`           | optional     | Used to configure a custom iOS [App Group](https://documentation.onesignal.com/docs/ios-sdk-setup#step-3-create-an-app-group) name. If not provided, defaults to `"group.{ios.bundleIdentifier}.onesignal"`. e.g: `"group.com.example.myapp.onesignal2"`. |
 | `nseBundleIdentifier`    | optional     | Used to configure a custom bundle identifier suffix for the iOS Notification Service Extension. The full bundle identifier will be `"{ios.bundleIdentifier}.{nseBundleIdentifier}"`. If not provided, defaults to `"OneSignalNotificationServiceExtension"`. |
+| `disableNSE`             | optional     | If `true`, the iOS Notification Service Extension (NSE) will not be added to the project. The NSE is required for badges, confirmed delivery, media attachments, and action buttons. Only disable this if you only need basic push notifications. |
 
 ### OneSignal App ID
 
