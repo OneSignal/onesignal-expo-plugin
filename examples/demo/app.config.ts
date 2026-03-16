@@ -1,4 +1,5 @@
 import { ConfigContext, ExpoConfig } from '@expo/config';
+import type { OneSignalPluginProps } from 'onesignal-expo-plugin';
 
 export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
@@ -46,7 +47,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
         smallIcons: ['./assets/images/small_icon.png'], // Optional: Custom notification icon (left side icon)
         smallIconAccentColor: '#C0FFEE', // Optional: For Android only
         largeIcons: ['./assets/images/icon.png'], // Optional: For Android only (right side icon)
-      },
+      } satisfies OneSignalPluginProps,
     ],
     'expo-router',
     [

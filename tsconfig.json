@@ -3,7 +3,7 @@
   "compilerOptions": {
     "rootDir": "./src",
     "outDir": "./build",
-    "declaration": false
+    "declaration": true
   },
   "include": ["./src"],
   "exclude": ["**/__mocks__/*", "**/__tests__/*", "examples"]

@@ -1,4 +1,5 @@
 import { ConfigContext, ExpoConfig } from '@expo/config';
+import type { OneSignalPluginProps } from 'onesignal-expo-plugin';
 
 export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
@@ -19,7 +20,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       {
         mode: 'development',
         disableNSE: true,
-      },
+      } satisfies OneSignalPluginProps,
     ],
   ],
   extra: {

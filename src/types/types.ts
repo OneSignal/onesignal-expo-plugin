@@ -5,7 +5,7 @@ export type OneSignalPluginProps = {
   /**
    * (required) Used to configure APNs environment entitlement. "development" or "production"
    */
-  mode: Mode;
+  mode: 'development' | 'production';
 
   /**
    * (optional) Used to configure Apple Team ID. You can find your Apple Team ID by running expo credentials:manager e.g: "91SW8A37CR"
@@ -74,8 +74,3 @@ export const ONESIGNAL_PLUGIN_PROPS: string[] = [
   'nseBundleIdentifier',
   'disableNSE',
 ];
-
-export enum Mode {
-  Dev = 'development',
-  Prod = 'production',
-}
