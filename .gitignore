@@ -2,6 +2,7 @@
 node_modules/
 build/
 .expo/
+.gradle/
 
 # Builds
 *.tgz
