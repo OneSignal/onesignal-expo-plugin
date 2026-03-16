@@ -10,11 +10,15 @@
   "scripts": {
     "test": "bun test",
     "test:coverage": "bun test --coverage",
-    "build": "bun run lint && rm -rf build && tsc && cp -a src/support/serviceExtensionFiles build/support/",
-    "format:check": "prettier --check \"**/*.{ts,tsx}\" --ignore-path .prettierignore",
-    "format:fix": "prettier --write \"**/*.{ts,tsx}\" --ignore-path .prettierignore",
+    "build": "rm -rf build && tsc && cp -a src/support/serviceExtensionFiles build/support/",
+    "format:spotless": "./examples/demo/android/gradlew spotlessApply",
+    "format:prettier": "prettier --write \"**/*.{ts,tsx}\" --ignore-path .gitignore",
+    "format": "concurrently \"bun run format:spotless\" \"bun run format:prettier\"",
+    "format:check:spotless": "./examples/demo/android/gradlew spotlessCheck",
+    "format:check:prettier": "prettier --check \"**/*.{ts,tsx}\" --ignore-path .gitignore",
+    "format:check": "concurrently \"bun run format:check:spotless\" \"bun run format:check:prettier\"",
     "lint": "oxlint src examples && bun run format:check",
-    "lint:fix": "oxlint src examples --fix && bun run format:fix"
+    "lint:fix": "oxlint src examples --fix && bun run format"
   },
   "repository": {
     "type": "git",
@@ -42,6 +46,7 @@
   "homepage": "https://github.com/OneSignal/onesignal-expo-plugin#readme",
   "devDependencies": {
     "@types/bun": "^1.3.9",
+    "concurrently": "^9.2.1",
     "expo-module-scripts": "^5.0.8",
     "oxlint": "^1.43.0",
     "prettier": "^3.8.1",
