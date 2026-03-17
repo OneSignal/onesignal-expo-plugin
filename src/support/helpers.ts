@@ -60,11 +60,7 @@ export function validatePluginProps(props: any): void {
         "OneSignal Expo Plugin: 'smallIconAccentColor' must be a string.",
       );
     }
-    if (!/^#?([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6}|[0-9A-Fa-f]{8})$/.test(props.smallIconAccentColor)) {
-      throw new Error(
-        `OneSignal Expo Plugin: 'smallIconAccentColor' must be a valid hex color (e.g. "#FF0000"), got "${props.smallIconAccentColor}".`,
-      );
-    }
+    parseColorToARGB(props.smallIconAccentColor);
   }
 
   if (props.largeIcons && !Array.isArray(props.largeIcons)) {
