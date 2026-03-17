@@ -11,6 +11,7 @@ import {
 } from '@expo/config-plugins';
 import { generateImageAsync } from '@expo/image-utils';
 import { OneSignalLog } from '../support/OneSignalLog';
+import { parseColorToARGB } from '../support/helpers';
 import { OneSignalPluginProps } from '../types/types';
 import { resolve, parse } from 'path';
 import { existsSync, mkdirSync, writeFileSync } from 'fs';
@@ -101,27 +102,28 @@ const withSmallIconAccentColor: ConfigPlugin<OneSignalPluginProps> = (
   }
 
   return withStringsXml(config, (config) => {
-    const colorInARGB = `FF${onesignalProps.smallIconAccentColor?.replace(
-      '#',
-      '',
-    )}`;
+    const colorInARGB = parseColorToARGB(
+      onesignalProps.smallIconAccentColor ?? '',
+    );
     const strings = config.modResults.resources.string ?? [];
 
-    // Check if the accent color entry already exists
-    const hasAccentColor = strings.some(
+    const existingIndex = strings.findIndex(
       (stringEntry) =>
-        stringEntry.$?.name === 'onesignal_notification_accent_color' &&
-        stringEntry._ === colorInARGB,
+        stringEntry.$?.name === 'onesignal_notification_accent_color',
     );
 
-    if (!hasAccentColor) {
-      const accentColorEntry = {
-        $: { name: 'onesignal_notification_accent_color' },
-        _: colorInARGB,
-      };
+    const accentColorEntry = {
+      $: { name: 'onesignal_notification_accent_color' },
+      _: colorInARGB,
+    };
 
-      config.modResults.resources.string = [...strings, accentColorEntry];
+    if (existingIndex !== -1) {
+      strings[existingIndex] = accentColorEntry;
+    } else {
+      strings.push(accentColorEntry);
     }
+
+    config.modResults.resources.string = strings;
 
     return config;
   });
