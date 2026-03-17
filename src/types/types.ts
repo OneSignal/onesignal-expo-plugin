@@ -9,6 +9,7 @@ export type OneSignalPluginProps = {
 
   /**
    * (optional) Used to configure Apple Team ID. You can find your Apple Team ID by running expo credentials:manager e.g: "91SW8A37CR"
+   * @deprecated Use `ios.appleTeamId` in your Expo config instead. This prop will be removed in a future major release.
    */
   devTeam?: string;
 
