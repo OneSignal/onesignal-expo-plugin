@@ -155,9 +155,9 @@ describe('validatePluginProps', () => {
   });
 
   test('rejects sounds array with non-string entries', () => {
-    expect(() =>
-      validatePluginProps({ ...validProps, sounds: [123] }),
-    ).toThrow("each entry in 'sounds' must be a string");
+    expect(() => validatePluginProps({ ...validProps, sounds: [123] })).toThrow(
+      "each entry in 'sounds' must be a string",
+    );
   });
 
   test('rejects non-wav sound files', () => {
