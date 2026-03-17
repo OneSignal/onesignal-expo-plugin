@@ -12,9 +12,9 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   userInterfaceStyle: 'automatic',
   newArchEnabled: true,
   ios: {
+    appleTeamId: '99SW8E36CT',
     icon: './assets/images/icon.png',
     bundleIdentifier: 'com.onesignal.example',
-    appleTeamId: '99SW8E36CT', // For setting the main target's development team
     infoPlist: {
       // For push notifications support when app is not in foreground
       UIBackgroundModes: ['remote-notification'],
@@ -41,7 +41,6 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       'onesignal-expo-plugin',
       {
         mode: 'development',
-        devTeam: '99SW8E36CT', // Optional: For setting the Notification Service Extension's development team
         appGroupName: 'group.expoCustom', // Optional: If you had your own app group name, you can set it here
         nseBundleIdentifier: 'ExpoNSE', // Optional: Custom bundle identifier for the Notification Service Extension
         smallIcons: ['./assets/images/small_icon.png'], // Optional: Custom notification icon (left side icon)
