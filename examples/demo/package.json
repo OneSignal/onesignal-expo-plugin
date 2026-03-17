@@ -3,6 +3,7 @@
   "main": "expo/AppEntry",
   "version": "1.0.0",
   "scripts": {
+    "clean": "bun run setup && npx expo prebuild --clean",
     "setup": "../setup.sh",
     "preandroid": "bun run setup",
     "preios": "bun run setup",
