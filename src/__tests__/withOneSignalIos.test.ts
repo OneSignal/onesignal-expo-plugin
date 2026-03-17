@@ -19,6 +19,12 @@ beforeEach(() => {
     withInfoPlist: passthrough,
     withXcodeProject: passthrough,
     withDangerousMod: passthrough,
+    IOSConfig: {
+      Paths: { getSourceRoot: () => '' },
+      XcodeUtils: {
+        addResourceFileToGroup: ({ project }: { project: unknown }) => project,
+      },
+    },
   }));
 });
 

@@ -61,6 +61,13 @@ export type OneSignalPluginProps = {
    * Only disable if you only need basic push notifications.
    */
   disableNSE?: boolean;
+
+  /**
+   * (optional) An array of local paths to custom notification sound files (.wav only).
+   * Files are added to the iOS app bundle and Android res/raw/.
+   * @see https://documentation.onesignal.com/docs/customize-notification-sounds
+   */
+  sounds?: string[];
 };
 
 export const ONESIGNAL_PLUGIN_PROPS: string[] = [
@@ -74,4 +81,5 @@ export const ONESIGNAL_PLUGIN_PROPS: string[] = [
   'appGroupName',
   'nseBundleIdentifier',
   'disableNSE',
+  'sounds',
 ];

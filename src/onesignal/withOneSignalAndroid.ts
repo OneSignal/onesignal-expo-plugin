@@ -12,8 +12,8 @@ import { generateImageAsync } from '@expo/image-utils';
 import { OneSignalLog } from '../support/OneSignalLog';
 import { parseColorToARGB } from '../support/helpers';
 import { OneSignalPluginProps } from '../types/types';
-import { resolve, parse } from 'path';
-import { existsSync, mkdirSync, writeFileSync } from 'fs';
+import { resolve, parse, basename } from 'path';
+import { existsSync, mkdirSync, writeFileSync, copyFileSync } from 'fs';
 
 const RESOURCE_ROOT_PATH = 'android/app/src/main/res/';
 
@@ -175,6 +175,39 @@ async function saveIconAsync(
   }
 }
 
+const withSoundFiles: ConfigPlugin<OneSignalPluginProps> = (
+  config,
+  onesignalProps,
+) => {
+  if (!onesignalProps.sounds) {
+    return config;
+  }
+
+  return withDangerousMod(config, [
+    'android',
+    async (config) => {
+      const projectRoot = config.modRequest.projectRoot;
+      const rawDir = resolve(projectRoot, RESOURCE_ROOT_PATH, 'raw');
+
+      if (!existsSync(rawDir)) {
+        mkdirSync(rawDir, { recursive: true });
+      }
+
+      for (const soundFile of onesignalProps.sounds!) {
+        const sourcePath = resolve(projectRoot, soundFile);
+        const fileName = basename(sourcePath).toLowerCase();
+
+        OneSignalLog.log(
+          `Copying sound file ${soundFile} to res/raw/${fileName}`,
+        );
+        copyFileSync(sourcePath, resolve(rawDir, fileName));
+      }
+
+      return config;
+    },
+  ]);
+};
+
 export const withOneSignalAndroid: ConfigPlugin<OneSignalPluginProps> = (
   config,
   props,
@@ -182,5 +215,6 @@ export const withOneSignalAndroid: ConfigPlugin<OneSignalPluginProps> = (
   config = withSmallIcons(config, props);
   config = withLargeIcons(config, props);
   config = withSmallIconAccentColor(config, props);
+  config = withSoundFiles(config, props);
   return config;
 };
