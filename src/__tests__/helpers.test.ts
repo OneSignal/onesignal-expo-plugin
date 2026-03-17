@@ -1,5 +1,35 @@
 import { describe, expect, test } from 'bun:test';
-import { validatePluginProps } from '../support/helpers';
+import { parseColorToARGB, validatePluginProps } from '../support/helpers';
+
+describe('parseColorToARGB', () => {
+  test('converts 6-digit hex with # to ARGB', () => {
+    expect(parseColorToARGB('#FF0000')).toBe('FFFF0000');
+  });
+
+  test('converts 6-digit hex without # to ARGB', () => {
+    expect(parseColorToARGB('279FD2')).toBe('FF279FD2');
+  });
+
+  test('converts lowercase hex to uppercase', () => {
+    expect(parseColorToARGB('#c0ffee')).toBe('FFC0FFEE');
+  });
+
+  test('passes through 8-digit hex (already has alpha)', () => {
+    expect(parseColorToARGB('#80FF0000')).toBe('80FF0000');
+  });
+
+  test('expands 3-digit shorthand hex', () => {
+    expect(parseColorToARGB('#F00')).toBe('FFFF0000');
+    expect(parseColorToARGB('abc')).toBe('FFAABBCC');
+  });
+
+  test('throws on invalid color strings', () => {
+    expect(() => parseColorToARGB('red')).toThrow('valid hex color');
+    expect(() => parseColorToARGB('#GGGGGG')).toThrow('valid hex color');
+    expect(() => parseColorToARGB('')).toThrow('valid hex color');
+    expect(() => parseColorToARGB('#12345')).toThrow('valid hex color');
+  });
+});
 
 describe('validatePluginProps', () => {
   const validProps = { mode: 'development' };
@@ -68,5 +98,38 @@ describe('validatePluginProps', () => {
 
   test('allows disableNSE to be omitted', () => {
     expect(() => validatePluginProps(validProps)).not.toThrow();
+  });
+
+  test('accepts valid 6-digit hex smallIconAccentColor', () => {
+    expect(() =>
+      validatePluginProps({ ...validProps, smallIconAccentColor: '#FF0000' }),
+    ).not.toThrow();
+  });
+
+  test('accepts valid 8-digit hex smallIconAccentColor', () => {
+    expect(() =>
+      validatePluginProps({ ...validProps, smallIconAccentColor: '#80FF0000' }),
+    ).not.toThrow();
+  });
+
+  test('accepts valid 3-digit hex smallIconAccentColor', () => {
+    expect(() =>
+      validatePluginProps({ ...validProps, smallIconAccentColor: '#F00' }),
+    ).not.toThrow();
+  });
+
+  test('rejects non-string smallIconAccentColor', () => {
+    expect(() =>
+      validatePluginProps({ ...validProps, smallIconAccentColor: 123 }),
+    ).toThrow("'smallIconAccentColor' must be a string");
+  });
+
+  test('rejects invalid hex smallIconAccentColor', () => {
+    expect(() =>
+      validatePluginProps({ ...validProps, smallIconAccentColor: 'red' }),
+    ).toThrow('valid hex color');
+    expect(() =>
+      validatePluginProps({ ...validProps, smallIconAccentColor: '#GGGGGG' }),
+    ).toThrow('valid hex color');
   });
 });

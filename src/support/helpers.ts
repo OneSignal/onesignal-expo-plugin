@@ -1,5 +1,36 @@
 import { ONESIGNAL_PLUGIN_PROPS } from '../types/types';
 
+const HEX_COLOR_6_REGEX = /^#?[0-9A-Fa-f]{6}$/;
+const HEX_COLOR_8_REGEX = /^#?[0-9A-Fa-f]{8}$/;
+
+/**
+ * Converts a hex color string (#RGB, #RRGGBB, or #AARRGGBB) to an
+ * 8-character ARGB hex string (no '#') expected by the OneSignal Android SDK.
+ */
+export function parseColorToARGB(color: string): string {
+  const hex = color.replace('#', '');
+
+  if (HEX_COLOR_8_REGEX.test(hex)) {
+    return hex.toUpperCase();
+  }
+
+  if (HEX_COLOR_6_REGEX.test(hex)) {
+    return `FF${hex.toUpperCase()}`;
+  }
+
+  if (/^[0-9A-Fa-f]{3}$/.test(hex)) {
+    const expanded = hex
+      .split('')
+      .map((c) => c + c)
+      .join('');
+    return `FF${expanded.toUpperCase()}`;
+  }
+
+  throw new Error(
+    `OneSignal Expo Plugin: 'smallIconAccentColor' must be a valid hex color (e.g. "#FF0000"), got "${color}".`,
+  );
+}
+
 export function validatePluginProps(props: any): void {
   // check the type of each property
   if (typeof props.mode !== 'string') {
@@ -23,13 +54,13 @@ export function validatePluginProps(props: any): void {
     throw new Error("OneSignal Expo Plugin: 'smallIcons' must be an array.");
   }
 
-  if (
-    props.smallIconAccentColor &&
-    typeof props.smallIconAccentColor !== 'string'
-  ) {
-    throw new Error(
-      "OneSignal Expo Plugin: 'smallIconAccentColor' must be a string.",
-    );
+  if (props.smallIconAccentColor != null) {
+    if (typeof props.smallIconAccentColor !== 'string') {
+      throw new Error(
+        "OneSignal Expo Plugin: 'smallIconAccentColor' must be a string.",
+      );
+    }
+    parseColorToARGB(props.smallIconAccentColor);
   }
 
   if (props.largeIcons && !Array.isArray(props.largeIcons)) {
