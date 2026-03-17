@@ -77,7 +77,10 @@ describe('resolveDevTeam', () => {
   test('returns ios.appleTeamId when set', async () => {
     const { resolveDevTeam } = await import('../onesignal/withOneSignalIos');
     const config = makeConfig({
-      ios: { bundleIdentifier: 'com.example.app', appleTeamId: 'TEAM_FROM_CONFIG' },
+      ios: {
+        bundleIdentifier: 'com.example.app',
+        appleTeamId: 'TEAM_FROM_CONFIG',
+      },
     });
 
     expect(resolveDevTeam(config, defaultProps)).toBe('TEAM_FROM_CONFIG');
@@ -87,9 +90,15 @@ describe('resolveDevTeam', () => {
   test('prefers ios.appleTeamId over devTeam and warns devTeam is ignored', async () => {
     const { resolveDevTeam } = await import('../onesignal/withOneSignalIos');
     const config = makeConfig({
-      ios: { bundleIdentifier: 'com.example.app', appleTeamId: 'TEAM_FROM_CONFIG' },
+      ios: {
+        bundleIdentifier: 'com.example.app',
+        appleTeamId: 'TEAM_FROM_CONFIG',
+      },
     });
-    const props: OneSignalPluginProps = { ...defaultProps, devTeam: 'TEAM_FROM_PROPS' };
+    const props: OneSignalPluginProps = {
+      ...defaultProps,
+      devTeam: 'TEAM_FROM_PROPS',
+    };
 
     expect(resolveDevTeam(config, props)).toBe('TEAM_FROM_CONFIG');
     expect(logSpy).toHaveBeenCalledTimes(1);
@@ -99,7 +108,10 @@ describe('resolveDevTeam', () => {
   test('falls back to devTeam and logs deprecation warning', async () => {
     const { resolveDevTeam } = await import('../onesignal/withOneSignalIos');
     const config = makeConfig();
-    const props: OneSignalPluginProps = { ...defaultProps, devTeam: 'TEAM_FROM_PROPS' };
+    const props: OneSignalPluginProps = {
+      ...defaultProps,
+      devTeam: 'TEAM_FROM_PROPS',
+    };
 
     expect(resolveDevTeam(config, props)).toBe('TEAM_FROM_PROPS');
     expect(logSpy).toHaveBeenCalledTimes(1);
