@@ -192,6 +192,35 @@ const withOneSignalNSE: ConfigPlugin<OneSignalPluginProps> = (
   ]);
 };
 
+/**
+ * Resolve the Apple development team ID. Prefers `ios.appleTeamId` from the
+ * Expo config, falling back to the plugin's deprecated `devTeam` prop.
+ */
+export function resolveDevTeam(
+  config: ExpoConfig,
+  props: OneSignalPluginProps,
+): string | undefined {
+  if (config.ios?.appleTeamId) {
+    if (props.devTeam) {
+      OneSignalLog.log(
+        'Warning: Both "ios.appleTeamId" and the deprecated "devTeam" plugin prop are set. ' +
+          '"devTeam" will be ignored. Remove "devTeam" from your plugin config.',
+      );
+    }
+    return config.ios.appleTeamId;
+  }
+
+  if (props.devTeam) {
+    OneSignalLog.log(
+      'Warning: The "devTeam" plugin prop is deprecated and will be removed in a future major release. ' +
+        'Set "ios.appleTeamId" in your Expo config instead.',
+    );
+    return props.devTeam;
+  }
+
+  return undefined;
+}
+
 const withOneSignalXcodeProject: ConfigPlugin<OneSignalPluginProps> = (
   config,
   props,
@@ -201,6 +230,8 @@ const withOneSignalXcodeProject: ConfigPlugin<OneSignalPluginProps> = (
     const nseBundleId = `${config.ios?.bundleIdentifier}.${
       props.nseBundleIdentifier ?? NSE_TARGET_NAME
     }`;
+
+    const devTeam = resolveDevTeam(config, props);
 
     if (xcodeProject.pbxTargetByName(NSE_TARGET_NAME)) {
       OneSignalLog.log(
@@ -278,7 +309,7 @@ const withOneSignalXcodeProject: ConfigPlugin<OneSignalPluginProps> = (
         configurations[key].buildSettings.PRODUCT_NAME == `"${NSE_TARGET_NAME}"`
       ) {
         const buildSettingsObj = configurations[key].buildSettings;
-        buildSettingsObj.DEVELOPMENT_TEAM = props?.devTeam;
+        buildSettingsObj.DEVELOPMENT_TEAM = devTeam;
         buildSettingsObj.IPHONEOS_DEPLOYMENT_TARGET =
           props?.iPhoneDeploymentTarget ?? IPHONEOS_DEPLOYMENT_TARGET;
         buildSettingsObj.TARGETED_DEVICE_FAMILY = TARGETED_DEVICE_FAMILY;
@@ -288,12 +319,8 @@ const withOneSignalXcodeProject: ConfigPlugin<OneSignalPluginProps> = (
     }
 
     // Add development teams to both your target and the original project
-    xcodeProject.addTargetAttribute(
-      'DevelopmentTeam',
-      props?.devTeam,
-      nseTarget,
-    );
-    xcodeProject.addTargetAttribute('DevelopmentTeam', props?.devTeam);
+    xcodeProject.addTargetAttribute('DevelopmentTeam', devTeam, nseTarget);
+    xcodeProject.addTargetAttribute('DevelopmentTeam', devTeam);
     return newConfig;
   });
 };
