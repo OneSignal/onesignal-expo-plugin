@@ -1,6 +1,6 @@
 {
   "name": "onesignal-expo-plugin",
-  "version": "2.3.0",
+  "version": "2.4.0",
   "description": "Some Changez",
   "main": "./app.plugin.js",
   "types": "./build/types/types.d.ts",
