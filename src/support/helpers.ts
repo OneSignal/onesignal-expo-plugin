@@ -1,3 +1,4 @@
+import { extname } from 'path';
 import { ONESIGNAL_PLUGIN_PROPS } from '../types/types';
 
 const HEX_COLOR_6_REGEX = /^#?[0-9A-Fa-f]{6}$/;
@@ -88,6 +89,24 @@ export function validatePluginProps(props: any): void {
 
   if (props.disableNSE !== undefined && typeof props.disableNSE !== 'boolean') {
     throw new Error("OneSignal Expo Plugin: 'disableNSE' must be a boolean.");
+  }
+
+  if (props.sounds !== undefined) {
+    if (!Array.isArray(props.sounds)) {
+      throw new Error("OneSignal Expo Plugin: 'sounds' must be an array.");
+    }
+    for (const sound of props.sounds) {
+      if (typeof sound !== 'string') {
+        throw new Error(
+          "OneSignal Expo Plugin: each entry in 'sounds' must be a string path.",
+        );
+      }
+      if (extname(sound).toLowerCase() !== '.wav') {
+        throw new Error(
+          `OneSignal Expo Plugin: sound file "${sound}" must be a .wav file. Only .wav is supported (works on both iOS and Android).`,
+        );
+      }
+    }
   }
 
   // check for extra properties

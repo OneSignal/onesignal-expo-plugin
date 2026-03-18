@@ -132,4 +132,53 @@ describe('validatePluginProps', () => {
       validatePluginProps({ ...validProps, smallIconAccentColor: '#GGGGGG' }),
     ).toThrow('valid hex color');
   });
+
+  test('accepts valid sounds array', () => {
+    expect(() =>
+      validatePluginProps({
+        ...validProps,
+        sounds: ['./assets/notification.wav'],
+      }),
+    ).not.toThrow();
+  });
+
+  test('accepts empty sounds array', () => {
+    expect(() =>
+      validatePluginProps({ ...validProps, sounds: [] }),
+    ).not.toThrow();
+  });
+
+  test('rejects non-array sounds', () => {
+    expect(() =>
+      validatePluginProps({ ...validProps, sounds: 'notification.wav' }),
+    ).toThrow("'sounds' must be an array");
+  });
+
+  test('rejects sounds array with non-string entries', () => {
+    expect(() => validatePluginProps({ ...validProps, sounds: [123] })).toThrow(
+      "each entry in 'sounds' must be a string",
+    );
+  });
+
+  test('rejects non-wav sound files', () => {
+    expect(() =>
+      validatePluginProps({ ...validProps, sounds: ['./assets/tone.mp3'] }),
+    ).toThrow('must be a .wav file');
+    expect(() =>
+      validatePluginProps({ ...validProps, sounds: ['./assets/ring.ogg'] }),
+    ).toThrow('must be a .wav file');
+    expect(() =>
+      validatePluginProps({ ...validProps, sounds: ['./assets/chime.aiff'] }),
+    ).toThrow('must be a .wav file');
+  });
+
+  test('accepts .wav with any casing', () => {
+    expect(() =>
+      validatePluginProps({ ...validProps, sounds: ['./assets/alert.WAV'] }),
+    ).not.toThrow();
+  });
+
+  test('allows sounds to be omitted', () => {
+    expect(() => validatePluginProps(validProps)).not.toThrow();
+  });
 });

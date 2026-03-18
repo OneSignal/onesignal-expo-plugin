@@ -5,6 +5,7 @@
 
 import {
   ConfigPlugin,
+  IOSConfig,
   withEntitlementsPlist,
   withInfoPlist,
   withXcodeProject,
@@ -325,6 +326,43 @@ const withOneSignalXcodeProject: ConfigPlugin<OneSignalPluginProps> = (
   });
 };
 
+const withSoundFiles: ConfigPlugin<OneSignalPluginProps> = (
+  config,
+  onesignalProps,
+) => {
+  if (!onesignalProps.sounds) {
+    return config;
+  }
+
+  return withXcodeProject(config, (config) => {
+    const projectRoot = config.modRequest.projectRoot;
+    const projectName = config.modRequest.projectName!;
+    const sourceRoot = IOSConfig.Paths.getSourceRoot(projectRoot);
+    let project = config.modResults;
+
+    for (const soundFile of onesignalProps.sounds!) {
+      const fileName = path.basename(soundFile);
+      const sourcePath = path.resolve(projectRoot, soundFile);
+      const destPath = path.resolve(sourceRoot, fileName);
+
+      OneSignalLog.log(`Copying sound file ${soundFile} to iOS project`);
+      fs.copyFileSync(sourcePath, destPath);
+
+      if (!project.hasFile(`${projectName}/${fileName}`)) {
+        project = IOSConfig.XcodeUtils.addResourceFileToGroup({
+          filepath: `${projectName}/${fileName}`,
+          groupName: projectName,
+          project,
+          isBuildFile: true,
+        });
+      }
+    }
+
+    config.modResults = project;
+    return config;
+  });
+};
+
 export const withOneSignalIos: ConfigPlugin<OneSignalPluginProps> = (
   config,
   props,
@@ -339,5 +377,6 @@ export const withOneSignalIos: ConfigPlugin<OneSignalPluginProps> = (
     config = withOneSignalXcodeProject(config, props);
     config = withEasManagedCredentials(config, props);
   }
+  config = withSoundFiles(config, props);
   return config;
 };

@@ -90,6 +90,7 @@ You can pass props to the plugin config object to configure:
 | `appGroupName`           | optional     | Used to configure a custom iOS [App Group](https://documentation.onesignal.com/docs/ios-sdk-setup#step-3-create-an-app-group) name. If not provided, defaults to `"group.{ios.bundleIdentifier}.onesignal"`. e.g: `"group.com.example.myapp.onesignal2"`. |
 | `nseBundleIdentifier`    | optional     | Used to configure a custom bundle identifier suffix for the iOS Notification Service Extension. The full bundle identifier will be `"{ios.bundleIdentifier}.{nseBundleIdentifier}"`. If not provided, defaults to `"OneSignalNotificationServiceExtension"`. |
 | `disableNSE`             | optional     | If `true`, the iOS Notification Service Extension (NSE) will not be added to the project. The NSE is required for badges, confirmed delivery, media attachments, and action buttons. Only disable this if you only need basic push notifications. |
+| `sounds`                 | optional     | An array of local paths to custom notification sound files (`.wav` only, ≤30 seconds). Files are copied into the app bundle on iOS and `res/raw/` on Android. e.g: `["./assets/notification_sound.wav"]`. See https://documentation.onesignal.com/docs/customize-notification-sounds. |
 
 ### OneSignal App ID
 
