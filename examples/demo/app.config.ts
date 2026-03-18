@@ -46,7 +46,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
         smallIcons: ['./assets/images/small_icon.png'], // Optional: Custom notification icon (left side icon)
         smallIconAccentColor: '#C0FFEE', // Optional: For Android only
         largeIcons: ['./assets/images/icon.png'], // Optional: For Android only (right side icon)
-        sounds: ['./assets/vine_boom.wav'], // Optional: Custom notification sounds
+        sounds: ['./assets/vine_boom.wav', './assets/ding.wav'], // Optional: Custom notification sounds
       } satisfies OneSignalPluginProps,
     ],
     'expo-router',
