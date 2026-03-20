@@ -1,6 +1,6 @@
 {
   "name": "demo",
-  "main": "expo/AppEntry",
+  "main": "./index.js",
   "version": "1.0.0",
   "scripts": {
     "clean": "bun run setup && npx expo prebuild --clean",
