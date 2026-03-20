@@ -1,7 +1,7 @@
 {
   "name": "disable-nse",
-  "main": "expo/AppEntry",
   "version": "1.0.0",
+  "main": "expo/AppEntry",
   "scripts": {
     "setup": "../setup.sh",
     "preandroid": "bun run setup",

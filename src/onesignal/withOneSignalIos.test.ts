@@ -1,7 +1,8 @@
-import { afterEach, beforeEach, describe, expect, test, vi } from 'vite-plus/test';
 import type { ExpoConfig } from '@expo/config-types';
-import type { OneSignalPluginProps } from '../types/types';
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vite-plus/test';
+
 import { OneSignalLog } from '../support/OneSignalLog';
+import type { OneSignalPluginProps } from '../types/types';
 
 vi.mock('@expo/config-plugins', () => {
   const passthrough = (_config: unknown, _fn: unknown) => _config;
@@ -54,9 +55,7 @@ describe('withOneSignalIos', () => {
     });
 
     const result = withOneSignalIos(config, defaultProps);
-    expect(
-      result.extra?.eas?.build?.experimental?.ios?.appExtensions,
-    ).toBeDefined();
+    expect(result.extra?.eas?.build?.experimental?.ios?.appExtensions).toBeDefined();
   });
 });
 

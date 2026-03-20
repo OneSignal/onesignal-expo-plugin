@@ -33,14 +33,12 @@ export default function App() {
     OneSignal.Debug.setLogLevel(LogLevel.Verbose);
     OneSignal.initialize(appId);
     OneSignal.login('test-disable-nse');
-    OneSignal.Notifications.requestPermission(true);
+    void OneSignal.Notifications.requestPermission(true);
 
     OneSignal.User.pushSubscription.addEventListener('change', (event) => {
       setSubscriptionId(event.current.id ?? null);
     });
-    OneSignal.User.pushSubscription
-      .getIdAsync()
-      .then((id) => setSubscriptionId(id ?? null));
+    void OneSignal.User.pushSubscription.getIdAsync().then((id) => setSubscriptionId(id ?? null));
   }, []);
 
   const handleSend = async () => {
@@ -62,18 +60,13 @@ export default function App() {
         Basic push notifications without the Notification Service Extension.
       </Text>
       <Pressable
-        style={({ pressed }) => [
-          styles.button,
-          pressed && styles.buttonPressed,
-        ]}
+        style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
         onPress={handleSend}
       >
         <Text style={styles.buttonText}>Send Test Notification</Text>
       </Pressable>
       <Text style={styles.subscriptionId}>
-        {subscriptionId
-          ? `Sub ID: ${subscriptionId}`
-          : 'Waiting for subscription...'}
+        {subscriptionId ? `Sub ID: ${subscriptionId}` : 'Waiting for subscription...'}
       </Text>
     </View>
   );

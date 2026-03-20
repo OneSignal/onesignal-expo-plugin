@@ -27,6 +27,7 @@ rm -rf examples/demo/app
 Keep `examples/demo/App.tsx` as the only app entry file.
 
 Platform specifics:
+
 - React Context + useReducer for state management
 - TypeScript with strict mode enabled
 - App bar text: "Expo" (next to the OneSignal logo SVG)
@@ -123,6 +124,7 @@ Then use: `bun run android` / `bun run ios`
 ## Dependencies
 
 dependencies:
+
 - expo: ~54.x
 - react-native: 0.81.x
 - react-native-onesignal: latest
@@ -139,6 +141,7 @@ dependencies:
 - react-native-toast-message: ^2.2.0
 
 devDependencies:
+
 - react-native-svg-transformer: ^1.5.3
 - @typescript-eslint/eslint-plugin: ^7.0.0
 - @typescript-eslint/parser: ^7.0.0
@@ -157,7 +160,7 @@ npx expo install react-native-onesignal @react-native-async-storage/async-storag
 const { getDefaultConfig } = require('expo/metro-config');
 const config = getDefaultConfig(__dirname);
 config.transformer.babelTransformerPath = require.resolve('react-native-svg-transformer/expo');
-config.resolver.assetExts = config.resolver.assetExts.filter(ext => ext !== 'svg');
+config.resolver.assetExts = config.resolver.assetExts.filter((ext) => ext !== 'svg');
 config.resolver.sourceExts.push('svg');
 module.exports = config;
 ```
@@ -185,6 +188,7 @@ You MUST use the OneSignal React Native demo as the implementation base and port
 Source: https://github.com/OneSignal/react-native-onesignal/tree/main/examples/demo
 
 Copy set (minimal edits):
+
 - `src/models/*`
 - `src/services/*`
 - `src/repositories/*`
@@ -275,6 +279,7 @@ Place `<Toast />` at the root of `App.tsx` (outside NavigationContainer children
 ### Icons
 
 Use `@expo/vector-icons` (MaterialCommunityIcons / MaterialIcons) for all icons. IAM send buttons use:
+
 - TOP BANNER: `arrow-up-bold-box-outline`
 - BOTTOM BANNER: `arrow-down-bold-box-outline`
 - CENTER MODAL: `crop-square`

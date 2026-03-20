@@ -13,9 +13,7 @@ To test OneSignal push notifications in the Expo demo on iOS, make sure the `ios
       },
       "entitlements": {
         "aps-environment": "development",
-        "com.apple.security.application-groups": [
-          "group.${ios.bundleIdentifier}.onesignal"
-        ]
+        "com.apple.security.application-groups": ["group.${ios.bundleIdentifier}.onesignal"]
       },
       "supportsTablet": true
     }

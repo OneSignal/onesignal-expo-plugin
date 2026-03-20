@@ -1,3 +1,4 @@
+import { MaterialIcons as Icon } from '@expo/vector-icons';
 import React, { useState } from 'react';
 import {
   Modal,
@@ -9,7 +10,7 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
-import { MaterialIcons as Icon } from '@expo/vector-icons';
+
 import { AppColors, AppTextStyles, AppDialogStyles } from '../../theme';
 
 interface Props {
@@ -53,12 +54,7 @@ export default function MultiSelectRemoveModal({
   };
 
   return (
-    <Modal
-      visible={visible}
-      transparent
-      animationType="fade"
-      onRequestClose={handleClose}
-    >
+    <Modal visible={visible} transparent animationType="fade" onRequestClose={handleClose}>
       <KeyboardAvoidingView
         style={AppDialogStyles.backdrop}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
@@ -69,17 +65,11 @@ export default function MultiSelectRemoveModal({
             {items.map(([key]) => {
               const isChecked = selected.has(key);
               return (
-                <TouchableOpacity
-                  key={key}
-                  style={styles.row}
-                  onPress={() => toggle(key)}
-                >
+                <TouchableOpacity key={key} style={styles.row} onPress={() => toggle(key)}>
                   <Icon
                     name={isChecked ? 'check-box' : 'check-box-outline-blank'}
                     size={22}
-                    color={
-                      isChecked ? AppColors.osPrimary : AppColors.osGrey600
-                    }
+                    color={isChecked ? AppColors.osPrimary : AppColors.osGrey600}
                   />
                   <Text style={styles.itemKey}>{key}</Text>
                 </TouchableOpacity>
@@ -87,10 +77,7 @@ export default function MultiSelectRemoveModal({
             })}
           </ScrollView>
           <View style={AppDialogStyles.actions}>
-            <TouchableOpacity
-              style={AppDialogStyles.actionBtn}
-              onPress={handleClose}
-            >
+            <TouchableOpacity style={AppDialogStyles.actionBtn} onPress={handleClose}>
               <Text style={AppDialogStyles.actionText}>Cancel</Text>
             </TouchableOpacity>
             <TouchableOpacity

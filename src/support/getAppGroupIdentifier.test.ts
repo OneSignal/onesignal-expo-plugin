@@ -1,11 +1,10 @@
 import { describe, expect, test } from 'vite-plus/test';
+
 import { getAppGroupIdentifier } from './helpers';
 
 describe('getAppGroupIdentifier', () => {
   test('returns default group name when no custom name provided', () => {
-    expect(getAppGroupIdentifier('com.example.app')).toBe(
-      'group.com.example.app.onesignal',
-    );
+    expect(getAppGroupIdentifier('com.example.app')).toBe('group.com.example.app.onesignal');
   });
 
   test('returns default group name when custom name is undefined', () => {
@@ -15,9 +14,9 @@ describe('getAppGroupIdentifier', () => {
   });
 
   test('returns custom group name when provided', () => {
-    expect(
-      getAppGroupIdentifier('com.example.app', 'group.com.example.custom'),
-    ).toBe('group.com.example.custom');
+    expect(getAppGroupIdentifier('com.example.app', 'group.com.example.custom')).toBe(
+      'group.com.example.custom',
+    );
   });
 
   test('handles empty bundle identifier', () => {
