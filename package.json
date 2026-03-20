@@ -2,14 +2,14 @@
   "name": "onesignal-expo-plugin",
   "version": "2.4.0",
   "description": "Some Changez",
-  "main": "./app.plugin.js",
-  "types": "./build/types/types.d.ts",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "files": [
-    "build",
-    "app.plugin.js"
+    "dist",
+    "serviceExtensionFiles"
   ],
   "scripts": {
-    "build": "rm -rf build && tsc && cp -a src/support/serviceExtensionFiles build/support/",
+    "build": "vp pack",
     "format:spotless": "./examples/demo/android/gradlew spotlessApply",
     "format": "vp fmt && npm run format:spotless",
     "format:check:spotless": "./examples/demo/android/gradlew spotlessCheck",
@@ -39,6 +39,7 @@
     "vite-plus": "latest"
   },
   "peerDependencies": {
+    "@expo/config-plugins": ">=7.0.0",
     "react-native-onesignal": ">=5.0.0"
   },
   "dependencies": {

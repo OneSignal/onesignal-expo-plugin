@@ -12,5 +12,12 @@ export default defineConfig({
       reporter: ['text-summary', 'lcov'],
       reportOnFailure: true,
     }
-  }
+  },
+  pack: {
+    entry: { index: 'src/onesignal/withOneSignal.ts' },
+    format: 'cjs',
+    fixedExtension: false,
+    dts: true,
+    deps: { onlyBundle: [] },
+  },
 });

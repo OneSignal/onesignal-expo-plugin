@@ -153,7 +153,7 @@ const withOneSignalNSE: ConfigPlugin<OneSignalPluginProps> = (
       const pluginDir = require.resolve('onesignal-expo-plugin/package.json');
       const sourceDir = path.join(
         pluginDir,
-        '../build/support/serviceExtensionFiles/',
+        '../serviceExtensionFiles/',
       );
       const iosPath = path.join(config.modRequest.projectRoot, 'ios');
       /* COPY OVER EXTENSION FILES */
