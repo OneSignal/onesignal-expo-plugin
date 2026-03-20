@@ -53,6 +53,5 @@
     "eslint-config-expo": "~10.0.0",
     "react-native-svg-transformer": "^1.5.3",
     "typescript": "~5.9.2"
-  },
-  "private": true
+  }
 }
