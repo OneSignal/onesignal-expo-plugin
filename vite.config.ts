@@ -6,4 +6,11 @@ export default defineConfig({
     // "*": "vp check --fix"
   },
   lint: {"options":{"typeAware":true,"typeCheck":true}},
+  test: {
+    coverage: {
+      enabled: true,
+      reporter: ['text-summary', 'lcov'],
+      reportOnFailure: true,
+    }
+  }
 });

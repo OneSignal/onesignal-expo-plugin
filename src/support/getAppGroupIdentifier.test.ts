@@ -1,5 +1,5 @@
-import { describe, expect, test } from 'bun:test';
-import { getAppGroupIdentifier } from '../support/helpers';
+import { describe, expect, test } from 'vite-plus/test';
+import { getAppGroupIdentifier } from './helpers';
 
 describe('getAppGroupIdentifier', () => {
   test('returns default group name when no custom name provided', () => {
