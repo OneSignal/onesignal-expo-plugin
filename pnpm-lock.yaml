@@ -22,6 +22,9 @@ importers:
         specifier: '>=5.0.0'
         version: 5.4.0(react-native@0.84.1(@babel/core@7.29.0)(@types/react@19.1.17)(react@19.2.4))
     devDependencies:
+      '@expo/config-types':
+        specifier: ^55.0.5
+        version: 55.0.5
       '@types/node':
         specifier: ^22.19.3
         version: 22.19.15
