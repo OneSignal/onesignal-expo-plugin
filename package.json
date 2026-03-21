@@ -28,7 +28,8 @@
     ".": {
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
-    }
+    },
+    "./package.json": "./package.json"
   },
   "scripts": {
     "build": "vp pack",
@@ -36,8 +37,8 @@
     "format": "vp fmt && npm run format:spotless",
     "format:check:spotless": "./examples/demo/android/gradlew spotlessCheck",
     "format:check": "vp fmt --check && npm run format:check:spotless",
-    "lint": "vp check src examples && npm run format:check",
-    "lint:fix": "vp check --fix src examples && npm run format",
+    "lint": "vp check src && npm run format:check",
+    "lint:fix": "vp check --fix src && npm run format",
     "test": "vp test"
   },
   "dependencies": {

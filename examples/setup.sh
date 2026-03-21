@@ -16,7 +16,7 @@ cd "$ORIGINAL_DIR"
 bun pm cache rm
 
 bun remove onesignal-expo-plugin
-bun add file:../../onesignal-expo-plugin.tgz/onesignal-expo-plugin.tgz
+bun add file:../../onesignal-expo-plugin.tgz
 
 # Workaround: bun hoists glob@7 from react-native, shadowing glob@13 needed by @expo/cli
 rm -rf node_modules/glob
