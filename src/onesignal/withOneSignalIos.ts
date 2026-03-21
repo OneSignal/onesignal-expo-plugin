@@ -3,6 +3,9 @@
  * @see https://documentation.onesignal.com/docs/react-native-sdk-setup#step-4-install-for-ios-using-cocoapods-for-ios-apps
  */
 
+import * as fs from 'fs';
+import * as path from 'path';
+
 import {
   ConfigPlugin,
   IOSConfig,
@@ -11,8 +14,11 @@ import {
   withXcodeProject,
   withDangerousMod,
 } from '@expo/config-plugins';
-import * as fs from 'fs';
-import * as path from 'path';
+import { ExpoConfig } from '@expo/config-types';
+
+import getEasManagedCredentialsConfigExtra from '../support/eas/getEasManagedCredentialsConfigExtra';
+import { FileManager } from '../support/FileManager';
+import { getAppGroupIdentifier } from '../support/helpers';
 import {
   DEFAULT_BUNDLE_SHORT_VERSION,
   DEFAULT_BUNDLE_VERSION,
@@ -22,23 +28,16 @@ import {
   NSE_EXT_FILES,
   TARGETED_DEVICE_FAMILY,
 } from '../support/iosConstants';
-import { getAppGroupIdentifier } from '../support/helpers';
-import { updatePodfile } from '../support/updatePodfile';
 import NseUpdaterManager from '../support/NseUpdaterManager';
 import { OneSignalLog } from '../support/OneSignalLog';
-import { FileManager } from '../support/FileManager';
+import { updatePodfile } from '../support/updatePodfile';
 import { OneSignalPluginProps } from '../types/types';
-import getEasManagedCredentialsConfigExtra from '../support/eas/getEasManagedCredentialsConfigExtra';
-import { ExpoConfig } from '@expo/config-types';
 
 /**
  * Add 'aps-environment' record with current environment to '<project-name>.entitlements' file
  * @see https://documentation.onesignal.com/docs/react-native-sdk-setup#step-4-install-for-ios-using-cocoapods-for-ios-apps
  */
-const withAppEnvironment: ConfigPlugin<OneSignalPluginProps> = (
-  config,
-  onesignalProps,
-) => {
+const withAppEnvironment: ConfigPlugin<OneSignalPluginProps> = (config, onesignalProps) => {
   return withEntitlementsPlist(config, (newConfig) => {
     if (onesignalProps?.mode == null) {
       throw new Error(`
@@ -55,9 +54,7 @@ const withAppEnvironment: ConfigPlugin<OneSignalPluginProps> = (
  * Add "Background Modes -> Remote notifications" and "App Group" permissions
  * @see https://documentation.onesignal.com/docs/react-native-sdk-setup#step-4-install-for-ios-using-cocoapods-for-ios-apps
  */
-const withRemoteNotificationsPermissions: ConfigPlugin<OneSignalPluginProps> = (
-  config,
-) => {
+const withRemoteNotificationsPermissions: ConfigPlugin<OneSignalPluginProps> = (config) => {
   const BACKGROUND_MODE_KEYS = ['remote-notification'];
   return withInfoPlist(config, (newConfig) => {
     if (!Array.isArray(newConfig.modResults.UIBackgroundModes)) {
@@ -77,10 +74,7 @@ const withRemoteNotificationsPermissions: ConfigPlugin<OneSignalPluginProps> = (
  * Add "App Group" permission
  * @see https://documentation.onesignal.com/docs/react-native-sdk-setup#step-4-install-for-ios-using-cocoapods-for-ios-apps (step 4.4)
  */
-const withAppGroupPermissions: ConfigPlugin<OneSignalPluginProps> = (
-  config,
-  props,
-) => {
+const withAppGroupPermissions: ConfigPlugin<OneSignalPluginProps> = (config, props) => {
   const APP_GROUP_KEY = 'com.apple.security.application-groups';
   return withEntitlementsPlist(config, (newConfig) => {
     if (!Array.isArray(newConfig.modResults[APP_GROUP_KEY])) {
@@ -104,10 +98,7 @@ const withAppGroupPermissions: ConfigPlugin<OneSignalPluginProps> = (
  * Add OneSignal_app_groups_key to Info.plist when a custom app group name is provided.
  * @see https://documentation.onesignal.com/docs/ios-sdk-setup#step-3-create-an-app-group
  */
-const withCustomAppGroupsKey: ConfigPlugin<OneSignalPluginProps> = (
-  config,
-  props,
-) => {
+const withCustomAppGroupsKey: ConfigPlugin<OneSignalPluginProps> = (config, props) => {
   return withInfoPlist(config, (newConfig) => {
     if (props?.appGroupName) {
       newConfig.modResults.OneSignal_app_groups_key = props.appGroupName;
@@ -116,10 +107,7 @@ const withCustomAppGroupsKey: ConfigPlugin<OneSignalPluginProps> = (
   });
 };
 
-const withEasManagedCredentials: ConfigPlugin<OneSignalPluginProps> = (
-  config,
-  props,
-) => {
+const withEasManagedCredentials: ConfigPlugin<OneSignalPluginProps> = (config, props) => {
   if (!config.ios?.bundleIdentifier) {
     return config;
   }
@@ -142,19 +130,13 @@ const withOneSignalPodfile: ConfigPlugin<OneSignalPluginProps> = (config) => {
   ]);
 };
 
-const withOneSignalNSE: ConfigPlugin<OneSignalPluginProps> = (
-  config,
-  props,
-) => {
+const withOneSignalNSE: ConfigPlugin<OneSignalPluginProps> = (config, props) => {
   return withDangerousMod(config, [
     'ios',
     async (config) => {
       // support for monorepos where node_modules can be above the project directory.
       const pluginDir = require.resolve('onesignal-expo-plugin/package.json');
-      const sourceDir = path.join(
-        pluginDir,
-        '../serviceExtensionFiles/',
-      );
+      const sourceDir = path.join(pluginDir, '../serviceExtensionFiles/');
       const iosPath = path.join(config.modRequest.projectRoot, 'ios');
       /* COPY OVER EXTENSION FILES */
       fs.mkdirSync(`${iosPath}/${NSE_TARGET_NAME}`, {
@@ -166,8 +148,7 @@ const withOneSignalNSE: ConfigPlugin<OneSignalPluginProps> = (
         await FileManager.copyFile(`${sourceDir}${file}`, targetFile);
       }
 
-      const sourcePath =
-        props.iosNSEFilePath ?? `${sourceDir}${NSE_SOURCE_FILE}`;
+      const sourcePath = props.iosNSEFilePath ?? `${sourceDir}${NSE_SOURCE_FILE}`;
       const targetFile = `${iosPath}/${NSE_TARGET_NAME}/${NSE_SOURCE_FILE}`;
       await FileManager.copyFile(`${sourcePath}`, targetFile);
 
@@ -181,12 +162,8 @@ const withOneSignalNSE: ConfigPlugin<OneSignalPluginProps> = (
       if (props.appGroupName) {
         await nseUpdater.updateNSEInfoPlistAppGroupKey(props.appGroupName);
       }
-      await nseUpdater.updateNSEBundleVersion(
-        config.ios?.buildNumber ?? DEFAULT_BUNDLE_VERSION,
-      );
-      await nseUpdater.updateNSEBundleShortVersion(
-        config?.version ?? DEFAULT_BUNDLE_SHORT_VERSION,
-      );
+      await nseUpdater.updateNSEBundleVersion(config.ios?.buildNumber ?? DEFAULT_BUNDLE_VERSION);
+      await nseUpdater.updateNSEBundleShortVersion(config?.version ?? DEFAULT_BUNDLE_SHORT_VERSION);
 
       return config;
     },
@@ -222,10 +199,7 @@ export function resolveDevTeam(
   return undefined;
 }
 
-const withOneSignalXcodeProject: ConfigPlugin<OneSignalPluginProps> = (
-  config,
-  props,
-) => {
+const withOneSignalXcodeProject: ConfigPlugin<OneSignalPluginProps> = (config, props) => {
   return withXcodeProject(config, (newConfig) => {
     const xcodeProject = newConfig.modResults;
     const nseBundleId = `${config.ios?.bundleIdentifier}.${
@@ -235,9 +209,7 @@ const withOneSignalXcodeProject: ConfigPlugin<OneSignalPluginProps> = (
     const devTeam = resolveDevTeam(config, props);
 
     if (xcodeProject.pbxTargetByName(NSE_TARGET_NAME)) {
-      OneSignalLog.log(
-        `${NSE_TARGET_NAME} already exists in project. Skipping...`,
-      );
+      OneSignalLog.log(`${NSE_TARGET_NAME} already exists in project. Skipping...`);
       return newConfig;
     }
 
@@ -266,10 +238,8 @@ const withOneSignalXcodeProject: ConfigPlugin<OneSignalPluginProps> = (
     // An upstream fix should be made to the code referenced in this link:
     //   - https://github.com/apache/cordova-node-xcode/blob/8b98cabc5978359db88dc9ff2d4c015cba40f150/lib/pbxProject.js#L860
     const projObjects = xcodeProject.hash.project.objects;
-    projObjects['PBXTargetDependency'] =
-      projObjects['PBXTargetDependency'] || {};
-    projObjects['PBXContainerItemProxy'] =
-      projObjects['PBXTargetDependency'] || {};
+    projObjects['PBXTargetDependency'] = projObjects['PBXTargetDependency'] || {};
+    projObjects['PBXContainerItemProxy'] = projObjects['PBXTargetDependency'] || {};
 
     // Add the NSE target
     // This adds PBXTargetDependency and PBXContainerItemProxy for you
@@ -287,19 +257,9 @@ const withOneSignalXcodeProject: ConfigPlugin<OneSignalPluginProps> = (
       'Sources',
       nseTarget.uuid,
     );
-    xcodeProject.addBuildPhase(
-      [],
-      'PBXResourcesBuildPhase',
-      'Resources',
-      nseTarget.uuid,
-    );
+    xcodeProject.addBuildPhase([], 'PBXResourcesBuildPhase', 'Resources', nseTarget.uuid);
 
-    xcodeProject.addBuildPhase(
-      [],
-      'PBXFrameworksBuildPhase',
-      'Frameworks',
-      nseTarget.uuid,
-    );
+    xcodeProject.addBuildPhase([], 'PBXFrameworksBuildPhase', 'Frameworks', nseTarget.uuid);
 
     // Edit the Deployment info of the new Target, only IphoneOS and Targeted Device Family
     // However, can be more
@@ -326,10 +286,7 @@ const withOneSignalXcodeProject: ConfigPlugin<OneSignalPluginProps> = (
   });
 };
 
-const withSoundFiles: ConfigPlugin<OneSignalPluginProps> = (
-  config,
-  onesignalProps,
-) => {
+const withSoundFiles: ConfigPlugin<OneSignalPluginProps> = (config, onesignalProps) => {
   if (!onesignalProps.sounds) {
     return config;
   }
@@ -363,10 +320,7 @@ const withSoundFiles: ConfigPlugin<OneSignalPluginProps> = (
   });
 };
 
-export const withOneSignalIos: ConfigPlugin<OneSignalPluginProps> = (
-  config,
-  props,
-) => {
+export const withOneSignalIos: ConfigPlugin<OneSignalPluginProps> = (config, props) => {
   config = withAppEnvironment(config, props);
   config = withRemoteNotificationsPermissions(config, props);
   if (!props.disableNSE) {

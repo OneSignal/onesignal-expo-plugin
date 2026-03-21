@@ -1,13 +1,11 @@
-import React from 'react';
-import { TouchableOpacity, Text, View, StyleSheet } from 'react-native';
 import { MaterialCommunityIcons as Icon } from '@expo/vector-icons';
-import SectionCard from '../SectionCard';
-import {
-  InAppMessageType,
-  iamTypeLabel,
-  iamTypeIcon,
-} from '../../models/InAppMessageType';
+import React, { type ComponentProps } from 'react';
+import { TouchableOpacity, Text, View, StyleSheet } from 'react-native';
+
+type IconName = ComponentProps<typeof Icon>['name'];
+import { InAppMessageType, iamTypeLabel, iamTypeIcon } from '../../models/InAppMessageType';
 import { AppColors, AppSpacing } from '../../theme';
+import SectionCard from '../SectionCard';
 
 interface Props {
   onSendIam: (type: InAppMessageType) => void;
@@ -34,7 +32,7 @@ export default function SendIamSection({ onSendIam, onInfoTap }: Props) {
         >
           <View style={styles.inner}>
             <Icon
-              name={iamTypeIcon[type]}
+              name={iamTypeIcon[type] as IconName}
               size={20}
               color={AppColors.white}
               style={styles.icon}

@@ -2,48 +2,57 @@
   "name": "onesignal-expo-plugin",
   "version": "2.4.0",
   "description": "Some Changez",
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "keywords": [
+    "EAS",
+    "expo",
+    "notifications",
+    "onesignal",
+    "push"
+  ],
+  "homepage": "https://github.com/OneSignal/onesignal-expo-plugin#readme",
+  "bugs": {
+    "url": "https://github.com/OneSignal/onesignal-expo-plugin/issues"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/OneSignal/onesignal-expo-plugin.git"
+  },
   "files": [
     "dist",
     "serviceExtensionFiles"
   ],
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
   "scripts": {
     "build": "vp pack",
     "format:spotless": "./examples/demo/android/gradlew spotlessApply",
     "format": "vp fmt && npm run format:spotless",
     "format:check:spotless": "./examples/demo/android/gradlew spotlessCheck",
     "format:check": "vp fmt --check && npm run format:check:spotless",
-    "lint": "vp check src examples && npm run format:check",
-    "lint:fix": "vp check src examples --fix && npm run format",
+    "lint": "vp check src && npm run format:check",
+    "lint:fix": "vp check --fix src && npm run format",
     "test": "vp test"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/OneSignal/onesignal-expo-plugin.git"
+  "dependencies": {
+    "@expo/image-utils": "^0.8.8"
   },
-  "keywords": [
-    "expo",
-    "onesignal",
-    "push",
-    "notifications",
-    "EAS"
-  ],
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/OneSignal/onesignal-expo-plugin/issues"
-  },
-  "homepage": "https://github.com/OneSignal/onesignal-expo-plugin#readme",
   "devDependencies": {
+    "@expo/config-types": "^55.0.5",
+    "@types/node": "^22.19.3",
     "@vitest/coverage-v8": "^4.1.0",
     "vite-plus": "latest"
   },
   "peerDependencies": {
     "@expo/config-plugins": ">=7.0.0",
     "react-native-onesignal": ">=5.0.0"
-  },
-  "dependencies": {
-    "@expo/image-utils": "^0.8.8"
   },
   "packageManager": "pnpm@10.32.1",
   "pnpm": {

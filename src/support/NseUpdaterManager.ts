@@ -20,10 +20,7 @@ export default class NseUpdaterManager {
     const entitlementsFilePath = `${this.nsePath}/${entitlementsFileName}`;
     let entitlementsFile = await FileManager.readFile(entitlementsFilePath);
 
-    entitlementsFile = entitlementsFile.replace(
-      GROUP_IDENTIFIER_TEMPLATE_REGEX,
-      groupIdentifier,
-    );
+    entitlementsFile = entitlementsFile.replace(GROUP_IDENTIFIER_TEMPLATE_REGEX, groupIdentifier);
     await FileManager.writeFile(entitlementsFilePath, entitlementsFile);
   }
 

@@ -9,8 +9,7 @@ export interface UserData {
 export function userDataFromJson(json: Record<string, unknown>): UserData {
   const identity = (json.identity as Record<string, string>) ?? {};
   const properties = (json.properties as Record<string, unknown>) ?? {};
-  const subscriptions =
-    (json.subscriptions as Array<Record<string, unknown>>) ?? [];
+  const subscriptions = (json.subscriptions as Array<Record<string, unknown>>) ?? [];
 
   const aliases: Record<string, string> = {};
   for (const [key, value] of Object.entries(identity)) {
@@ -25,9 +24,11 @@ export function userDataFromJson(json: Record<string, unknown>): UserData {
   const smsNumbers: string[] = [];
   for (const sub of subscriptions) {
     if (sub.type === 'Email' && sub.token) {
-      emails.push(String(sub.token));
+      const token = typeof sub.token === 'string' ? sub.token : JSON.stringify(sub.token);
+      emails.push(token);
     } else if (sub.type === 'SMS' && sub.token) {
-      smsNumbers.push(String(sub.token));
+      const token = typeof sub.token === 'string' ? sub.token : JSON.stringify(sub.token);
+      smsNumbers.push(token);
     }
   }
 

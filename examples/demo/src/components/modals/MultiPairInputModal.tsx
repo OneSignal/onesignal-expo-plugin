@@ -1,3 +1,4 @@
+import { MaterialIcons as Icon } from '@expo/vector-icons';
 import React, { useState, useCallback } from 'react';
 import {
   Modal,
@@ -10,7 +11,7 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
-import { MaterialIcons as Icon } from '@expo/vector-icons';
+
 import { AppColors, AppDialogStyles, AppInputProps } from '../../theme';
 
 interface Row {
@@ -43,14 +44,9 @@ export default function MultiPairInputModal({
 
   const allFilled = rows.every((r) => r.key.trim() && r.value.trim());
 
-  const updateRow = useCallback(
-    (id: number, field: 'key' | 'value', text: string) => {
-      setRows((prev) =>
-        prev.map((r) => (r.id === id ? { ...r, [field]: text } : r)),
-      );
-    },
-    [],
-  );
+  const updateRow = useCallback((id: number, field: 'key' | 'value', text: string) => {
+    setRows((prev) => prev.map((r) => (r.id === id ? { ...r, [field]: text } : r)));
+  }, []);
 
   const addRow = useCallback(() => {
     setRows((prev) => [...prev, makeRow()]);
@@ -83,12 +79,7 @@ export default function MultiPairInputModal({
   };
 
   return (
-    <Modal
-      visible={visible}
-      transparent
-      animationType="fade"
-      onRequestClose={handleClose}
-    >
+    <Modal visible={visible} transparent animationType="fade" onRequestClose={handleClose}>
       <KeyboardAvoidingView
         style={AppDialogStyles.backdrop}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
@@ -124,11 +115,7 @@ export default function MultiPairInputModal({
                       onPress={() => removeRow(row.id)}
                       hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
                     >
-                      <Icon
-                        name="close"
-                        size={20}
-                        color={AppColors.osGrey600}
-                      />
+                      <Icon name="close" size={20} color={AppColors.osGrey600} />
                     </TouchableOpacity>
                   )}
                 </View>
@@ -139,10 +126,7 @@ export default function MultiPairInputModal({
             </TouchableOpacity>
           </ScrollView>
           <View style={AppDialogStyles.actions}>
-            <TouchableOpacity
-              style={AppDialogStyles.actionBtn}
-              onPress={handleClose}
-            >
+            <TouchableOpacity style={AppDialogStyles.actionBtn} onPress={handleClose}>
               <Text style={AppDialogStyles.actionText}>Cancel</Text>
             </TouchableOpacity>
             <TouchableOpacity

@@ -1,4 +1,5 @@
 import { extname } from 'path';
+
 import { ONESIGNAL_PLUGIN_PROPS } from '../types/types';
 
 const HEX_COLOR_6_REGEX = /^#?[0-9A-Fa-f]{6}$/;
@@ -42,13 +43,8 @@ export function validatePluginProps(props: any): void {
     throw new Error("OneSignal Expo Plugin: 'devTeam' must be a string.");
   }
 
-  if (
-    props.iPhoneDeploymentTarget &&
-    typeof props.iPhoneDeploymentTarget !== 'string'
-  ) {
-    throw new Error(
-      "OneSignal Expo Plugin: 'iPhoneDeploymentTarget' must be a string.",
-    );
+  if (props.iPhoneDeploymentTarget && typeof props.iPhoneDeploymentTarget !== 'string') {
+    throw new Error("OneSignal Expo Plugin: 'iPhoneDeploymentTarget' must be a string.");
   }
 
   if (props.smallIcons && !Array.isArray(props.smallIcons)) {
@@ -57,9 +53,7 @@ export function validatePluginProps(props: any): void {
 
   if (props.smallIconAccentColor != null) {
     if (typeof props.smallIconAccentColor !== 'string') {
-      throw new Error(
-        "OneSignal Expo Plugin: 'smallIconAccentColor' must be a string.",
-      );
+      throw new Error("OneSignal Expo Plugin: 'smallIconAccentColor' must be a string.");
     }
     parseColorToARGB(props.smallIconAccentColor);
   }
@@ -69,22 +63,15 @@ export function validatePluginProps(props: any): void {
   }
 
   if (props.iosNSEFilePath && typeof props.iosNSEFilePath !== 'string') {
-    throw new Error(
-      "OneSignal Expo Plugin: 'iosNSEFilePath' must be a string.",
-    );
+    throw new Error("OneSignal Expo Plugin: 'iosNSEFilePath' must be a string.");
   }
 
   if (props.appGroupName && typeof props.appGroupName !== 'string') {
     throw new Error("OneSignal Expo Plugin: 'appGroupName' must be a string.");
   }
 
-  if (
-    props.nseBundleIdentifier &&
-    typeof props.nseBundleIdentifier !== 'string'
-  ) {
-    throw new Error(
-      "OneSignal Expo Plugin: 'nseBundleIdentifier' must be a string.",
-    );
+  if (props.nseBundleIdentifier && typeof props.nseBundleIdentifier !== 'string') {
+    throw new Error("OneSignal Expo Plugin: 'nseBundleIdentifier' must be a string.");
   }
 
   if (props.disableNSE !== undefined && typeof props.disableNSE !== 'boolean') {
@@ -97,9 +84,7 @@ export function validatePluginProps(props: any): void {
     }
     for (const sound of props.sounds) {
       if (typeof sound !== 'string') {
-        throw new Error(
-          "OneSignal Expo Plugin: each entry in 'sounds' must be a string path.",
-        );
+        throw new Error("OneSignal Expo Plugin: each entry in 'sounds' must be a string path.");
       }
       if (extname(sound).toLowerCase() !== '.wav') {
         throw new Error(

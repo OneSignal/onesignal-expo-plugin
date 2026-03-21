@@ -3,7 +3,7 @@ set -euo pipefail
 
 ORIGINAL_DIR=$(pwd)
 
-# Build root package
+# Build plugin (dist/) then pack to onesignal-expo-plugin.tgz at repo root
 cd ../../
 bun run build
 
@@ -11,7 +11,7 @@ rm -f onesignal-expo-plugin.tgz
 bun pm pack
 mv onesignal-expo-plugin-*.tgz onesignal-expo-plugin.tgz
 
-# Use fresh install of the package
+# Install from tarball (matches published npm install)
 cd "$ORIGINAL_DIR"
 bun pm cache rm
 

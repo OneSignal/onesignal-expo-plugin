@@ -3,17 +3,16 @@
  * @see https://documentation.onesignal.com/docs/react-native-sdk-setup#step-4-install-for-ios-using-cocoapods-for-ios-apps
  */
 
-import {
-  ConfigPlugin,
-  withDangerousMod,
-  withStringsXml,
-} from '@expo/config-plugins';
-import { generateImageAsync } from '@expo/image-utils';
-import { OneSignalLog } from '../support/OneSignalLog';
-import { parseColorToARGB } from '../support/helpers';
-import { OneSignalPluginProps } from '../types/types';
-import { resolve, parse, basename } from 'path';
 import { existsSync, mkdirSync, writeFileSync, copyFileSync } from 'fs';
+import { resolve, parse, basename } from 'path';
+
+import { ConfigPlugin, withDangerousMod, withStringsXml } from '@expo/config-plugins';
+import type { ExpoConfig } from '@expo/config-types';
+import { generateImageAsync } from '@expo/image-utils';
+
+import { parseColorToARGB } from '../support/helpers';
+import { OneSignalLog } from '../support/OneSignalLog';
+import { OneSignalPluginProps } from '../types/types';
 
 const RESOURCE_ROOT_PATH = 'android/app/src/main/res/';
 
@@ -33,20 +32,24 @@ const LARGE_ICON_DIRS_TO_SIZE: { [name: string]: number } = {
 
 const SMALL_ICON_DEFAULT_NAME = 'ic_stat_onesignal_default';
 
-const withSmallIcons: ConfigPlugin<OneSignalPluginProps> = (
-  config,
-  onesignalProps,
-) => {
-  if (!onesignalProps.smallIcons && !config.notification?.icon) {
+/** Expo may expose `notification.icon` for legacy Android notification icon config. */
+type ExpoConfigWithNotification = ExpoConfig & {
+  notification?: { icon?: string };
+};
+
+const withSmallIcons: ConfigPlugin<OneSignalPluginProps> = (config, onesignalProps) => {
+  const expoConfig = config as ExpoConfigWithNotification;
+  if (!onesignalProps.smallIcons && !expoConfig.notification?.icon) {
     return config;
   }
 
   return withDangerousMod(config, [
     'android',
     async (config) => {
-      if (config.notification?.icon) {
+      const modConfig = config as ExpoConfigWithNotification;
+      if (modConfig.notification?.icon) {
         await saveIconAsync(
-          config.notification.icon,
+          modConfig.notification.icon,
           config.modRequest.projectRoot,
           SMALL_ICON_DIRS_TO_SIZE,
           SMALL_ICON_DEFAULT_NAME,
@@ -68,10 +71,7 @@ const withSmallIcons: ConfigPlugin<OneSignalPluginProps> = (
 
 const LARGE_ICON_DEFAULT_NAME = 'ic_onesignal_large_icon_default';
 
-const withLargeIcons: ConfigPlugin<OneSignalPluginProps> = (
-  config,
-  onesignalProps,
-) => {
+const withLargeIcons: ConfigPlugin<OneSignalPluginProps> = (config, onesignalProps) => {
   if (!onesignalProps.largeIcons) {
     return config;
   }
@@ -92,23 +92,17 @@ const withLargeIcons: ConfigPlugin<OneSignalPluginProps> = (
   ]);
 };
 
-const withSmallIconAccentColor: ConfigPlugin<OneSignalPluginProps> = (
-  config,
-  onesignalProps,
-) => {
+const withSmallIconAccentColor: ConfigPlugin<OneSignalPluginProps> = (config, onesignalProps) => {
   if (!onesignalProps.smallIconAccentColor) {
     return config;
   }
 
   return withStringsXml(config, (config) => {
-    const colorInARGB = parseColorToARGB(
-      onesignalProps.smallIconAccentColor ?? '',
-    );
+    const colorInARGB = parseColorToARGB(onesignalProps.smallIconAccentColor ?? '');
     const strings = config.modResults.resources.string ?? [];
 
     const existingIndex = strings.findIndex(
-      (stringEntry) =>
-        stringEntry.$?.name === 'onesignal_notification_accent_color',
+      (stringEntry) => stringEntry.$?.name === 'onesignal_notification_accent_color',
     );
 
     const accentColorEntry = {
@@ -175,10 +169,7 @@ async function saveIconAsync(
   }
 }
 
-const withSoundFiles: ConfigPlugin<OneSignalPluginProps> = (
-  config,
-  onesignalProps,
-) => {
+const withSoundFiles: ConfigPlugin<OneSignalPluginProps> = (config, onesignalProps) => {
   if (!onesignalProps.sounds) {
     return config;
   }
@@ -197,9 +188,7 @@ const withSoundFiles: ConfigPlugin<OneSignalPluginProps> = (
         const sourcePath = resolve(projectRoot, soundFile);
         const fileName = basename(sourcePath).toLowerCase();
 
-        OneSignalLog.log(
-          `Copying sound file ${soundFile} to res/raw/${fileName}`,
-        );
+        OneSignalLog.log(`Copying sound file ${soundFile} to res/raw/${fileName}`);
         copyFileSync(sourcePath, resolve(rawDir, fileName));
       }
 
@@ -208,10 +197,7 @@ const withSoundFiles: ConfigPlugin<OneSignalPluginProps> = (
   ]);
 };
 
-export const withOneSignalAndroid: ConfigPlugin<OneSignalPluginProps> = (
-  config,
-  props,
-) => {
+export const withOneSignalAndroid: ConfigPlugin<OneSignalPluginProps> = (config, props) => {
   config = withSmallIcons(config, props);
   config = withLargeIcons(config, props);
   config = withSmallIconAccentColor(config, props);

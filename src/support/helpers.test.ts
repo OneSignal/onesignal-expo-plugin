@@ -1,4 +1,5 @@
 import { describe, expect, test } from 'vite-plus/test';
+
 import { parseColorToARGB, validatePluginProps } from './helpers';
 
 describe('parseColorToARGB', () => {
@@ -48,15 +49,15 @@ describe('validatePluginProps', () => {
   });
 
   test('rejects non-string appGroupName', () => {
-    expect(() =>
-      validatePluginProps({ ...validProps, appGroupName: 123 }),
-    ).toThrow("'appGroupName' must be a string");
+    expect(() => validatePluginProps({ ...validProps, appGroupName: 123 })).toThrow(
+      "'appGroupName' must be a string",
+    );
   });
 
   test('rejects unknown properties', () => {
-    expect(() =>
-      validatePluginProps({ ...validProps, unknownProp: 'value' }),
-    ).toThrow('invalid property "unknownProp"');
+    expect(() => validatePluginProps({ ...validProps, unknownProp: 'value' })).toThrow(
+      'invalid property "unknownProp"',
+    );
   });
 
   test('allows appGroupName to be omitted', () => {
@@ -73,27 +74,23 @@ describe('validatePluginProps', () => {
   });
 
   test('rejects non-string nseBundleIdentifier', () => {
-    expect(() =>
-      validatePluginProps({ ...validProps, nseBundleIdentifier: 123 }),
-    ).toThrow("'nseBundleIdentifier' must be a string");
+    expect(() => validatePluginProps({ ...validProps, nseBundleIdentifier: 123 })).toThrow(
+      "'nseBundleIdentifier' must be a string",
+    );
   });
 
   test('accepts disableNSE as true', () => {
-    expect(() =>
-      validatePluginProps({ ...validProps, disableNSE: true }),
-    ).not.toThrow();
+    expect(() => validatePluginProps({ ...validProps, disableNSE: true })).not.toThrow();
   });
 
   test('accepts disableNSE as false', () => {
-    expect(() =>
-      validatePluginProps({ ...validProps, disableNSE: false }),
-    ).not.toThrow();
+    expect(() => validatePluginProps({ ...validProps, disableNSE: false })).not.toThrow();
   });
 
   test('rejects non-boolean disableNSE', () => {
-    expect(() =>
-      validatePluginProps({ ...validProps, disableNSE: 'true' }),
-    ).toThrow("'disableNSE' must be a boolean");
+    expect(() => validatePluginProps({ ...validProps, disableNSE: 'true' })).toThrow(
+      "'disableNSE' must be a boolean",
+    );
   });
 
   test('allows disableNSE to be omitted', () => {
@@ -119,18 +116,18 @@ describe('validatePluginProps', () => {
   });
 
   test('rejects non-string smallIconAccentColor', () => {
-    expect(() =>
-      validatePluginProps({ ...validProps, smallIconAccentColor: 123 }),
-    ).toThrow("'smallIconAccentColor' must be a string");
+    expect(() => validatePluginProps({ ...validProps, smallIconAccentColor: 123 })).toThrow(
+      "'smallIconAccentColor' must be a string",
+    );
   });
 
   test('rejects invalid hex smallIconAccentColor', () => {
-    expect(() =>
-      validatePluginProps({ ...validProps, smallIconAccentColor: 'red' }),
-    ).toThrow('valid hex color');
-    expect(() =>
-      validatePluginProps({ ...validProps, smallIconAccentColor: '#GGGGGG' }),
-    ).toThrow('valid hex color');
+    expect(() => validatePluginProps({ ...validProps, smallIconAccentColor: 'red' })).toThrow(
+      'valid hex color',
+    );
+    expect(() => validatePluginProps({ ...validProps, smallIconAccentColor: '#GGGGGG' })).toThrow(
+      'valid hex color',
+    );
   });
 
   test('accepts valid sounds array', () => {
@@ -143,15 +140,13 @@ describe('validatePluginProps', () => {
   });
 
   test('accepts empty sounds array', () => {
-    expect(() =>
-      validatePluginProps({ ...validProps, sounds: [] }),
-    ).not.toThrow();
+    expect(() => validatePluginProps({ ...validProps, sounds: [] })).not.toThrow();
   });
 
   test('rejects non-array sounds', () => {
-    expect(() =>
-      validatePluginProps({ ...validProps, sounds: 'notification.wav' }),
-    ).toThrow("'sounds' must be an array");
+    expect(() => validatePluginProps({ ...validProps, sounds: 'notification.wav' })).toThrow(
+      "'sounds' must be an array",
+    );
   });
 
   test('rejects sounds array with non-string entries', () => {
@@ -161,15 +156,15 @@ describe('validatePluginProps', () => {
   });
 
   test('rejects non-wav sound files', () => {
-    expect(() =>
-      validatePluginProps({ ...validProps, sounds: ['./assets/tone.mp3'] }),
-    ).toThrow('must be a .wav file');
-    expect(() =>
-      validatePluginProps({ ...validProps, sounds: ['./assets/ring.ogg'] }),
-    ).toThrow('must be a .wav file');
-    expect(() =>
-      validatePluginProps({ ...validProps, sounds: ['./assets/chime.aiff'] }),
-    ).toThrow('must be a .wav file');
+    expect(() => validatePluginProps({ ...validProps, sounds: ['./assets/tone.mp3'] })).toThrow(
+      'must be a .wav file',
+    );
+    expect(() => validatePluginProps({ ...validProps, sounds: ['./assets/ring.ogg'] })).toThrow(
+      'must be a .wav file',
+    );
+    expect(() => validatePluginProps({ ...validProps, sounds: ['./assets/chime.aiff'] })).toThrow(
+      'must be a .wav file',
+    );
   });
 
   test('accepts .wav with any casing', () => {

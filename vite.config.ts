@@ -2,16 +2,21 @@ import { defineConfig } from 'vite-plus';
 
 export default defineConfig({
   staged: {
-    "*": "",
-    // "*": "vp check --fix"
+    '*': 'vp check --fix',
   },
-  lint: {"options":{"typeAware":true,"typeCheck":true}},
+  fmt: {
+    singleQuote: true,
+    sortImports: {
+      enabled: true,
+    },
+  },
+  lint: { options: { typeAware: true, typeCheck: true } },
   test: {
     coverage: {
       enabled: true,
       reporter: ['text-summary', 'lcov'],
       reportOnFailure: true,
-    }
+    },
   },
   pack: {
     entry: { index: 'src/onesignal/withOneSignal.ts' },

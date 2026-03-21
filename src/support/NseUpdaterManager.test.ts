@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, test, vi } from 'vite-plus/test';
-import NseUpdaterManager from './NseUpdaterManager';
+
 import { FileManager } from './FileManager';
+import NseUpdaterManager from './NseUpdaterManager';
 
 vi.mock('./FileManager', () => ({
   FileManager: {
@@ -41,17 +42,18 @@ describe('NseUpdaterManager', () => {
   beforeEach(() => {
     writtenFiles = {};
 
+    // FileManager methods are static; vi.mocked needs the mock reference from the module.
+    // eslint-disable-next-line @typescript-eslint/unbound-method -- mock targets static methods
     vi.mocked(FileManager.readFile).mockImplementation(async (path: string) => {
       if (path.endsWith('.entitlements')) return NSE_ENTITLEMENTS_TEMPLATE;
       if (path.endsWith('-Info.plist')) return NSE_INFO_PLIST_TEMPLATE;
       throw new Error(`Unexpected file read: ${path}`);
     });
 
-    vi.mocked(FileManager.writeFile).mockImplementation(
-      async (path: string, contents: string) => {
-        writtenFiles[path] = contents;
-      },
-    );
+    // eslint-disable-next-line @typescript-eslint/unbound-method -- mock targets static methods
+    vi.mocked(FileManager.writeFile).mockImplementation(async (path: string, contents: string) => {
+      writtenFiles[path] = contents;
+    });
   });
 
   test('updateNSEEntitlements replaces template with group identifier', async () => {

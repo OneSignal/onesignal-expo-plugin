@@ -35,19 +35,14 @@ function App() {
     const init = async () => {
       try {
         const prefs = PreferencesService.getInstance();
-        const [
-          appId,
-          consentRequired,
-          privacyConsent,
-          iamPaused,
-          locationShared,
-        ] = await Promise.all([
-          prefs.getAppId(),
-          prefs.getConsentRequired(),
-          prefs.getPrivacyConsent(),
-          prefs.getIamPaused(),
-          prefs.getLocationShared(),
-        ]);
+        const [appId, consentRequired, privacyConsent, iamPaused, locationShared] =
+          await Promise.all([
+            prefs.getAppId(),
+            prefs.getConsentRequired(),
+            prefs.getPrivacyConsent(),
+            prefs.getIamPaused(),
+            prefs.getLocationShared(),
+          ]);
 
         OneSignalApiService.getInstance().setAppId(appId);
 
@@ -71,51 +66,31 @@ function App() {
             log.i(TAG, `IAM willDisplay: ${e.message.messageId}`);
           },
         );
-        OneSignal.InAppMessages.addEventListener(
-          'didDisplay',
-          (e: InAppMessageDidDisplayEvent) => {
-            log.i(TAG, `IAM didDisplay: ${e.message.messageId}`);
-          },
-        );
+        OneSignal.InAppMessages.addEventListener('didDisplay', (e: InAppMessageDidDisplayEvent) => {
+          log.i(TAG, `IAM didDisplay: ${e.message.messageId}`);
+        });
         OneSignal.InAppMessages.addEventListener(
           'willDismiss',
           (e: InAppMessageWillDismissEvent) => {
             log.i(TAG, `IAM willDismiss: ${e.message.messageId}`);
           },
         );
-        OneSignal.InAppMessages.addEventListener(
-          'didDismiss',
-          (e: InAppMessageDidDismissEvent) => {
-            log.i(TAG, `IAM didDismiss: ${e.message.messageId}`);
-          },
-        );
-        OneSignal.InAppMessages.addEventListener(
-          'click',
-          (e: InAppMessageClickEvent) => {
-            log.i(TAG, `IAM click: ${e.result.actionId ?? 'unknown'}`);
-          },
-        );
-        OneSignal.Notifications.addEventListener(
-          'click',
-          (e: NotificationClickEvent) => {
-            log.i(TAG, `Notification click: ${e.notification.title ?? ''}`);
-          },
-        );
-        OneSignal.Notifications.addEventListener(
-          'permissionChange',
-          (granted: boolean) => {
-            log.i(TAG, `Permission changed: ${granted}`);
-          },
-        );
+        OneSignal.InAppMessages.addEventListener('didDismiss', (e: InAppMessageDidDismissEvent) => {
+          log.i(TAG, `IAM didDismiss: ${e.message.messageId}`);
+        });
+        OneSignal.InAppMessages.addEventListener('click', (e: InAppMessageClickEvent) => {
+          log.i(TAG, `IAM click: ${e.result.actionId ?? 'unknown'}`);
+        });
+        OneSignal.Notifications.addEventListener('click', (e: NotificationClickEvent) => {
+          log.i(TAG, `Notification click: ${e.notification.title ?? ''}`);
+        });
+        OneSignal.Notifications.addEventListener('permissionChange', (granted: boolean) => {
+          log.i(TAG, `Permission changed: ${granted}`);
+        });
         OneSignal.Notifications.addEventListener(
           'foregroundWillDisplay',
           (e: NotificationWillDisplayEvent) => {
-            log.i(
-              TAG,
-              `Notification foregroundWillDisplay: ${
-                e.getNotification().title ?? ''
-              }`,
-            );
+            log.i(TAG, `Notification foregroundWillDisplay: ${e.getNotification().title ?? ''}`);
             e.preventDefault();
             e.getNotification().display();
           },
@@ -127,18 +102,15 @@ function App() {
       }
     };
 
-    init();
+    void init();
 
     // Fetch tooltips in background
-    TooltipHelper.getInstance().init();
+    void TooltipHelper.getInstance().init();
   }, []);
 
   return (
     <SafeAreaProvider>
-      <StatusBar
-        backgroundColor={AppColors.osPrimary}
-        barStyle="light-content"
-      />
+      <StatusBar backgroundColor={AppColors.osPrimary} barStyle="light-content" />
       <AppContextProvider>
         <NavigationContainer>
           <Stack.Navigator
@@ -155,11 +127,7 @@ function App() {
               options={{
                 headerTitle: () => (
                   <View style={headerStyles.container}>
-                    <OneSignalLogo
-                      height={22}
-                      width={99}
-                      style={headerStyles.logo}
-                    />
+                    <OneSignalLogo height={22} width={99} style={headerStyles.logo} />
                     <Text style={headerStyles.subtitle}>Expo</Text>
                   </View>
                 ),

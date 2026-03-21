@@ -1,12 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import {
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
 import { MaterialIcons as Icon } from '@expo/vector-icons';
+import React, { useEffect, useState } from 'react';
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+
 import LogManager, { LogEntry } from '../services/LogManager';
 import { AppColors, AppTextStyles } from '../theme';
 
@@ -85,33 +80,22 @@ export default function LogView() {
                 </Text>
               ) : (
                 entries.map((entry, index) => (
-                  <View
-                    key={index}
-                    style={styles.logRow}
-                    testID={`log_entry_${index}`}
-                  >
-                    <Text
-                      style={styles.timestamp}
-                      testID={`log_entry_${index}_timestamp`}
-                    >
+                  <View key={index} style={styles.logRow} testID={`log_entry_${index}`}>
+                    <Text style={styles.timestamp} testID={`log_entry_${index}_timestamp`}>
                       {entry.timestamp}
                     </Text>
                     <Text
                       style={[
                         styles.level,
                         {
-                          color:
-                            LEVEL_COLORS[entry.level] ?? AppColors.osGrey500,
+                          color: LEVEL_COLORS[entry.level] ?? AppColors.osGrey500,
                         },
                       ]}
                       testID={`log_entry_${index}_level`}
                     >
                       {entry.level}
                     </Text>
-                    <Text
-                      style={styles.message}
-                      testID={`log_entry_${index}_message`}
-                    >
+                    <Text style={styles.message} testID={`log_entry_${index}_message`}>
                       {entry.tag}: {entry.message}
                     </Text>
                   </View>
