@@ -1,20 +1,11 @@
-import {
-  afterEach,
-  beforeEach,
-  describe,
-  expect,
-  mock,
-  spyOn,
-  test,
-} from 'bun:test';
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vite-plus/test';
 import type { ExpoConfig } from '@expo/config-types';
 import type { OneSignalPluginProps } from '../types/types';
 import { OneSignalLog } from '../support/OneSignalLog';
 
-const passthrough = (_config: ExpoConfig, _fn: unknown) => _config;
-
-beforeEach(() => {
-  mock.module('@expo/config-plugins', () => ({
+vi.mock('@expo/config-plugins', () => {
+  const passthrough = (_config: unknown, _fn: unknown) => _config;
+  return {
     withEntitlementsPlist: passthrough,
     withInfoPlist: passthrough,
     withXcodeProject: passthrough,
@@ -25,7 +16,7 @@ beforeEach(() => {
         addResourceFileToGroup: ({ project }: { project: unknown }) => project,
       },
     },
-  }));
+  };
 });
 
 function makeConfig(overrides: Partial<ExpoConfig> = {}): ExpoConfig {
@@ -42,14 +33,14 @@ const defaultProps: OneSignalPluginProps = {
 
 describe('withOneSignalIos', () => {
   test('does not throw when ios.bundleIdentifier is missing', async () => {
-    const { withOneSignalIos } = await import('../onesignal/withOneSignalIos');
+    const { withOneSignalIos } = await import('./withOneSignalIos');
     const config = makeConfig();
 
     expect(() => withOneSignalIos(config, defaultProps)).not.toThrow();
   });
 
   test('does not set config.extra when ios.bundleIdentifier is missing', async () => {
-    const { withOneSignalIos } = await import('../onesignal/withOneSignalIos');
+    const { withOneSignalIos } = await import('./withOneSignalIos');
     const config = makeConfig();
 
     const result = withOneSignalIos(config, defaultProps);
@@ -57,7 +48,7 @@ describe('withOneSignalIos', () => {
   });
 
   test('sets config.extra when ios.bundleIdentifier is present', async () => {
-    const { withOneSignalIos } = await import('../onesignal/withOneSignalIos');
+    const { withOneSignalIos } = await import('./withOneSignalIos');
     const config = makeConfig({
       ios: { bundleIdentifier: 'com.example.app' },
     });
@@ -70,10 +61,10 @@ describe('withOneSignalIos', () => {
 });
 
 describe('resolveDevTeam', () => {
-  let logSpy: ReturnType<typeof spyOn>;
+  let logSpy: ReturnType<typeof vi.spyOn>;
 
   beforeEach(() => {
-    logSpy = spyOn(OneSignalLog, 'log');
+    logSpy = vi.spyOn(OneSignalLog, 'log');
   });
 
   afterEach(() => {
@@ -81,7 +72,7 @@ describe('resolveDevTeam', () => {
   });
 
   test('returns ios.appleTeamId when set', async () => {
-    const { resolveDevTeam } = await import('../onesignal/withOneSignalIos');
+    const { resolveDevTeam } = await import('./withOneSignalIos');
     const config = makeConfig({
       ios: {
         bundleIdentifier: 'com.example.app',
@@ -94,7 +85,7 @@ describe('resolveDevTeam', () => {
   });
 
   test('prefers ios.appleTeamId over devTeam and warns devTeam is ignored', async () => {
-    const { resolveDevTeam } = await import('../onesignal/withOneSignalIos');
+    const { resolveDevTeam } = await import('./withOneSignalIos');
     const config = makeConfig({
       ios: {
         bundleIdentifier: 'com.example.app',
@@ -112,7 +103,7 @@ describe('resolveDevTeam', () => {
   });
 
   test('falls back to devTeam and logs deprecation warning', async () => {
-    const { resolveDevTeam } = await import('../onesignal/withOneSignalIos');
+    const { resolveDevTeam } = await import('./withOneSignalIos');
     const config = makeConfig();
     const props: OneSignalPluginProps = {
       ...defaultProps,
@@ -125,7 +116,7 @@ describe('resolveDevTeam', () => {
   });
 
   test('returns undefined when neither is set', async () => {
-    const { resolveDevTeam } = await import('../onesignal/withOneSignalIos');
+    const { resolveDevTeam } = await import('./withOneSignalIos');
     const config = makeConfig();
 
     expect(resolveDevTeam(config, defaultProps)).toBeUndefined();

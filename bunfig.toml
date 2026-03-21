@@ -1,5 +1,0 @@
-[test]
-coverageReporter = ["text", "lcov"]  # default ["text"]
-coverageDir = "./coverage"
-#coverageThreshold = 0.67 # Currently it's per file so need to add more tests
-coverageSkipTestFiles = true  # default false

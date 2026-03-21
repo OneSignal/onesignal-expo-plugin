@@ -1,5 +1,5 @@
-import { describe, expect, test } from 'bun:test';
-import getEasManagedCredentialsConfigExtra from '../support/eas/getEasManagedCredentialsConfigExtra';
+import { describe, expect, test } from 'vite-plus/test';
+import getEasManagedCredentialsConfigExtra from './getEasManagedCredentialsConfigExtra';
 import type { ExpoConfig } from '@expo/config-types';
 
 function makeConfig(overrides: Partial<ExpoConfig> = {}): ExpoConfig {

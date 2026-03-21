@@ -1,5 +1,5 @@
-import { describe, expect, test } from 'bun:test';
-import { parseColorToARGB, validatePluginProps } from '../support/helpers';
+import { describe, expect, test } from 'vite-plus/test';
+import { parseColorToARGB, validatePluginProps } from './helpers';
 
 describe('parseColorToARGB', () => {
   test('converts 6-digit hex with # to ARGB', () => {

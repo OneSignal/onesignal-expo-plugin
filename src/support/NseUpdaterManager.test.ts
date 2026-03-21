@@ -1,5 +1,13 @@
-import { beforeEach, describe, expect, mock, test } from 'bun:test';
-import NseUpdaterManager from '../support/NseUpdaterManager';
+import { beforeEach, describe, expect, test, vi } from 'vite-plus/test';
+import NseUpdaterManager from './NseUpdaterManager';
+import { FileManager } from './FileManager';
+
+vi.mock('./FileManager', () => ({
+  FileManager: {
+    readFile: vi.fn(),
+    writeFile: vi.fn(),
+  },
+}));
 
 const NSE_ENTITLEMENTS_TEMPLATE = `<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
@@ -33,18 +41,17 @@ describe('NseUpdaterManager', () => {
   beforeEach(() => {
     writtenFiles = {};
 
-    mock.module('../support/FileManager', () => ({
-      FileManager: {
-        readFile: mock(async (path: string) => {
-          if (path.endsWith('.entitlements')) return NSE_ENTITLEMENTS_TEMPLATE;
-          if (path.endsWith('-Info.plist')) return NSE_INFO_PLIST_TEMPLATE;
-          throw new Error(`Unexpected file read: ${path}`);
-        }),
-        writeFile: mock(async (path: string, contents: string) => {
-          writtenFiles[path] = contents;
-        }),
+    vi.mocked(FileManager.readFile).mockImplementation(async (path: string) => {
+      if (path.endsWith('.entitlements')) return NSE_ENTITLEMENTS_TEMPLATE;
+      if (path.endsWith('-Info.plist')) return NSE_INFO_PLIST_TEMPLATE;
+      throw new Error(`Unexpected file read: ${path}`);
+    });
+
+    vi.mocked(FileManager.writeFile).mockImplementation(
+      async (path: string, contents: string) => {
+        writtenFiles[path] = contents;
       },
-    }));
+    );
   });
 
   test('updateNSEEntitlements replaces template with group identifier', async () => {
