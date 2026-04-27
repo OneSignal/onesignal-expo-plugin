@@ -5,6 +5,16 @@ import { AppColors, AppTextStyles, AppTheme, AppSpacing } from '../../theme';
 import SectionCard from '../SectionCard';
 import ToggleRow from '../ToggleRow';
 
+const E2E_MODE = process.env.EXPO_PUBLIC_E2E_MODE;
+const MASK_CHAR = '•';
+
+function maskValue(value: string): string {
+  if (E2E_MODE === 'true') {
+    return MASK_CHAR.repeat(value.length);
+  }
+  return value;
+}
+
 interface Props {
   appId: string;
   consentRequired: boolean;
@@ -21,13 +31,18 @@ export default function AppSection({
   onSetConsentGiven,
 }: Props) {
   return (
-    <SectionCard title="App">
+    <SectionCard title="App" sectionKey="app">
       {/* App ID display */}
       <View style={[AppTheme.card, styles.appIdCard]}>
         <View style={styles.idRow}>
           <Text style={styles.idLabel}>App ID</Text>
-          <Text style={styles.idValue} numberOfLines={1} ellipsizeMode="middle">
-            {appId}
+          <Text
+            style={styles.idValue}
+            numberOfLines={1}
+            ellipsizeMode="middle"
+            testID="app_id_value"
+          >
+            {maskValue(appId)}
           </Text>
         </View>
       </View>

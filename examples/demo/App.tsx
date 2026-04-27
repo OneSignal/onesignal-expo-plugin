@@ -2,123 +2,32 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React, { useEffect } from 'react';
 import { StatusBar, StyleSheet, Text, View } from 'react-native';
-import {
-  InAppMessageClickEvent,
-  InAppMessageDidDismissEvent,
-  InAppMessageDidDisplayEvent,
-  InAppMessageWillDismissEvent,
-  InAppMessageWillDisplayEvent,
-  LogLevel,
-  NotificationClickEvent,
-  NotificationWillDisplayEvent,
-  OneSignal,
-} from 'react-native-onesignal';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import Toast from 'react-native-toast-message';
 
 import OneSignalLogo from './assets/onesignal_logo.svg';
-import { AppContextProvider } from './src/context/AppContext';
+import AppHeader from './src/components/AppHeader';
+import { OneSignalProvider } from './src/hooks/useOneSignal';
 import HomeScreen from './src/screens/HomeScreen';
 import SecondaryScreen from './src/screens/SecondaryScreen';
-import LogManager from './src/services/LogManager';
-import OneSignalApiService from './src/services/OneSignalApiService';
-import PreferencesService from './src/services/PreferencesService';
 import TooltipHelper from './src/services/TooltipHelper';
 import { AppColors } from './src/theme';
 
 const Stack = createNativeStackNavigator();
-const log = LogManager.getInstance();
-const TAG = 'App';
 
 function App() {
   useEffect(() => {
-    const init = async () => {
-      try {
-        const prefs = PreferencesService.getInstance();
-        const [appId, consentRequired, privacyConsent, iamPaused, locationShared] =
-          await Promise.all([
-            prefs.getAppId(),
-            prefs.getConsentRequired(),
-            prefs.getPrivacyConsent(),
-            prefs.getIamPaused(),
-            prefs.getLocationShared(),
-          ]);
-
-        OneSignalApiService.getInstance().setAppId(appId);
-
-        OneSignal.Debug.setLogLevel(LogLevel.Verbose);
-        OneSignal.setConsentRequired(consentRequired);
-        OneSignal.setConsentGiven(privacyConsent);
-        OneSignal.initialize(appId);
-
-        OneSignal.InAppMessages.setPaused(iamPaused);
-        OneSignal.Location.setShared(locationShared);
-
-        console.log(
-          'OneSignal.Notifications.getPermissionAsync: ',
-          await OneSignal.Notifications.getPermissionAsync(),
-        );
-
-        // Register SDK event listeners for logging
-        OneSignal.InAppMessages.addEventListener(
-          'willDisplay',
-          (e: InAppMessageWillDisplayEvent) => {
-            log.i(TAG, `IAM willDisplay: ${e.message.messageId}`);
-          },
-        );
-        OneSignal.InAppMessages.addEventListener('didDisplay', (e: InAppMessageDidDisplayEvent) => {
-          log.i(TAG, `IAM didDisplay: ${e.message.messageId}`);
-        });
-        OneSignal.InAppMessages.addEventListener(
-          'willDismiss',
-          (e: InAppMessageWillDismissEvent) => {
-            log.i(TAG, `IAM willDismiss: ${e.message.messageId}`);
-          },
-        );
-        OneSignal.InAppMessages.addEventListener('didDismiss', (e: InAppMessageDidDismissEvent) => {
-          log.i(TAG, `IAM didDismiss: ${e.message.messageId}`);
-        });
-        OneSignal.InAppMessages.addEventListener('click', (e: InAppMessageClickEvent) => {
-          log.i(TAG, `IAM click: ${e.result.actionId ?? 'unknown'}`);
-        });
-        OneSignal.Notifications.addEventListener('click', (e: NotificationClickEvent) => {
-          log.i(TAG, `Notification click: ${e.notification.title ?? ''}`);
-        });
-        OneSignal.Notifications.addEventListener('permissionChange', (granted: boolean) => {
-          log.i(TAG, `Permission changed: ${granted}`);
-        });
-        OneSignal.Notifications.addEventListener(
-          'foregroundWillDisplay',
-          (e: NotificationWillDisplayEvent) => {
-            log.i(TAG, `Notification foregroundWillDisplay: ${e.getNotification().title ?? ''}`);
-            e.preventDefault();
-            e.getNotification().display();
-          },
-        );
-
-        log.i(TAG, `OneSignal initialized with app ID: ${appId}`);
-      } catch (err) {
-        log.e(TAG, `Init error: ${String(err)}`);
-      }
-    };
-
-    void init();
-
-    // Fetch tooltips in background
     void TooltipHelper.getInstance().init();
   }, []);
 
   return (
     <SafeAreaProvider>
       <StatusBar backgroundColor={AppColors.osPrimary} barStyle="light-content" />
-      <AppContextProvider>
+      <OneSignalProvider>
         <NavigationContainer>
           <Stack.Navigator
             screenOptions={{
-              headerStyle: { backgroundColor: AppColors.osPrimary },
-              headerTintColor: AppColors.white,
-              headerTitleAlign: 'center',
-              headerShadowVisible: false,
+              header: (props) => <AppHeader {...props} />,
             }}
           >
             <Stack.Screen
@@ -140,7 +49,7 @@ function App() {
             />
           </Stack.Navigator>
         </NavigationContainer>
-      </AppContextProvider>
+      </OneSignalProvider>
       <Toast position="bottom" bottomOffset={20} />
     </SafeAreaProvider>
   );
