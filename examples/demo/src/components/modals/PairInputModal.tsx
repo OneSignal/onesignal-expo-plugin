@@ -91,6 +91,7 @@ export default function PairInputModal({
               style={AppDialogStyles.actionBtn}
               onPress={handleConfirm}
               disabled={!canSubmit}
+              testID="singlepair_confirm_button"
             >
               <Text
                 style={[

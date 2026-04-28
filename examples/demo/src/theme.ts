@@ -1,4 +1,4 @@
-import { StyleSheet, TextInputProps } from 'react-native';
+import { StyleSheet, type TextInputProps } from 'react-native';
 
 export const AppColors = {
   osPrimary: '#E54B4D',
@@ -12,12 +12,6 @@ export const AppColors = {
   osDivider: '#E8EAED',
   osWarningBackground: '#FFF8E1',
   osBackdrop: 'rgba(0,0,0,0.54)',
-  osLogBackground: '#1A1B1E',
-  osLogDebug: '#82AAFF',
-  osLogInfo: '#C3E88D',
-  osLogWarn: '#FFCB6B',
-  osLogError: '#FF5370',
-  osLogTimestamp: '#676E7B',
   white: '#FFFFFF',
 } as const;
 
@@ -31,14 +25,7 @@ export const AppTextStyles = StyleSheet.create({
   bodyLarge: { fontSize: 16, fontWeight: '400' },
   bodyMedium: { fontSize: 14, fontWeight: '400' },
   bodySmall: { fontSize: 12, fontWeight: '400' },
-  labelSmall: { fontSize: 11, fontWeight: '500' },
 });
-
-export const AppInputProps: TextInputProps = {
-  autoCorrect: false,
-  autoCapitalize: 'none',
-  autoComplete: 'off',
-};
 
 export const AppTheme = StyleSheet.create({
   card: {
@@ -54,6 +41,17 @@ export const AppTheme = StyleSheet.create({
     marginVertical: 8,
   },
 });
+
+export const AppInputProps: TextInputProps = {
+  autoCorrect: false,
+  autoCapitalize: 'none',
+  autoComplete: 'off',
+  // Prevents Android Autofill / Credential Manager from walking the input on focus.
+  // Without this, Android 14+ rebuilds the AssistStructure when a new input
+  // appears (e.g. revealing the "Value" field in OutcomeModal) and force-stops
+  // the UiAutomator2 instrumentation, making Appium tests fail mid-suite.
+  importantForAutofill: 'no',
+};
 
 export const AppDialogStyles = StyleSheet.create({
   backdrop: {

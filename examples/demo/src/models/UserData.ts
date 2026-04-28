@@ -23,11 +23,11 @@ export function userDataFromJson(json: Record<string, unknown>): UserData {
   const emails: string[] = [];
   const smsNumbers: string[] = [];
   for (const sub of subscriptions) {
-    if (sub.type === 'Email' && sub.token) {
-      const token = typeof sub.token === 'string' ? sub.token : JSON.stringify(sub.token);
+    const token = sub.token;
+    if (typeof token !== 'string') continue;
+    if (sub.type === 'Email') {
       emails.push(token);
-    } else if (sub.type === 'SMS' && sub.token) {
-      const token = typeof sub.token === 'string' ? sub.token : JSON.stringify(sub.token);
+    } else if (sub.type === 'SMS') {
       smsNumbers.push(token);
     }
   }

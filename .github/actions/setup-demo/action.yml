@@ -1,0 +1,75 @@
+name: 'Setup Demo'
+description: 'Builds the expo plugin, installs it into the demo via tarball, generates native folders, and writes the .env file'
+inputs:
+  onesignal-app-id:
+    description: 'OneSignal App ID for the demo .env'
+    required: true
+  onesignal-api-key:
+    description: 'OneSignal API Key for the demo .env'
+    required: true
+  prebuild-platform:
+    description: 'Platform to run `expo prebuild` for: ios, android, or all'
+    required: false
+    default: 'all'
+  install-pods:
+    description: 'Whether to run pod install for iOS after prebuild'
+    required: false
+    default: 'false'
+runs:
+  using: 'composite'
+  steps:
+    - name: Set up Vite+
+      uses: voidzero-dev/setup-vp@v1
+      with:
+        cache: true
+        run-install: true
+
+    - name: Cache demo bun dependencies
+      uses: actions/cache@v5
+      with:
+        path: examples/demo/node_modules
+        key: bun-${{ runner.os }}-${{ hashFiles('examples/demo/bun.lock') }}
+        restore-keys: bun-${{ runner.os }}-
+
+    - name: Build plugin and install into demo
+      shell: bash
+      working-directory: examples/demo
+      run: bun run setup
+
+    - name: Create demo .env
+      shell: bash
+      working-directory: examples/demo
+      run: |
+        echo "EXPO_PUBLIC_ONESIGNAL_APP_ID=${{ inputs.onesignal-app-id }}" > .env
+        echo "EXPO_PUBLIC_ONESIGNAL_API_KEY=${{ inputs.onesignal-api-key }}" >> .env
+        echo "EXPO_PUBLIC_E2E_MODE=true" >> .env
+
+    - name: Expo prebuild
+      shell: bash
+      working-directory: examples/demo
+      env:
+        PREBUILD_PLATFORM: ${{ inputs.prebuild-platform }}
+      run: |
+        if [ "$PREBUILD_PLATFORM" = "all" ]; then
+          bunx expo prebuild --clean --no-install
+        else
+          bunx expo prebuild --platform "$PREBUILD_PLATFORM" --clean --no-install
+        fi
+
+    - name: Cache CocoaPods
+      if: inputs.install-pods == 'true'
+      uses: actions/cache@v5
+      with:
+        path: examples/demo/ios/Pods
+        # Hash Podfile (exists after `expo prebuild --no-install`) rather than
+        # Podfile.lock — the lockfile isn't generated until the Install Pods
+        # step below, so hashing it would always resolve to the empty string
+        # and degrade to the restore-key, defeating content-addressing.
+        key: pods-${{ runner.os }}-${{ hashFiles('examples/demo/ios/Podfile') }}
+        restore-keys: pods-${{ runner.os }}-
+
+    - name: Install Pods
+      if: inputs.install-pods == 'true'
+      shell: bash
+      working-directory: examples/demo/ios
+      run: pod install

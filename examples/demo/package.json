@@ -10,7 +10,7 @@
     "start": "expo start",
     "reset-project": "node ./scripts/reset-project.js",
     "android": "expo run:android --device",
-    "ios": "xcrun simctl shutdown all && expo run:ios --device",
+    "ios": "expo run:ios --device",
     "open:ios": "open ios/OneSignalDemo.xcworkspace",
     "lint": "expo lint"
   },
@@ -38,7 +38,7 @@
     "react-dom": "19.1.0",
     "react-native": "0.81.5",
     "react-native-gesture-handler": "~2.28.0",
-    "react-native-onesignal": "5.3.5",
+    "react-native-onesignal": "5.4.3",
     "react-native-reanimated": "~4.1.1",
     "react-native-safe-area-context": "~5.6.0",
     "react-native-screens": "~4.16.0",

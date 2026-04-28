@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, TouchableOpacity, Linking, StyleSheet } from 'react-native';
 
 import { AppColors, AppTextStyles, AppTheme, AppSpacing } from '../../theme';
+import { maskValue } from '../../utils/maskValue';
 import SectionCard from '../SectionCard';
 import ToggleRow from '../ToggleRow';
 
@@ -21,13 +22,18 @@ export default function AppSection({
   onSetConsentGiven,
 }: Props) {
   return (
-    <SectionCard title="App">
+    <SectionCard title="App" sectionKey="app">
       {/* App ID display */}
       <View style={[AppTheme.card, styles.appIdCard]}>
         <View style={styles.idRow}>
           <Text style={styles.idLabel}>App ID</Text>
-          <Text style={styles.idValue} numberOfLines={1} ellipsizeMode="middle">
-            {appId}
+          <Text
+            style={styles.idValue}
+            numberOfLines={1}
+            ellipsizeMode="middle"
+            testID="app_id_value"
+          >
+            {maskValue(appId)}
           </Text>
         </View>
       </View>

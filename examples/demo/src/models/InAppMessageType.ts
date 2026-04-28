@@ -1,3 +1,8 @@
+import type { MaterialCommunityIcons } from '@expo/vector-icons';
+import type { ComponentProps } from 'react';
+
+type MaterialCommunityIconName = ComponentProps<typeof MaterialCommunityIcons>['name'];
+
 export enum InAppMessageType {
   TopBanner = 'top_banner',
   BottomBanner = 'bottom_banner',
@@ -12,7 +17,7 @@ export const iamTypeLabel: Record<InAppMessageType, string> = {
   [InAppMessageType.FullScreen]: 'FULL SCREEN',
 };
 
-export const iamTypeIcon: Record<InAppMessageType, string> = {
+export const iamTypeIcon: Record<InAppMessageType, MaterialCommunityIconName> = {
   [InAppMessageType.TopBanner]: 'format-vertical-align-top',
   [InAppMessageType.BottomBanner]: 'format-vertical-align-bottom',
   [InAppMessageType.CenterModal]: 'crop-square',

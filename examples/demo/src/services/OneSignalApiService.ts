@@ -1,8 +1,7 @@
 import { NotificationType } from '../models/NotificationType';
 import { UserData, userDataFromJson } from '../models/UserData';
-import LogManager from './LogManager';
 
-const TAG = 'OneSignalApiService';
+const ONESIGNAL_API_KEY = process.env.EXPO_PUBLIC_ONESIGNAL_API_KEY;
 
 class OneSignalApiService {
   private static _instance: OneSignalApiService;
@@ -21,6 +20,10 @@ class OneSignalApiService {
 
   getAppId(): string {
     return this._appId;
+  }
+
+  hasApiKey(): boolean {
+    return !!ONESIGNAL_API_KEY?.trim();
   }
 
   async sendNotification(type: NotificationType, subscriptionId: string): Promise<boolean> {
@@ -89,13 +92,53 @@ class OneSignalApiService {
 
       if (!response.ok) {
         const text = await response.text();
-        LogManager.getInstance().e(TAG, `Send notification failed: ${text}`);
+        console.error(`Send notification failed: ${text}`);
         return false;
       }
 
       return true;
     } catch (err) {
-      LogManager.getInstance().e(TAG, `Send notification error: ${String(err)}`);
+      console.error(`Send notification error: ${String(err)}`);
+      return false;
+    }
+  }
+
+  async updateLiveActivity(
+    activityId: string,
+    event: 'update' | 'end',
+    eventUpdates: Record<string, unknown> = {},
+  ): Promise<boolean> {
+    try {
+      const url = `https://api.onesignal.com/apps/${this._appId}/live_activities/${activityId}/notifications`;
+      const payload: Record<string, unknown> = {
+        event,
+        event_updates: eventUpdates,
+        name: event === 'end' ? 'End Live Activity' : 'Live Activity Update',
+        priority: 10,
+      };
+
+      if (event === 'end') {
+        payload.dismissal_date = Math.floor(Date.now() / 1000);
+      }
+
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Key ${ONESIGNAL_API_KEY}`,
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        const text = await response.text();
+        console.error(`${event} live activity failed: ${text}`);
+        return false;
+      }
+
+      return true;
+    } catch (err) {
+      console.error(`${event} live activity error: ${String(err)}`);
       return false;
     }
   }
@@ -105,13 +148,13 @@ class OneSignalApiService {
       const url = `https://api.onesignal.com/apps/${this._appId}/users/by/onesignal_id/${onesignalId}`;
       const response = await fetch(url);
       if (!response.ok) {
-        LogManager.getInstance().w(TAG, `fetchUser failed: ${response.status}`);
+        console.warn(`fetchUser failed: ${response.status}`);
         return null;
       }
       const json = (await response.json()) as Record<string, unknown>;
       return userDataFromJson(json);
     } catch (err) {
-      LogManager.getInstance().e(TAG, `fetchUser error: ${String(err)}`);
+      console.error(`fetchUser error: ${String(err)}`);
       return null;
     }
   }

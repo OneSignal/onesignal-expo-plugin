@@ -65,7 +65,12 @@ export default function MultiSelectRemoveModal({
             {items.map(([key]) => {
               const isChecked = selected.has(key);
               return (
-                <TouchableOpacity key={key} style={styles.row} onPress={() => toggle(key)}>
+                <TouchableOpacity
+                  key={key}
+                  style={styles.row}
+                  onPress={() => toggle(key)}
+                  testID={`remove_checkbox_${key}`}
+                >
                   <Icon
                     name={isChecked ? 'check-box' : 'check-box-outline-blank'}
                     size={22}
@@ -84,6 +89,7 @@ export default function MultiSelectRemoveModal({
               style={AppDialogStyles.actionBtn}
               onPress={handleConfirm}
               disabled={selected.size === 0}
+              testID="multiselect_confirm_button"
             >
               <Text
                 style={[
