@@ -15,13 +15,13 @@ INSTALLED_DIR="$ORIGINAL_DIR/node_modules/onesignal-expo-plugin"
 # combined list) instead of using `find -newer`, because mtimes get
 # bumped by routine git operations (checkout, branch switch, rebase)
 # even when the source is identical — that caused needless rebuilds.
-# `serviceExtensionFiles/` is included because it's shipped verbatim in
-# the tarball (see the "files" field in package.json). Inputs match the
-# canonical list in sdk-shared/appium/scripts/run-local.sh's
-# setup_expo_plugin so cache hits stay consistent across the two flows.
+# Inputs match exactly what `bun pm pack` ships per package.json's "files"
+# field: src/ (transpiled to dist/), serviceExtensionFiles/, plus the
+# packaging-relevant configs (package.json, tsconfig.json). build.gradle
+# is intentionally excluded — it lives at the repo root for spotless
+# formatting only and is not part of the tarball.
 src_hash=$(find "$PLUGIN_ROOT/src" "$PLUGIN_ROOT/serviceExtensionFiles" \
                 "$PLUGIN_ROOT/package.json" "$PLUGIN_ROOT/tsconfig.json" \
-                "$PLUGIN_ROOT/build.gradle" \
            -type f 2>/dev/null \
            | sort \
            | xargs shasum 2>/dev/null \
