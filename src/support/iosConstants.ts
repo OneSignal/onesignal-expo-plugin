@@ -24,3 +24,18 @@ export const NSE_EXT_FILES = [
   `${NSE_TARGET_NAME}.entitlements`,
   `${NSE_TARGET_NAME}-Info.plist`,
 ];
+
+export const LIVE_ACTIVITY_TARGET_NAME = 'OneSignalWidget';
+export const LIVE_ACTIVITY_DEPLOYMENT_TARGET = '16.2';
+export const LIVE_ACTIVITY_BUNDLE_FILE = 'OneSignalWidgetBundle.swift';
+export const LIVE_ACTIVITY_WIDGET_FILE = 'OneSignalWidgetLiveActivity.swift';
+export const LIVE_ACTIVITY_INFO_PLIST_FILE = `${LIVE_ACTIVITY_TARGET_NAME}-Info.plist`;
+
+export const liveActivityPodfileSnippet = (targetName: string): string => `
+target '${targetName}' do
+  use_frameworks!
+  pod 'OneSignal/OneSignal', '>= 5.0.0', '< 6.0'
+end`;
+
+export const liveActivityPodfileRegex = (targetName: string): RegExp =>
+  new RegExp(`target '${targetName}'`);

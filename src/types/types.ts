@@ -1,4 +1,26 @@
 /**
+ * Configuration for the iOS Widget Extension target that hosts Live Activities.
+ */
+export type OneSignalLiveActivityProps = {
+  /**
+   * (optional) Custom widget extension target name. Defaults to "OneSignalWidget".
+   * The full bundle identifier becomes "{ios.bundleIdentifier}.{bundleIdentifierSuffix ?? targetName}".
+   */
+  targetName?: string;
+
+  /**
+   * (optional) Suffix appended to ios.bundleIdentifier for the widget extension. Defaults to targetName.
+   */
+  bundleIdentifierSuffix?: string;
+
+  /**
+   * (optional) Local path to a custom Live Activity widget Swift file. If omitted, ships a default
+   * widget built on `DefaultLiveActivityAttributes` so it works with `OneSignal.LiveActivities.setupDefault()`.
+   */
+  widgetFilePath?: string;
+};
+
+/**
  * OneSignalPluginProps refer to the properties set by the user in their app config file (e.g: app.json)
  */
 export type OneSignalPluginProps = {
@@ -68,6 +90,13 @@ export type OneSignalPluginProps = {
    * @see https://documentation.onesignal.com/docs/customize-notification-sounds
    */
   sounds?: string[];
+
+  /**
+   * (optional) Opt in to scaffolding an iOS Widget Extension target for Live Activities.
+   * Presence of this prop enables Live Activity setup. Requires iOS 16.1+ and a .p8 APNs key.
+   * @see https://documentation.onesignal.com/docs/cross-platform-live-activity-setup
+   */
+  liveActivities?: OneSignalLiveActivityProps;
 };
 
 export const ONESIGNAL_PLUGIN_PROPS: string[] = [
@@ -82,4 +111,5 @@ export const ONESIGNAL_PLUGIN_PROPS: string[] = [
   'nseBundleIdentifier',
   'disableNSE',
   'sounds',
+  'liveActivities',
 ];
