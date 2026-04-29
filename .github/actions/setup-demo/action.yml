@@ -43,6 +43,7 @@ runs:
         echo "EXPO_PUBLIC_ONESIGNAL_APP_ID=${{ inputs.onesignal-app-id }}" > .env
         echo "EXPO_PUBLIC_ONESIGNAL_API_KEY=${{ inputs.onesignal-api-key }}" >> .env
         echo "EXPO_PUBLIC_E2E_MODE=true" >> .env
+        echo "EXPO_PUBLIC_ONESIGNAL_ANDROID_CHANNEL_ID=7ec2ece9-c538-4656-9516-1316f48a005c" >> .env
 
     - name: Expo prebuild
       shell: bash
