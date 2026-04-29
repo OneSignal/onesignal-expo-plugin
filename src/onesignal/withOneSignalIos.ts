@@ -116,6 +116,7 @@ const withEasManagedCredentials: ConfigPlugin<OneSignalPluginProps> = (config, p
     props?.appGroupName,
     props?.nseBundleIdentifier,
     props?.liveActivities,
+    props?.disableNSE,
   );
   return config;
 };
@@ -322,11 +323,15 @@ export const withOneSignalIos: ConfigPlugin<OneSignalPluginProps> = (config, pro
     config = withOneSignalPodfile(config, props);
     config = withOneSignalNSE(config, props);
     config = withOneSignalXcodeProject(config, props);
-    config = withEasManagedCredentials(config, props);
   }
   config = withSoundFiles(config, props);
   if (props.liveActivities) {
     config = withOneSignalLiveActivity(config, props);
+  }
+  // EAS extras must run after every target that contributes an appExtension entry
+  // so disableNSE + liveActivities still registers the widget target.
+  if (!props.disableNSE || props.liveActivities) {
+    config = withEasManagedCredentials(config, props);
   }
   return config;
 };

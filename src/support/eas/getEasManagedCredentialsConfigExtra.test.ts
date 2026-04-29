@@ -76,6 +76,33 @@ describe('getEasManagedCredentialsConfigExtra', () => {
     });
   });
 
+  test('omits NSE entry when disableNSE is true', () => {
+    const result = getEasManagedCredentialsConfigExtra(
+      makeConfig(),
+      undefined,
+      undefined,
+      undefined,
+      true,
+    );
+    const appExtensions = result.eas.build.experimental.ios.appExtensions;
+
+    expect(appExtensions).toHaveLength(0);
+  });
+
+  test('registers only the widget when disableNSE is true and liveActivities is set', () => {
+    const result = getEasManagedCredentialsConfigExtra(
+      makeConfig(),
+      undefined,
+      undefined,
+      {},
+      true,
+    );
+    const appExtensions = result.eas.build.experimental.ios.appExtensions;
+
+    expect(appExtensions).toHaveLength(1);
+    expect(appExtensions[0].targetName).toBe('OneSignalWidget');
+  });
+
   test('adds custom Live Activity extension when target and suffix are provided', () => {
     const result = getEasManagedCredentialsConfigExtra(makeConfig(), undefined, undefined, {
       targetName: 'MyWidget',

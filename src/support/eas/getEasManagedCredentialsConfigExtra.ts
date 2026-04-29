@@ -13,12 +13,14 @@ export default function getEasManagedCredentialsConfigExtra(
   appGroupName?: string,
   nseBundleIdentifier?: string,
   liveActivities?: LiveActivityExtensionConfig,
+  disableNSE?: boolean,
 ): { [k: string]: any } {
   const bundleIdentifier = config?.ios?.bundleIdentifier ?? '';
-  const bundleId = `${bundleIdentifier}.${nseBundleIdentifier ?? NSE_TARGET_NAME}`;
-  const appExtensions = [
-    ...(config.extra?.eas?.build?.experimental?.ios?.appExtensions ?? []),
-    {
+  const appExtensions = [...(config.extra?.eas?.build?.experimental?.ios?.appExtensions ?? [])];
+
+  if (!disableNSE) {
+    const bundleId = `${bundleIdentifier}.${nseBundleIdentifier ?? NSE_TARGET_NAME}`;
+    appExtensions.push({
       targetName: NSE_TARGET_NAME,
       bundleIdentifier: bundleId,
       entitlements: {
@@ -26,8 +28,8 @@ export default function getEasManagedCredentialsConfigExtra(
           getAppGroupIdentifier(bundleIdentifier, appGroupName),
         ],
       },
-    },
-  ];
+    });
+  }
 
   if (liveActivities) {
     const targetName = liveActivities.targetName ?? LIVE_ACTIVITY_TARGET_NAME;
