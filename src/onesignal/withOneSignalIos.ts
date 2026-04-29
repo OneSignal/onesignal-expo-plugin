@@ -18,13 +18,12 @@ import { ExpoConfig } from '@expo/config-types';
 
 import getEasManagedCredentialsConfigExtra from '../support/eas/getEasManagedCredentialsConfigExtra';
 import { FileManager } from '../support/FileManager';
-import { getAppGroupIdentifier, resolveDevTeam } from '../support/helpers';
+import { getAppGroupIdentifier, resolveDevTeam, resolveNseConfig } from '../support/helpers';
 import {
   DEFAULT_BUNDLE_SHORT_VERSION,
   DEFAULT_BUNDLE_VERSION,
   IPHONEOS_DEPLOYMENT_TARGET,
   NSE_TARGET_NAME,
-  NSE_SOURCE_FILE,
   NSE_EXT_FILES,
   TARGETED_DEVICE_FAMILY,
 } from '../support/iosConstants';
@@ -150,9 +149,25 @@ const withOneSignalNSE: ConfigPlugin<OneSignalPluginProps> = (config, props) => 
         await FileManager.copyFile(`${sourceDir}${file}`, targetFile);
       }
 
-      const sourcePath = props.iosNSEFilePath ?? `${sourceDir}${NSE_SOURCE_FILE}`;
-      const targetFile = `${iosPath}/${NSE_TARGET_NAME}/${NSE_SOURCE_FILE}`;
+      const nseConfig = resolveNseConfig(props.iosNSEFilePath);
+      const sourcePath = props.iosNSEFilePath ?? `${sourceDir}${nseConfig.sourceFile}`;
+      const targetFile = `${iosPath}/${NSE_TARGET_NAME}/${nseConfig.sourceFile}`;
       await FileManager.copyFile(`${sourcePath}`, targetFile);
+
+      // ObjC NSE needs a paired header. Prefer a sibling next to the customer's .m so they
+      // can override the default; fall back to the shipped template (matches pre-Swift behavior
+      // where the .h was always supplied by the plugin).
+      if (nseConfig.headerFile) {
+        const siblingHeader = props.iosNSEFilePath
+          ? path.join(path.dirname(props.iosNSEFilePath), nseConfig.headerFile)
+          : undefined;
+        const headerSource =
+          siblingHeader && fs.existsSync(siblingHeader)
+            ? siblingHeader
+            : `${sourceDir}${nseConfig.headerFile}`;
+        const headerTarget = `${iosPath}/${NSE_TARGET_NAME}/${nseConfig.headerFile}`;
+        await FileManager.copyFile(headerSource, headerTarget);
+      }
 
       /* MODIFY COPIED EXTENSION FILES */
       const nseUpdater = new NseUpdaterManager(iosPath);
@@ -161,6 +176,7 @@ const withOneSignalNSE: ConfigPlugin<OneSignalPluginProps> = (config, props) => 
         props.appGroupName,
       );
       await nseUpdater.updateNSEEntitlements(appGroupId);
+      await nseUpdater.updateNSEPrincipalClass(nseConfig.principalClass);
       if (props.appGroupName) {
         await nseUpdater.updateNSEInfoPlistAppGroupKey(props.appGroupName);
       }
@@ -182,18 +198,20 @@ const withOneSignalXcodeProject: ConfigPlugin<OneSignalPluginProps> = (config, p
     }`;
 
     const devTeam = resolveDevTeam(config, props);
+    const nseConfig = resolveNseConfig(props.iosNSEFilePath);
+    // Header (if any) belongs in the group for navigation but not in Sources phase — it's compiled implicitly via #import.
+    const groupFiles = [
+      ...NSE_EXT_FILES,
+      nseConfig.sourceFile,
+      ...(nseConfig.headerFile ? [nseConfig.headerFile] : []),
+    ];
 
     if (xcodeProject.pbxTargetByName(NSE_TARGET_NAME)) {
       OneSignalLog.log(`${NSE_TARGET_NAME} already exists in project. Skipping...`);
       return newConfig;
     }
 
-    // Create new PBXGroup for the extension
-    const extGroup = xcodeProject.addPbxGroup(
-      [...NSE_EXT_FILES, NSE_SOURCE_FILE],
-      NSE_TARGET_NAME,
-      NSE_TARGET_NAME,
-    );
+    const extGroup = xcodeProject.addPbxGroup(groupFiles, NSE_TARGET_NAME, NSE_TARGET_NAME);
 
     // Add the new PBXGroup to the top level group. This makes the
     // files / folder appear in the file explorer in Xcode.
@@ -226,7 +244,7 @@ const withOneSignalXcodeProject: ConfigPlugin<OneSignalPluginProps> = (config, p
     );
 
     xcodeProject.addBuildPhase(
-      [NSE_SOURCE_FILE],
+      [nseConfig.sourceFile],
       'PBXSourcesBuildPhase',
       'Sources',
       nseTarget.uuid,

@@ -3,6 +3,7 @@ import { extname } from 'path';
 import { ExpoConfig } from '@expo/config-types';
 
 import { ONESIGNAL_PLUGIN_PROPS, OneSignalPluginProps } from '../types/types';
+import { NSE_SOURCE_FILE } from './iosConstants';
 import { OneSignalLog } from './OneSignalLog';
 
 const HEX_COLOR_6_REGEX = /^#?[0-9A-Fa-f]{6}$/;
@@ -135,6 +136,49 @@ export function validatePluginProps(props: any): void {
       );
     }
   }
+}
+
+export type NseLanguage = 'swift' | 'objc';
+
+export type NseConfig = {
+  language: NseLanguage;
+  /** File the customer's source maps to inside the NSE target (e.g. `NotificationService.swift`). */
+  sourceFile: string;
+  /** Header file required for ObjC; undefined for Swift. */
+  headerFile?: string;
+  /** Value baked into the NSE Info.plist's `NSExtensionPrincipalClass`. */
+  principalClass: string;
+};
+
+/**
+ * Detect whether the customer's NSE is Swift or Objective-C from `iosNSEFilePath`.
+ * Defaults to Swift when no custom path is provided.
+ */
+export function resolveNseConfig(iosNSEFilePath?: string): NseConfig {
+  const ext = iosNSEFilePath ? extname(iosNSEFilePath).toLowerCase() : '.swift';
+
+  if (ext === '.swift' || ext === '') {
+    // Swift class is module-namespaced; iOS resolves it via NSClassFromString against the qualified name.
+    return {
+      language: 'swift',
+      sourceFile: NSE_SOURCE_FILE,
+      principalClass: '$(PRODUCT_MODULE_NAME).NotificationService',
+    };
+  }
+
+  if (ext === '.m') {
+    // ObjC classes register under their bare name in the runtime.
+    return {
+      language: 'objc',
+      sourceFile: 'NotificationService.m',
+      headerFile: 'NotificationService.h',
+      principalClass: 'NotificationService',
+    };
+  }
+
+  throw new Error(
+    `OneSignal Expo Plugin: 'iosNSEFilePath' must point to a .swift or .m file. Got "${iosNSEFilePath}".`,
+  );
 }
 
 export function getAppGroupIdentifier(

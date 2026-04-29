@@ -107,10 +107,14 @@ export default ({ config }: ConfigContext): ExpoConfig =>
           smallIconAccentColor: '#C0FFEE', // Optional: For Android only
           largeIcons: ['./assets/images/icon.png'], // Optional: For Android only (right side icon)
           sounds: ['./assets/vine_boom.wav'], // Optional: Custom notification sounds
+
+          // Uncomment this to use the Objective-C version of the Notification Service Extension
+          iosNSEFilePath: './customNSE/NSE.m',
+
           liveActivities: {
             targetName: 'OneSignalWidget',
             bundleIdentifierSuffix: 'LA',
-            widgetFilePath: './widgets/LiveActivity.swift',
+            widgetFilePath: './customWidget/LiveActivity.swift',
           },
         } satisfies OneSignalPluginProps,
       ],

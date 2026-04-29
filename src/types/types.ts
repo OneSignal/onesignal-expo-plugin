@@ -64,9 +64,11 @@ export type OneSignalPluginProps = {
   largeIcons?: string[];
 
   /**
-   * (optional) The local path to a custom Notification Service Extension (NSE), written in Swift. The NSE will typically start as a copy
-   * of the default NSE found at (serviceExtensionFiles/NotificationService.swift), then altered to support any custom
-   * logic required.
+   * (optional) Local path to a custom Notification Service Extension (NSE) source file.
+   * Both Swift (`.swift`) and Objective-C (`.m`) are supported. For `.m`, an optional sibling
+   * `NotificationService.h` will be picked up if present; otherwise the plugin's default header
+   * is used. Typically a copy of `serviceExtensionFiles/NotificationService.swift` or
+   * `NotificationService.m`, altered to support custom logic.
    */
   iosNSEFilePath?: string;
 

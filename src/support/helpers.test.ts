@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vite-plus/test';
 
-import { parseColorToARGB, validatePluginProps } from './helpers';
+import { parseColorToARGB, resolveNseConfig, validatePluginProps } from './helpers';
 
 describe('parseColorToARGB', () => {
   test('converts 6-digit hex with # to ARGB', () => {
@@ -191,6 +191,15 @@ describe('validatePluginProps', () => {
     ).not.toThrow();
   });
 
+  test('accepts iosNSEFilePath as .swift or .m', () => {
+    expect(() =>
+      validatePluginProps({ ...validProps, iosNSEFilePath: './ios/NotificationService.swift' }),
+    ).not.toThrow();
+    expect(() =>
+      validatePluginProps({ ...validProps, iosNSEFilePath: './ios/NotificationService.m' }),
+    ).not.toThrow();
+  });
+
   test('rejects invalid liveActivities values', () => {
     expect(() => validatePluginProps({ ...validProps, liveActivities: true })).toThrow(
       "'liveActivities' must be an object",
@@ -201,5 +210,35 @@ describe('validatePluginProps', () => {
     expect(() =>
       validatePluginProps({ ...validProps, liveActivities: { unknown: 'value' } }),
     ).toThrow('invalid property "unknown"');
+  });
+});
+
+describe('resolveNseConfig', () => {
+  test('defaults to swift when no path is provided', () => {
+    const cfg = resolveNseConfig();
+    expect(cfg.language).toBe('swift');
+    expect(cfg.sourceFile).toBe('NotificationService.swift');
+    expect(cfg.headerFile).toBeUndefined();
+    expect(cfg.principalClass).toBe('$(PRODUCT_MODULE_NAME).NotificationService');
+  });
+
+  test('returns swift config for .swift paths', () => {
+    const cfg = resolveNseConfig('./ios/Custom.swift');
+    expect(cfg.language).toBe('swift');
+    expect(cfg.sourceFile).toBe('NotificationService.swift');
+    expect(cfg.principalClass).toBe('$(PRODUCT_MODULE_NAME).NotificationService');
+  });
+
+  test('returns objc config for .m paths', () => {
+    const cfg = resolveNseConfig('./ios/Custom.m');
+    expect(cfg.language).toBe('objc');
+    expect(cfg.sourceFile).toBe('NotificationService.m');
+    expect(cfg.headerFile).toBe('NotificationService.h');
+    expect(cfg.principalClass).toBe('NotificationService');
+  });
+
+  test('throws on unsupported extensions', () => {
+    expect(() => resolveNseConfig('./ios/Custom.cpp')).toThrow('must point to a .swift or .m');
+    expect(() => resolveNseConfig('./ios/Custom.h')).toThrow('must point to a .swift or .m');
   });
 });
