@@ -29,8 +29,8 @@ export const LIVE_ACTIVITY_INFO_PLIST_FILE = `${LIVE_ACTIVITY_TARGET_NAME}-Info.
 
 export const liveActivityPodfileSnippet = (targetName: string): string => `
 target '${targetName}' do
-  use_frameworks!
-  pod 'OneSignal/OneSignal', '>= 5.0.0', '< 6.0'
+  pod 'OneSignalXCFramework', '>= 5.0', '< 6.0'
+  use_frameworks! :linkage => podfile_properties['ios.useFrameworks'].to_sym if podfile_properties['ios.useFrameworks']
 end`;
 
 export const liveActivityPodfileRegex = (targetName: string): RegExp =>

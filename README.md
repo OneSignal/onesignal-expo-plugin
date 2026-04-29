@@ -137,6 +137,7 @@ Requirements:
 - iOS 16.2+ for the generated widget target.
 - A `.p8` APNs key. Apple does not support p12 certificates for Live Activities.
 - `OneSignal.LiveActivities.setupDefault()` must be called before using OneSignal's Live Activity APIs.
+- The widget target depends on `OneSignalXCFramework`, which mirrors the [Cross-platform Live Activity setup](https://documentation.onesignal.com/docs/cross-platform-live-activity-setup#3-add-the-onesignalxcframework-to-your-podfile) and avoids the React Native + `use_frameworks!` host/extension linkage conflict.
 
 See the [Cross-platform Live Activity SDK setup](https://documentation.onesignal.com/docs/cross-platform-live-activity-setup) and [Live Activities developer setup](https://documentation.onesignal.com/docs/live-activities-developer-setup) for API usage and customization.
 
