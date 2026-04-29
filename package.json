@@ -20,7 +20,8 @@
   },
   "files": [
     "dist",
-    "serviceExtensionFiles"
+    "serviceExtensionFiles",
+    "widgetExtensionFiles"
   ],
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",

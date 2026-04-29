@@ -176,4 +176,29 @@ describe('validatePluginProps', () => {
   test('allows sounds to be omitted', () => {
     expect(() => validatePluginProps(validProps)).not.toThrow();
   });
+
+  test('accepts liveActivities object with string props', () => {
+    expect(() =>
+      validatePluginProps({
+        ...validProps,
+        liveActivities: {
+          targetName: 'MyWidget',
+          bundleIdentifierSuffix: 'widget',
+          widgetFilePath: './widgets/MyWidget.swift',
+        },
+      }),
+    ).not.toThrow();
+  });
+
+  test('rejects invalid liveActivities values', () => {
+    expect(() => validatePluginProps({ ...validProps, liveActivities: true })).toThrow(
+      "'liveActivities' must be an object",
+    );
+    expect(() =>
+      validatePluginProps({ ...validProps, liveActivities: { targetName: 123 } }),
+    ).toThrow("'liveActivities.targetName' must be a string");
+    expect(() =>
+      validatePluginProps({ ...validProps, liveActivities: { unknown: 'value' } }),
+    ).toThrow('invalid property "unknown"');
+  });
 });

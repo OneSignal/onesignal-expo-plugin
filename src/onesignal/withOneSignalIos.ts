@@ -18,7 +18,7 @@ import { ExpoConfig } from '@expo/config-types';
 
 import getEasManagedCredentialsConfigExtra from '../support/eas/getEasManagedCredentialsConfigExtra';
 import { FileManager } from '../support/FileManager';
-import { getAppGroupIdentifier } from '../support/helpers';
+import { getAppGroupIdentifier, resolveDevTeam } from '../support/helpers';
 import {
   DEFAULT_BUNDLE_SHORT_VERSION,
   DEFAULT_BUNDLE_VERSION,
@@ -32,6 +32,7 @@ import NseUpdaterManager from '../support/NseUpdaterManager';
 import { OneSignalLog } from '../support/OneSignalLog';
 import { updatePodfile } from '../support/updatePodfile';
 import { OneSignalPluginProps } from '../types/types';
+import { withOneSignalLiveActivity } from './withOneSignalLiveActivity';
 
 /**
  * Add 'aps-environment' record with current environment to '<project-name>.entitlements' file
@@ -115,6 +116,7 @@ const withEasManagedCredentials: ConfigPlugin<OneSignalPluginProps> = (config, p
     config as ExpoConfig,
     props?.appGroupName,
     props?.nseBundleIdentifier,
+    props?.liveActivities,
   );
   return config;
 };
@@ -170,34 +172,7 @@ const withOneSignalNSE: ConfigPlugin<OneSignalPluginProps> = (config, props) => 
   ]);
 };
 
-/**
- * Resolve the Apple development team ID. Prefers `ios.appleTeamId` from the
- * Expo config, falling back to the plugin's deprecated `devTeam` prop.
- */
-export function resolveDevTeam(
-  config: ExpoConfig,
-  props: OneSignalPluginProps,
-): string | undefined {
-  if (config.ios?.appleTeamId) {
-    if (props.devTeam) {
-      OneSignalLog.log(
-        'Warning: Both "ios.appleTeamId" and the deprecated "devTeam" plugin prop are set. ' +
-          '"devTeam" will be ignored. Remove "devTeam" from your plugin config.',
-      );
-    }
-    return config.ios.appleTeamId;
-  }
-
-  if (props.devTeam) {
-    OneSignalLog.log(
-      'Warning: The "devTeam" plugin prop is deprecated and will be removed in a future major release. ' +
-        'Set "ios.appleTeamId" in your Expo config instead.',
-    );
-    return props.devTeam;
-  }
-
-  return undefined;
-}
+export { resolveDevTeam } from '../support/helpers';
 
 const withOneSignalXcodeProject: ConfigPlugin<OneSignalPluginProps> = (config, props) => {
   return withXcodeProject(config, (newConfig) => {
@@ -332,5 +307,8 @@ export const withOneSignalIos: ConfigPlugin<OneSignalPluginProps> = (config, pro
     config = withEasManagedCredentials(config, props);
   }
   config = withSoundFiles(config, props);
+  if (props.liveActivities) {
+    config = withOneSignalLiveActivity(config, props);
+  }
   return config;
 };

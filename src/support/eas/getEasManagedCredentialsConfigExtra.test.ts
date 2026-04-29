@@ -55,4 +55,38 @@ describe('getEasManagedCredentialsConfigExtra', () => {
     expect(appExtension.targetName).toBe('OneSignalNotificationServiceExtension');
     expect(appExtension.bundleIdentifier).toBe('com.example.app.CustomNSE');
   });
+
+  test('does not include Live Activity extension when not provided', () => {
+    const result = getEasManagedCredentialsConfigExtra(makeConfig());
+    const appExtensions = result.eas.build.experimental.ios.appExtensions;
+
+    expect(appExtensions).toHaveLength(1);
+    expect(appExtensions[0].targetName).toBe('OneSignalNotificationServiceExtension');
+  });
+
+  test('adds default Live Activity extension when provided', () => {
+    const result = getEasManagedCredentialsConfigExtra(makeConfig(), undefined, undefined, {});
+    const appExtensions = result.eas.build.experimental.ios.appExtensions;
+
+    expect(appExtensions).toHaveLength(2);
+    expect(appExtensions[1]).toEqual({
+      targetName: 'OneSignalWidget',
+      bundleIdentifier: 'com.example.app.OneSignalWidget',
+      entitlements: {},
+    });
+  });
+
+  test('adds custom Live Activity extension when target and suffix are provided', () => {
+    const result = getEasManagedCredentialsConfigExtra(makeConfig(), undefined, undefined, {
+      targetName: 'MyWidget',
+      bundleIdentifierSuffix: 'widget',
+    });
+    const appExtensions = result.eas.build.experimental.ios.appExtensions;
+
+    expect(appExtensions[1]).toEqual({
+      targetName: 'MyWidget',
+      bundleIdentifier: 'com.example.app.widget',
+      entitlements: {},
+    });
+  });
 });

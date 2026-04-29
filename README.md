@@ -86,11 +86,59 @@ You can pass props to the plugin config object to configure:
 | `smallIcons`             | optional       | An array of local paths to small notification icons for Android. Image should be white, transparent, and 96x96 in size. Input images will be automatically scaled down and placed in the appropriate resource folders. e.g: `["./assets/ic_stat_onesignal_default.png"]`. See https://documentation.onesignal.com/docs/customize-notification-icons#small-notification-icons. |
 | `largeIcons`             | optional       | An array of local paths to large notification icons for Android. Image should be white, transparent, and 256x256 in size. e.g: `["./assets/ic_onesignal_large_icon_default.png"]`. See https://documentation.onesignal.com/docs/customize-notification-icons#large-notification-icons.                                                                                        |
 | `smallIconAccentColor`   | optional       | The accent color to use for notification icons on Android. Must be a valid hex value, e.g: `"#FF0000"`                                                                                                                                                                                                                                                                        |
-| `iosNSEFilePath`         | optional       | The local path to a custom Notification Service Extension (NSE), written in Objective-C. The NSE will typically start as a copy of the [default NSE](https://github.com/OneSignal/onesignal-expo-plugin/blob/main/support/serviceExtensionFiles/NotificationService.m), then altered to support any custom logic required. e.g: `"./assets/NotificationService.m"`.           |
+| `iosNSEFilePath`         | optional       | The local path to a custom Notification Service Extension (NSE), written in Swift. The NSE will typically start as a copy of the [default NSE](https://github.com/OneSignal/onesignal-expo-plugin/blob/main/serviceExtensionFiles/NotificationService.swift), then altered to support any custom logic required. e.g: `"./assets/NotificationService.swift"`.                 |
 | `appGroupName`           | optional       | Used to configure a custom iOS [App Group](https://documentation.onesignal.com/docs/ios-sdk-setup#step-3-create-an-app-group) name. If not provided, defaults to `"group.{ios.bundleIdentifier}.onesignal"`. e.g: `"group.com.example.myapp.onesignal2"`.                                                                                                                     |
 | `nseBundleIdentifier`    | optional       | Used to configure a custom bundle identifier suffix for the iOS Notification Service Extension. The full bundle identifier will be `"{ios.bundleIdentifier}.{nseBundleIdentifier}"`. If not provided, defaults to `"OneSignalNotificationServiceExtension"`.                                                                                                                  |
 | `disableNSE`             | optional       | If `true`, the iOS Notification Service Extension (NSE) will not be added to the project. The NSE is required for badges, confirmed delivery, media attachments, and action buttons. Only disable this if you only need basic push notifications.                                                                                                                             |
 | `sounds`                 | optional       | An array of local paths to custom notification sound files (`.wav` only, ≤30 seconds). Files are copied into the app bundle on iOS and `res/raw/` on Android. e.g: `["./assets/notification_sound.wav"]`. See https://documentation.onesignal.com/docs/customize-notification-sounds.                                                                                         |
+| `liveActivities`         | optional       | Opt in to scaffolding an iOS Widget Extension target for OneSignal Live Activities. Use `{}` for the default `OneSignalWidget` target, or pass `targetName`, `bundleIdentifierSuffix`, or `widgetFilePath` to customize it. See [Live Activities](#live-activities).                                                                                                          |
+
+### Live Activities
+
+Set `liveActivities` to an object to add the native iOS Widget Extension files and Podfile target required for OneSignal Live Activities.
+
+```json
+{
+  "plugins": [
+    [
+      "onesignal-expo-plugin",
+      {
+        "mode": "development",
+        "liveActivities": {}
+      }
+    ]
+  ]
+}
+```
+
+The default widget target is `OneSignalWidget`, with a bundle identifier of `"{ios.bundleIdentifier}.OneSignalWidget"`. You can customize it:
+
+```json
+{
+  "liveActivities": {
+    "targetName": "MyWidget",
+    "bundleIdentifierSuffix": "widget",
+    "widgetFilePath": "./widgets/MyWidgetLiveActivity.swift"
+  }
+}
+```
+
+The default generated widget uses OneSignal's `DefaultLiveActivityAttributes`, so call `setupDefault()` from your app code after initializing OneSignal:
+
+```js
+import { OneSignal } from 'react-native-onesignal';
+
+OneSignal.initialize('YOUR-ONESIGNAL-APP-ID');
+OneSignal.LiveActivities.setupDefault();
+```
+
+Requirements:
+
+- iOS 16.2+ for the generated widget target.
+- A `.p8` APNs key. Apple does not support p12 certificates for Live Activities.
+- `OneSignal.LiveActivities.setupDefault()` must be called before using OneSignal's Live Activity APIs.
+
+See the [Cross-platform Live Activity SDK setup](https://documentation.onesignal.com/docs/cross-platform-live-activity-setup) and [Live Activities developer setup](https://documentation.onesignal.com/docs/live-activities-developer-setup) for API usage and customization.
 
 ### OneSignal App ID
 

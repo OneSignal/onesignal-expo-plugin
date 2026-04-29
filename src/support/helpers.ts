@@ -1,6 +1,9 @@
 import { extname } from 'path';
 
-import { ONESIGNAL_PLUGIN_PROPS } from '../types/types';
+import { ExpoConfig } from '@expo/config-types';
+
+import { ONESIGNAL_PLUGIN_PROPS, OneSignalPluginProps } from '../types/types';
+import { OneSignalLog } from './OneSignalLog';
 
 const HEX_COLOR_6_REGEX = /^#?[0-9A-Fa-f]{6}$/;
 const HEX_COLOR_8_REGEX = /^#?[0-9A-Fa-f]{8}$/;
@@ -94,6 +97,29 @@ export function validatePluginProps(props: any): void {
     }
   }
 
+  if (props.liveActivities !== undefined) {
+    if (
+      props.liveActivities === null ||
+      Array.isArray(props.liveActivities) ||
+      typeof props.liveActivities !== 'object'
+    ) {
+      throw new Error("OneSignal Expo Plugin: 'liveActivities' must be an object.");
+    }
+
+    const liveActivities = props.liveActivities;
+    const liveActivityProps = ['targetName', 'bundleIdentifierSuffix', 'widgetFilePath'];
+    for (const prop of Object.keys(liveActivities)) {
+      if (!liveActivityProps.includes(prop)) {
+        throw new Error(
+          `OneSignal Expo Plugin: You have provided an invalid property "${prop}" to 'liveActivities'.`,
+        );
+      }
+      if (typeof liveActivities[prop] !== 'string') {
+        throw new Error(`OneSignal Expo Plugin: 'liveActivities.${prop}' must be a string.`);
+      }
+    }
+  }
+
   // check for extra properties
   const inputProps = Object.keys(props);
 
@@ -111,4 +137,33 @@ export function getAppGroupIdentifier(
   customAppGroupName?: string,
 ): string {
   return customAppGroupName ?? `group.${bundleIdentifier}.onesignal`;
+}
+
+/**
+ * Resolve the Apple development team ID. Prefers `ios.appleTeamId` from the
+ * Expo config, falling back to the plugin's deprecated `devTeam` prop.
+ */
+export function resolveDevTeam(
+  config: ExpoConfig,
+  props: OneSignalPluginProps,
+): string | undefined {
+  if (config.ios?.appleTeamId) {
+    if (props.devTeam) {
+      OneSignalLog.log(
+        'Warning: Both "ios.appleTeamId" and the deprecated "devTeam" plugin prop are set. ' +
+          '"devTeam" will be ignored. Remove "devTeam" from your plugin config.',
+      );
+    }
+    return config.ios.appleTeamId;
+  }
+
+  if (props.devTeam) {
+    OneSignalLog.log(
+      'Warning: The "devTeam" plugin prop is deprecated and will be removed in a future major release. ' +
+        'Set "ios.appleTeamId" in your Expo config instead.',
+    );
+    return props.devTeam;
+  }
+
+  return undefined;
 }

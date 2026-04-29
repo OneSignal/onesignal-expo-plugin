@@ -14,6 +14,7 @@ import {
 } from '@expo/config-plugins';
 
 import { FileManager } from '../support/FileManager';
+import { resolveDevTeam } from '../support/helpers';
 import {
   BUNDLE_SHORT_VERSION_TEMPLATE_REGEX,
   BUNDLE_VERSION_TEMPLATE_REGEX,
@@ -30,7 +31,6 @@ import {
 } from '../support/iosConstants';
 import { OneSignalLog } from '../support/OneSignalLog';
 import { OneSignalPluginProps } from '../types/types';
-import { resolveDevTeam } from './withOneSignalIos';
 
 /** Resolve the widget extension target name, defaulting when unset. */
 export function resolveLiveActivityTargetName(props: OneSignalPluginProps): string {
@@ -139,12 +139,9 @@ const withLiveActivityXcodeProject: ConfigPlugin<OneSignalPluginProps> = (config
   return withXcodeProject(config, (newConfig) => {
     const xcodeProject = newConfig.modResults;
     const targetName = resolveLiveActivityTargetName(props);
-    const widgetBundleId = resolveLiveActivityBundleId(
-      newConfig.ios?.bundleIdentifier ?? '',
-      props,
-    );
+    const widgetBundleId = resolveLiveActivityBundleId(config.ios?.bundleIdentifier ?? '', props);
     const deploymentTarget = resolveLiveActivityDeploymentTarget(props);
-    const devTeam = resolveDevTeam(newConfig as Parameters<typeof resolveDevTeam>[0], props);
+    const devTeam = resolveDevTeam(config as Parameters<typeof resolveDevTeam>[0], props);
 
     if (xcodeProject.pbxTargetByName(targetName)) {
       OneSignalLog.log(`${targetName} already exists in project. Skipping...`);
