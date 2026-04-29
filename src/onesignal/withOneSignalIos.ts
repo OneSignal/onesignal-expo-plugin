@@ -250,9 +250,8 @@ const withOneSignalXcodeProject: ConfigPlugin<OneSignalPluginProps> = (config, p
       nseBundleId,
     );
 
-    // Add build phases to the new target
     xcodeProject.addBuildPhase(
-      ['NotificationService.m'],
+      [NSE_SOURCE_FILE],
       'PBXSourcesBuildPhase',
       'Sources',
       nseTarget.uuid,
@@ -274,6 +273,7 @@ const withOneSignalXcodeProject: ConfigPlugin<OneSignalPluginProps> = (config, p
         buildSettingsObj.IPHONEOS_DEPLOYMENT_TARGET =
           props?.iPhoneDeploymentTarget ?? IPHONEOS_DEPLOYMENT_TARGET;
         buildSettingsObj.TARGETED_DEVICE_FAMILY = TARGETED_DEVICE_FAMILY;
+        buildSettingsObj.SWIFT_VERSION = '5.0';
         buildSettingsObj.CODE_SIGN_ENTITLEMENTS = `${NSE_TARGET_NAME}/${NSE_TARGET_NAME}.entitlements`;
         buildSettingsObj.CODE_SIGN_STYLE = 'Automatic';
       }

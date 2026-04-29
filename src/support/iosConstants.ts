@@ -9,7 +9,7 @@ export const DEFAULT_BUNDLE_VERSION = '1';
 export const DEFAULT_BUNDLE_SHORT_VERSION = '1.0';
 
 export const NSE_TARGET_NAME = 'OneSignalNotificationServiceExtension';
-export const NSE_SOURCE_FILE = 'NotificationService.m';
+export const NSE_SOURCE_FILE = 'NotificationService.swift';
 
 export const NSE_PODFILE_SNIPPET = `
 target '${NSE_TARGET_NAME}' do
@@ -19,11 +19,7 @@ end`;
 
 export const NSE_PODFILE_REGEX = new RegExp(`target '${NSE_TARGET_NAME}'`);
 
-export const NSE_EXT_FILES = [
-  'NotificationService.h',
-  `${NSE_TARGET_NAME}.entitlements`,
-  `${NSE_TARGET_NAME}-Info.plist`,
-];
+export const NSE_EXT_FILES = [`${NSE_TARGET_NAME}.entitlements`, `${NSE_TARGET_NAME}-Info.plist`];
 
 export const LIVE_ACTIVITY_TARGET_NAME = 'OneSignalWidget';
 export const LIVE_ACTIVITY_DEPLOYMENT_TARGET = '16.2';
