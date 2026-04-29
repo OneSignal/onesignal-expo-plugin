@@ -107,7 +107,12 @@ export function validatePluginProps(props: any): void {
     }
 
     const liveActivities = props.liveActivities;
-    const liveActivityProps = ['targetName', 'bundleIdentifierSuffix', 'widgetFilePath'];
+    const liveActivityProps = [
+      'targetName',
+      'bundleIdentifierSuffix',
+      'widgetFilePath',
+      'deploymentTarget',
+    ];
     for (const prop of Object.keys(liveActivities)) {
       if (!liveActivityProps.includes(prop)) {
         throw new Error(

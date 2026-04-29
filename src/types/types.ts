@@ -18,6 +18,12 @@ export type OneSignalLiveActivityProps = {
    * widget built on `DefaultLiveActivityAttributes` so it works with `OneSignal.LiveActivities.setupDefault()`.
    */
   widgetFilePath?: string;
+
+  /**
+   * (optional) IPHONEOS_DEPLOYMENT_TARGET for the widget extension. Defaults to "16.2" (ActivityKit minimum).
+   * Values below 16.2 are clamped with a warning. Independent of the NSE's `iPhoneDeploymentTarget` prop.
+   */
+  deploymentTarget?: string;
 };
 
 /**

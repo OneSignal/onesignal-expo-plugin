@@ -48,8 +48,8 @@ export function resolveLiveActivityBundleId(
 }
 
 /** Resolve the IPHONEOS_DEPLOYMENT_TARGET for the widget target (must be >= 16.2). */
-function resolveLiveActivityDeploymentTarget(props: OneSignalPluginProps): string {
-  const requested = props.iPhoneDeploymentTarget;
+export function resolveLiveActivityDeploymentTarget(props: OneSignalPluginProps): string {
+  const requested = props.liveActivities?.deploymentTarget;
   if (!requested) {
     return LIVE_ACTIVITY_DEPLOYMENT_TARGET;
   }
@@ -58,7 +58,7 @@ function resolveLiveActivityDeploymentTarget(props: OneSignalPluginProps): strin
   const minNum = parseFloat(LIVE_ACTIVITY_DEPLOYMENT_TARGET);
   if (Number.isFinite(requestedNum) && requestedNum < minNum) {
     OneSignalLog.log(
-      `Warning: iPhoneDeploymentTarget "${requested}" is below the minimum required for Live Activities (${LIVE_ACTIVITY_DEPLOYMENT_TARGET}). The widget extension will use ${LIVE_ACTIVITY_DEPLOYMENT_TARGET}.`,
+      `Warning: liveActivities.deploymentTarget "${requested}" is below the minimum required for Live Activities (${LIVE_ACTIVITY_DEPLOYMENT_TARGET}). The widget extension will use ${LIVE_ACTIVITY_DEPLOYMENT_TARGET}.`,
     );
     return LIVE_ACTIVITY_DEPLOYMENT_TARGET;
   }

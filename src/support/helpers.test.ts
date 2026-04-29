@@ -185,6 +185,7 @@ describe('validatePluginProps', () => {
           targetName: 'MyWidget',
           bundleIdentifierSuffix: 'widget',
           widgetFilePath: './widgets/MyWidget.swift',
+          deploymentTarget: '16.2',
         },
       }),
     ).not.toThrow();
