@@ -101,7 +101,7 @@ export default ({ config }: ConfigContext): ExpoConfig =>
         'onesignal-expo-plugin',
         {
           mode: 'development',
-          appGroupName: 'group.com.onesignal.example.NSE', // Optional: If you had your own app group name, you can set it here
+          appGroupName: 'group.com.onesignal.example.onesignal', // Optional: If you had your own app group name, you can set it here
           nseBundleIdentifier: 'NSE', // Optional: Custom bundle identifier for the Notification Service Extension
           smallIcons: ['./assets/images/small_icon.png'], // Optional: Custom notification icon (left side icon)
           smallIconAccentColor: '#C0FFEE', // Optional: For Android only
@@ -110,6 +110,7 @@ export default ({ config }: ConfigContext): ExpoConfig =>
           liveActivities: {
             targetName: 'OneSignalWidget',
             bundleIdentifierSuffix: 'LA',
+            widgetFilePath: './widgets/LiveActivity.swift',
           },
         } satisfies OneSignalPluginProps,
       ],
@@ -130,8 +131,5 @@ export default ({ config }: ConfigContext): ExpoConfig =>
     experiments: {
       typedRoutes: true,
       reactCompiler: true,
-    },
-    extra: {
-      oneSignalAppId: '77e32082-ea27-42e3-a898-c72e141824ef',
     },
   });
