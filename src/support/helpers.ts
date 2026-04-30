@@ -1,6 +1,10 @@
 import { extname } from 'path';
 
-import { ONESIGNAL_PLUGIN_PROPS } from '../types/types';
+import { ExpoConfig } from '@expo/config-types';
+
+import { ONESIGNAL_PLUGIN_PROPS, OneSignalPluginProps } from '../types/types';
+import { NSE_SOURCE_FILE } from './iosConstants';
+import { OneSignalLog } from './OneSignalLog';
 
 const HEX_COLOR_6_REGEX = /^#?[0-9A-Fa-f]{6}$/;
 const HEX_COLOR_8_REGEX = /^#?[0-9A-Fa-f]{8}$/;
@@ -94,6 +98,34 @@ export function validatePluginProps(props: any): void {
     }
   }
 
+  if (props.liveActivities !== undefined) {
+    if (
+      props.liveActivities === null ||
+      Array.isArray(props.liveActivities) ||
+      typeof props.liveActivities !== 'object'
+    ) {
+      throw new Error("OneSignal Expo Plugin: 'liveActivities' must be an object.");
+    }
+
+    const liveActivities = props.liveActivities;
+    const liveActivityProps = [
+      'targetName',
+      'bundleIdentifierSuffix',
+      'widgetFilePath',
+      'deploymentTarget',
+    ];
+    for (const prop of Object.keys(liveActivities)) {
+      if (!liveActivityProps.includes(prop)) {
+        throw new Error(
+          `OneSignal Expo Plugin: You have provided an invalid property "${prop}" to 'liveActivities'.`,
+        );
+      }
+      if (typeof liveActivities[prop] !== 'string') {
+        throw new Error(`OneSignal Expo Plugin: 'liveActivities.${prop}' must be a string.`);
+      }
+    }
+  }
+
   // check for extra properties
   const inputProps = Object.keys(props);
 
@@ -106,9 +138,81 @@ export function validatePluginProps(props: any): void {
   }
 }
 
+export type NseLanguage = 'swift' | 'objc';
+
+export type NseConfig = {
+  language: NseLanguage;
+  /** File the customer's source maps to inside the NSE target (e.g. `NotificationService.swift`). */
+  sourceFile: string;
+  /** Header file required for ObjC; undefined for Swift. */
+  headerFile?: string;
+  /** Value baked into the NSE Info.plist's `NSExtensionPrincipalClass`. */
+  principalClass: string;
+};
+
+/**
+ * Detect whether the customer's NSE is Swift or Objective-C from `iosNSEFilePath`.
+ * Defaults to Swift when no custom path is provided.
+ */
+export function resolveNseConfig(iosNSEFilePath?: string): NseConfig {
+  const ext = iosNSEFilePath ? extname(iosNSEFilePath).toLowerCase() : '.swift';
+
+  if (ext === '.swift' || ext === '') {
+    // Swift class is module-namespaced; iOS resolves it via NSClassFromString against the qualified name.
+    return {
+      language: 'swift',
+      sourceFile: NSE_SOURCE_FILE,
+      principalClass: '$(PRODUCT_MODULE_NAME).NotificationService',
+    };
+  }
+
+  if (ext === '.m') {
+    // ObjC classes register under their bare name in the runtime.
+    return {
+      language: 'objc',
+      sourceFile: 'NotificationService.m',
+      headerFile: 'NotificationService.h',
+      principalClass: 'NotificationService',
+    };
+  }
+
+  throw new Error(
+    `OneSignal Expo Plugin: 'iosNSEFilePath' must point to a .swift or .m file. Got "${iosNSEFilePath}".`,
+  );
+}
+
 export function getAppGroupIdentifier(
   bundleIdentifier: string,
   customAppGroupName?: string,
 ): string {
   return customAppGroupName ?? `group.${bundleIdentifier}.onesignal`;
+}
+
+/**
+ * Resolve the Apple development team ID. Prefers `ios.appleTeamId` from the
+ * Expo config, falling back to the plugin's deprecated `devTeam` prop.
+ */
+export function resolveDevTeam(
+  config: ExpoConfig,
+  props: OneSignalPluginProps,
+): string | undefined {
+  if (config.ios?.appleTeamId) {
+    if (props.devTeam) {
+      OneSignalLog.log(
+        'Warning: Both "ios.appleTeamId" and the deprecated "devTeam" plugin prop are set. ' +
+          '"devTeam" will be ignored. Remove "devTeam" from your plugin config.',
+      );
+    }
+    return config.ios.appleTeamId;
+  }
+
+  if (props.devTeam) {
+    OneSignalLog.log(
+      'Warning: The "devTeam" plugin prop is deprecated and will be removed in a future major release. ' +
+        'Set "ios.appleTeamId" in your Expo config instead.',
+    );
+    return props.devTeam;
+  }
+
+  return undefined;
 }

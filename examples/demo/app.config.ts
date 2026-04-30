@@ -1,9 +1,6 @@
-import * as fs from 'node:fs';
-import * as path from 'node:path';
-
 import { ConfigContext, ExpoConfig } from '@expo/config';
 import type { ConfigPlugin } from '@expo/config-plugins';
-import { withDangerousMod, withGradleProperties } from '@expo/config-plugins';
+import { withGradleProperties } from '@expo/config-plugins';
 import type { OneSignalPluginProps } from 'onesignal-expo-plugin';
 
 // Inline mirror of `@expo/config-plugins`'s `PropertiesItem` discriminated
@@ -54,111 +51,89 @@ const withFastGradleProperties: ConfigPlugin = (cfg) =>
     return mod;
   });
 
-// The OneSignalWidget Live Activities extension lives outside what
-// onesignal-expo-plugin manages, so its `OneSignalXCFramework` Cocoapods
-// dependency has to be re-declared in the Podfile on every prebuild.
-// Without this, the Widget target compiles its own Swift sources but
-// can't `import OneSignalLiveActivities` and the build fails at link time.
-const WIDGET_TARGET_NAME = 'OneSignalWidgetExtension';
-const WIDGET_PODFILE_BLOCK = `
-target '${WIDGET_TARGET_NAME}' do
-  pod 'OneSignalXCFramework', '>= 5.0', '< 6.0'
-end
-`;
-
-const withWidgetPodfileTarget: ConfigPlugin = (cfg) =>
-  withDangerousMod(cfg, [
-    'ios',
-    async (mod) => {
-      const podfilePath = path.join(mod.modRequest.platformProjectRoot, 'Podfile');
-      const podfile = await fs.promises.readFile(podfilePath, 'utf8');
-      if (podfile.includes(`target '${WIDGET_TARGET_NAME}'`)) {
-        return mod;
-      }
-      await fs.promises.writeFile(podfilePath, podfile.trimEnd() + '\n' + WIDGET_PODFILE_BLOCK);
-      return mod;
-    },
-  ]);
-
 // `plugins` only accepts the JSON-serializable form (string or [string,
 // props]) per the ExpoConfig type, so inline `ConfigPlugin` functions
 // like `withFastGradleProperties` are applied by calling them on the
 // finished config instead.
 export default ({ config }: ConfigContext): ExpoConfig =>
-  withWidgetPodfileTarget(
-    withFastGradleProperties({
-      ...config,
-      name: 'OneSignal Demo',
-      slug: 'demo',
-      version: '1.0.0',
-      orientation: 'portrait',
+  withFastGradleProperties({
+    ...config,
+    name: 'OneSignal Demo',
+    slug: 'demo',
+    version: '1.0.0',
+    orientation: 'portrait',
+    icon: './assets/images/icon.png',
+    scheme: 'demo',
+    userInterfaceStyle: 'automatic',
+    newArchEnabled: true,
+    ios: {
+      appleTeamId: '99SW8E36CT',
       icon: './assets/images/icon.png',
-      scheme: 'demo',
-      userInterfaceStyle: 'automatic',
-      newArchEnabled: true,
-      ios: {
-        appleTeamId: '99SW8E36CT',
-        icon: './assets/images/icon.png',
-        bundleIdentifier: 'com.onesignal.example',
-        infoPlist: {
-          // For push notifications support when app is not in foreground
-          UIBackgroundModes: ['remote-notification'],
+      bundleIdentifier: 'com.onesignal.example',
+      infoPlist: {
+        // For push notifications support when app is not in foreground
+        UIBackgroundModes: ['remote-notification'],
 
-          // For OneSignal location permissions
-          NSLocationWhenInUseUsageDescription: 'This app uses your location to...',
-
-          // Enable iOS Live Activities (ActivityKit). Required by the
-          // OneSignalWidget extension; without this the widget runs but the
-          // system never starts/updates activities.
-          NSSupportsLiveActivities: true,
-        },
-        entitlements: {
-          'aps-environment': 'development', // For push notifications support
-          'com.apple.security.application-groups': ['group.expoNotUsed'], // Additional app groups if needed (you can have multiple app groups)
-        },
-        supportsTablet: true,
-      },
-      android: {
-        package: 'com.onesignal.example',
         // For OneSignal location permissions
-        permissions: [
-          'android.permission.ACCESS_COARSE_LOCATION',
-          'android.permission.ACCESS_FINE_LOCATION',
-        ],
+        NSLocationWhenInUseUsageDescription: 'This app uses your location to...',
+
+        // Enable iOS Live Activities (ActivityKit). Required by the
+        // OneSignalWidget extension; without this the widget runs but the
+        // system never starts/updates activities.
+        NSSupportsLiveActivities: true,
       },
-      plugins: [
-        [
-          'onesignal-expo-plugin',
-          {
-            mode: 'development',
-            appGroupName: 'group.com.onesignal.example.NSE', // Optional: If you had your own app group name, you can set it here
-            nseBundleIdentifier: 'NSE', // Optional: Custom bundle identifier for the Notification Service Extension
-            smallIcons: ['./assets/images/small_icon.png'], // Optional: Custom notification icon (left side icon)
-            smallIconAccentColor: '#C0FFEE', // Optional: For Android only
-            largeIcons: ['./assets/images/icon.png'], // Optional: For Android only (right side icon)
-            sounds: ['./assets/vine_boom.wav'], // Optional: Custom notification sounds
-          } satisfies OneSignalPluginProps,
-        ],
-        'expo-router',
-        [
-          'expo-splash-screen',
-          {
-            image: './assets/images/icon.png',
-            imageWidth: 200,
-            resizeMode: 'contain',
-            backgroundColor: '#ffffff',
-            dark: {
-              backgroundColor: '#000000',
-            },
-          },
-        ],
+      entitlements: {
+        'aps-environment': 'development', // For push notifications support
+        'com.apple.security.application-groups': ['group.expoNotUsed'], // Additional app groups if needed (you can have multiple app groups)
+      },
+      supportsTablet: true,
+    },
+    android: {
+      package: 'com.onesignal.example',
+      // For OneSignal location permissions
+      permissions: [
+        'android.permission.ACCESS_COARSE_LOCATION',
+        'android.permission.ACCESS_FINE_LOCATION',
       ],
-      experiments: {
-        typedRoutes: true,
-        reactCompiler: true,
-      },
-      extra: {
-        oneSignalAppId: '77e32082-ea27-42e3-a898-c72e141824ef',
-      },
-    }),
-  );
+    },
+    plugins: [
+      [
+        'onesignal-expo-plugin',
+        {
+          mode: 'development',
+          appGroupName: 'group.com.onesignal.example.onesignal', // Optional: If you had your own app group name, you can set it here
+          nseBundleIdentifier: 'NSE', // Optional: Custom bundle identifier for the Notification Service Extension
+          smallIcons: ['./assets/images/small_icon.png'], // Optional: Custom notification icon (left side icon)
+          smallIconAccentColor: '#C0FFEE', // Optional: For Android only
+          largeIcons: ['./assets/images/icon.png'], // Optional: For Android only (right side icon)
+          sounds: ['./assets/vine_boom.wav'], // Optional: Custom notification sounds
+
+          // Uncomment this to use the Objective-C version of the Notification Service Extension
+          iosNSEFilePath: './customNSE/NSE.m',
+
+          liveActivities: {
+            targetName: 'OneSignalWidget',
+            bundleIdentifierSuffix: 'LA',
+            widgetFilePath: './customWidget/LiveActivity.swift',
+          },
+        } satisfies OneSignalPluginProps,
+      ],
+      'expo-router',
+      [
+        'expo-splash-screen',
+        {
+          image: './assets/images/icon.png',
+          imageWidth: 200,
+          resizeMode: 'contain',
+          backgroundColor: '#ffffff',
+          dark: {
+            backgroundColor: '#000000',
+          },
+        },
+      ],
+    ],
+    experiments: {
+      typedRoutes: true,
+      reactCompiler: true,
+    },
+  });

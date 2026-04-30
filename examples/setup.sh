@@ -16,11 +16,12 @@ INSTALLED_DIR="$ORIGINAL_DIR/node_modules/onesignal-expo-plugin"
 # bumped by routine git operations (checkout, branch switch, rebase)
 # even when the source is identical — that caused needless rebuilds.
 # Inputs match exactly what `bun pm pack` ships per package.json's "files"
-# field: src/ (transpiled to dist/), serviceExtensionFiles/, plus the
-# packaging-relevant configs (package.json, tsconfig.json). build.gradle
-# is intentionally excluded — it lives at the repo root for spotless
-# formatting only and is not part of the tarball.
+# field: src/ (transpiled to dist/), serviceExtensionFiles/,
+# widgetExtensionFiles/, plus the packaging-relevant configs (package.json,
+# tsconfig.json). build.gradle is intentionally excluded — it lives at the
+# repo root for spotless formatting only and is not part of the tarball.
 src_hash=$(find "$PLUGIN_ROOT/src" "$PLUGIN_ROOT/serviceExtensionFiles" \
+                "$PLUGIN_ROOT/widgetExtensionFiles" \
                 "$PLUGIN_ROOT/package.json" "$PLUGIN_ROOT/tsconfig.json" \
            -type f 2>/dev/null \
            | sort \

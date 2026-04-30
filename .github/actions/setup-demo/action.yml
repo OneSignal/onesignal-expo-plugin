@@ -24,17 +24,17 @@ runs:
         cache: true
         run-install: true
 
-    - name: Cache demo bun dependencies
+    - name: Cache demo dependencies
       uses: actions/cache@v5
       with:
         path: examples/demo/node_modules
-        key: bun-${{ runner.os }}-${{ hashFiles('examples/demo/bun.lock') }}
-        restore-keys: bun-${{ runner.os }}-
+        key: vp-${{ runner.os }}-${{ hashFiles('examples/demo/package-lock.json') }}
+        restore-keys: vp-${{ runner.os }}-
 
     - name: Build plugin and install into demo
       shell: bash
       working-directory: examples/demo
-      run: bun run setup
+      run: vp run setup
 
     - name: Create demo .env
       shell: bash
@@ -43,6 +43,7 @@ runs:
         echo "EXPO_PUBLIC_ONESIGNAL_APP_ID=${{ inputs.onesignal-app-id }}" > .env
         echo "EXPO_PUBLIC_ONESIGNAL_API_KEY=${{ inputs.onesignal-api-key }}" >> .env
         echo "EXPO_PUBLIC_E2E_MODE=true" >> .env
+        echo "EXPO_PUBLIC_ONESIGNAL_ANDROID_CHANNEL_ID=7ec2ece9-c538-4656-9516-1316f48a005c" >> .env
 
     - name: Expo prebuild
       shell: bash
@@ -51,9 +52,9 @@ runs:
         PREBUILD_PLATFORM: ${{ inputs.prebuild-platform }}
       run: |
         if [ "$PREBUILD_PLATFORM" = "all" ]; then
-          bunx expo prebuild --clean --no-install
+          vpx run prebuild --clean --no-install
         else
-          bunx expo prebuild --platform "$PREBUILD_PLATFORM" --clean --no-install
+          vpx run prebuild --platform "$PREBUILD_PLATFORM" --clean --no-install
         fi
 
     - name: Cache CocoaPods

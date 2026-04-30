@@ -57,6 +57,59 @@ describe('withOneSignalIos', () => {
     const result = withOneSignalIos(config, defaultProps);
     expect(result.extra?.eas?.build?.experimental?.ios?.appExtensions).toBeDefined();
   });
+
+  test('does not add Live Activity extension when liveActivities is missing', async () => {
+    const { withOneSignalIos } = await import('./withOneSignalIos');
+    const config = makeConfig({
+      ios: { bundleIdentifier: 'com.example.app' },
+    });
+
+    const result = withOneSignalIos(config, defaultProps);
+    const appExtensions = result.extra?.eas?.build?.experimental?.ios?.appExtensions;
+    expect(appExtensions).toHaveLength(1);
+    expect(appExtensions?.[0].targetName).toBe('OneSignalNotificationServiceExtension');
+  });
+
+  test('adds default Live Activity extension when liveActivities is set', async () => {
+    const { withOneSignalIos } = await import('./withOneSignalIos');
+    const config = makeConfig({
+      ios: { bundleIdentifier: 'com.example.app' },
+    });
+    const props: OneSignalPluginProps = {
+      ...defaultProps,
+      liveActivities: {},
+    };
+
+    const result = withOneSignalIos(config, props);
+    const appExtensions = result.extra?.eas?.build?.experimental?.ios?.appExtensions;
+    expect(appExtensions?.[1]).toEqual({
+      targetName: 'OneSignalWidget',
+      bundleIdentifier: 'com.example.app.OneSignalWidget',
+      entitlements: {},
+    });
+  });
+
+  test('adds custom Live Activity extension when target and suffix are set', async () => {
+    const { withOneSignalIos } = await import('./withOneSignalIos');
+    const config = makeConfig({
+      ios: { bundleIdentifier: 'com.example.app' },
+    });
+    const props: OneSignalPluginProps = {
+      ...defaultProps,
+      liveActivities: {
+        targetName: 'MyWidget',
+        bundleIdentifierSuffix: 'widget',
+      },
+    };
+
+    const result = withOneSignalIos(config, props);
+    const appExtensions = result.extra?.eas?.build?.experimental?.ios?.appExtensions;
+    expect(appExtensions?.[1]).toEqual({
+      targetName: 'MyWidget',
+      bundleIdentifier: 'com.example.app.widget',
+      entitlements: {},
+    });
+  });
 });
 
 describe('resolveDevTeam', () => {

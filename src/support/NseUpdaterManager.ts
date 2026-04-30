@@ -3,6 +3,7 @@ import {
   BUNDLE_SHORT_VERSION_TEMPLATE_REGEX,
   BUNDLE_VERSION_TEMPLATE_REGEX,
   GROUP_IDENTIFIER_TEMPLATE_REGEX,
+  NSE_PRINCIPAL_CLASS_TEMPLATE_REGEX,
   NSE_TARGET_NAME,
 } from './iosConstants';
 
@@ -35,6 +36,14 @@ export default class NseUpdaterManager {
     const plistFilePath = `${this.nsePath}/${plistFileName}`;
     let plistFile = await FileManager.readFile(plistFilePath);
     plistFile = plistFile.replace(BUNDLE_SHORT_VERSION_TEMPLATE_REGEX, version);
+    await FileManager.writeFile(plistFilePath, plistFile);
+  }
+
+  /** Replace the {{NSE_PRINCIPAL_CLASS}} placeholder with the language-appropriate value. */
+  async updateNSEPrincipalClass(principalClass: string): Promise<void> {
+    const plistFilePath = `${this.nsePath}/${plistFileName}`;
+    let plistFile = await FileManager.readFile(plistFilePath);
+    plistFile = plistFile.replace(NSE_PRINCIPAL_CLASS_TEMPLATE_REGEX, principalClass);
     await FileManager.writeFile(plistFilePath, plistFile);
   }
 

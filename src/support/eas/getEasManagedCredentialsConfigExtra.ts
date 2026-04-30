@@ -1,14 +1,46 @@
 import { ExpoConfig } from '@expo/config-types';
 
 import { getAppGroupIdentifier } from '../helpers';
-import { NSE_TARGET_NAME } from '../iosConstants';
+import { LIVE_ACTIVITY_TARGET_NAME, NSE_TARGET_NAME } from '../iosConstants';
+
+type LiveActivityExtensionConfig = {
+  targetName?: string;
+  bundleIdentifierSuffix?: string;
+};
 
 export default function getEasManagedCredentialsConfigExtra(
   config: ExpoConfig,
   appGroupName?: string,
   nseBundleIdentifier?: string,
+  liveActivities?: LiveActivityExtensionConfig,
+  disableNSE?: boolean,
 ): { [k: string]: any } {
-  const bundleId = `${config?.ios?.bundleIdentifier}.${nseBundleIdentifier ?? NSE_TARGET_NAME}`;
+  const bundleIdentifier = config?.ios?.bundleIdentifier ?? '';
+  const appExtensions = [...(config.extra?.eas?.build?.experimental?.ios?.appExtensions ?? [])];
+
+  if (!disableNSE) {
+    const bundleId = `${bundleIdentifier}.${nseBundleIdentifier ?? NSE_TARGET_NAME}`;
+    appExtensions.push({
+      targetName: NSE_TARGET_NAME,
+      bundleIdentifier: bundleId,
+      entitlements: {
+        'com.apple.security.application-groups': [
+          getAppGroupIdentifier(bundleIdentifier, appGroupName),
+        ],
+      },
+    });
+  }
+
+  if (liveActivities) {
+    const targetName = liveActivities.targetName ?? LIVE_ACTIVITY_TARGET_NAME;
+    const suffix = liveActivities.bundleIdentifierSuffix ?? targetName;
+    appExtensions.push({
+      targetName,
+      bundleIdentifier: `${bundleIdentifier}.${suffix}`,
+      entitlements: {},
+    });
+  }
+
   return {
     ...config.extra,
     eas: {
@@ -19,18 +51,7 @@ export default function getEasManagedCredentialsConfigExtra(
           ...config.extra?.eas?.build?.experimental,
           ios: {
             ...config.extra?.eas?.build?.experimental?.ios,
-            appExtensions: [
-              ...(config.extra?.eas?.build?.experimental?.ios?.appExtensions ?? []),
-              {
-                targetName: NSE_TARGET_NAME,
-                bundleIdentifier: bundleId,
-                entitlements: {
-                  'com.apple.security.application-groups': [
-                    getAppGroupIdentifier(config?.ios?.bundleIdentifier ?? '', appGroupName),
-                  ],
-                },
-              },
-            ],
+            appExtensions,
           },
         },
       },

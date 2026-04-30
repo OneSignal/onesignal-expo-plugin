@@ -18,13 +18,12 @@ import { ExpoConfig } from '@expo/config-types';
 
 import getEasManagedCredentialsConfigExtra from '../support/eas/getEasManagedCredentialsConfigExtra';
 import { FileManager } from '../support/FileManager';
-import { getAppGroupIdentifier } from '../support/helpers';
+import { getAppGroupIdentifier, resolveDevTeam, resolveNseConfig } from '../support/helpers';
 import {
   DEFAULT_BUNDLE_SHORT_VERSION,
   DEFAULT_BUNDLE_VERSION,
   IPHONEOS_DEPLOYMENT_TARGET,
   NSE_TARGET_NAME,
-  NSE_SOURCE_FILE,
   NSE_EXT_FILES,
   TARGETED_DEVICE_FAMILY,
 } from '../support/iosConstants';
@@ -32,6 +31,7 @@ import NseUpdaterManager from '../support/NseUpdaterManager';
 import { OneSignalLog } from '../support/OneSignalLog';
 import { updatePodfile } from '../support/updatePodfile';
 import { OneSignalPluginProps } from '../types/types';
+import { withOneSignalLiveActivity } from './withOneSignalLiveActivity';
 
 /**
  * Add 'aps-environment' record with current environment to '<project-name>.entitlements' file
@@ -115,6 +115,8 @@ const withEasManagedCredentials: ConfigPlugin<OneSignalPluginProps> = (config, p
     config as ExpoConfig,
     props?.appGroupName,
     props?.nseBundleIdentifier,
+    props?.liveActivities,
+    props?.disableNSE,
   );
   return config;
 };
@@ -148,9 +150,25 @@ const withOneSignalNSE: ConfigPlugin<OneSignalPluginProps> = (config, props) => 
         await FileManager.copyFile(`${sourceDir}${file}`, targetFile);
       }
 
-      const sourcePath = props.iosNSEFilePath ?? `${sourceDir}${NSE_SOURCE_FILE}`;
-      const targetFile = `${iosPath}/${NSE_TARGET_NAME}/${NSE_SOURCE_FILE}`;
+      const nseConfig = resolveNseConfig(props.iosNSEFilePath);
+      const sourcePath = props.iosNSEFilePath ?? `${sourceDir}${nseConfig.sourceFile}`;
+      const targetFile = `${iosPath}/${NSE_TARGET_NAME}/${nseConfig.sourceFile}`;
       await FileManager.copyFile(`${sourcePath}`, targetFile);
+
+      // ObjC NSE needs a paired header. Prefer a sibling next to the customer's .m so they
+      // can override the default; fall back to the shipped template (matches pre-Swift behavior
+      // where the .h was always supplied by the plugin).
+      if (nseConfig.headerFile) {
+        const siblingHeader = props.iosNSEFilePath
+          ? path.join(path.dirname(props.iosNSEFilePath), nseConfig.headerFile)
+          : undefined;
+        const headerSource =
+          siblingHeader && fs.existsSync(siblingHeader)
+            ? siblingHeader
+            : `${sourceDir}${nseConfig.headerFile}`;
+        const headerTarget = `${iosPath}/${NSE_TARGET_NAME}/${nseConfig.headerFile}`;
+        await FileManager.copyFile(headerSource, headerTarget);
+      }
 
       /* MODIFY COPIED EXTENSION FILES */
       const nseUpdater = new NseUpdaterManager(iosPath);
@@ -159,6 +177,7 @@ const withOneSignalNSE: ConfigPlugin<OneSignalPluginProps> = (config, props) => 
         props.appGroupName,
       );
       await nseUpdater.updateNSEEntitlements(appGroupId);
+      await nseUpdater.updateNSEPrincipalClass(nseConfig.principalClass);
       if (props.appGroupName) {
         await nseUpdater.updateNSEInfoPlistAppGroupKey(props.appGroupName);
       }
@@ -170,34 +189,7 @@ const withOneSignalNSE: ConfigPlugin<OneSignalPluginProps> = (config, props) => 
   ]);
 };
 
-/**
- * Resolve the Apple development team ID. Prefers `ios.appleTeamId` from the
- * Expo config, falling back to the plugin's deprecated `devTeam` prop.
- */
-export function resolveDevTeam(
-  config: ExpoConfig,
-  props: OneSignalPluginProps,
-): string | undefined {
-  if (config.ios?.appleTeamId) {
-    if (props.devTeam) {
-      OneSignalLog.log(
-        'Warning: Both "ios.appleTeamId" and the deprecated "devTeam" plugin prop are set. ' +
-          '"devTeam" will be ignored. Remove "devTeam" from your plugin config.',
-      );
-    }
-    return config.ios.appleTeamId;
-  }
-
-  if (props.devTeam) {
-    OneSignalLog.log(
-      'Warning: The "devTeam" plugin prop is deprecated and will be removed in a future major release. ' +
-        'Set "ios.appleTeamId" in your Expo config instead.',
-    );
-    return props.devTeam;
-  }
-
-  return undefined;
-}
+export { resolveDevTeam } from '../support/helpers';
 
 const withOneSignalXcodeProject: ConfigPlugin<OneSignalPluginProps> = (config, props) => {
   return withXcodeProject(config, (newConfig) => {
@@ -207,18 +199,20 @@ const withOneSignalXcodeProject: ConfigPlugin<OneSignalPluginProps> = (config, p
     }`;
 
     const devTeam = resolveDevTeam(config, props);
+    const nseConfig = resolveNseConfig(props.iosNSEFilePath);
+    // Header (if any) belongs in the group for navigation but not in Sources phase — it's compiled implicitly via #import.
+    const groupFiles = [
+      ...NSE_EXT_FILES,
+      nseConfig.sourceFile,
+      ...(nseConfig.headerFile ? [nseConfig.headerFile] : []),
+    ];
 
     if (xcodeProject.pbxTargetByName(NSE_TARGET_NAME)) {
       OneSignalLog.log(`${NSE_TARGET_NAME} already exists in project. Skipping...`);
       return newConfig;
     }
 
-    // Create new PBXGroup for the extension
-    const extGroup = xcodeProject.addPbxGroup(
-      [...NSE_EXT_FILES, NSE_SOURCE_FILE],
-      NSE_TARGET_NAME,
-      NSE_TARGET_NAME,
-    );
+    const extGroup = xcodeProject.addPbxGroup(groupFiles, NSE_TARGET_NAME, NSE_TARGET_NAME);
 
     // Add the new PBXGroup to the top level group. This makes the
     // files / folder appear in the file explorer in Xcode.
@@ -250,9 +244,8 @@ const withOneSignalXcodeProject: ConfigPlugin<OneSignalPluginProps> = (config, p
       nseBundleId,
     );
 
-    // Add build phases to the new target
     xcodeProject.addBuildPhase(
-      ['NotificationService.m'],
+      [nseConfig.sourceFile],
       'PBXSourcesBuildPhase',
       'Sources',
       nseTarget.uuid,
@@ -274,6 +267,7 @@ const withOneSignalXcodeProject: ConfigPlugin<OneSignalPluginProps> = (config, p
         buildSettingsObj.IPHONEOS_DEPLOYMENT_TARGET =
           props?.iPhoneDeploymentTarget ?? IPHONEOS_DEPLOYMENT_TARGET;
         buildSettingsObj.TARGETED_DEVICE_FAMILY = TARGETED_DEVICE_FAMILY;
+        buildSettingsObj.SWIFT_VERSION = '5.0';
         buildSettingsObj.CODE_SIGN_ENTITLEMENTS = `${NSE_TARGET_NAME}/${NSE_TARGET_NAME}.entitlements`;
         buildSettingsObj.CODE_SIGN_STYLE = 'Automatic';
       }
@@ -329,8 +323,15 @@ export const withOneSignalIos: ConfigPlugin<OneSignalPluginProps> = (config, pro
     config = withOneSignalPodfile(config, props);
     config = withOneSignalNSE(config, props);
     config = withOneSignalXcodeProject(config, props);
-    config = withEasManagedCredentials(config, props);
   }
   config = withSoundFiles(config, props);
+  if (props.liveActivities) {
+    config = withOneSignalLiveActivity(config, props);
+  }
+  // EAS extras must run after every target that contributes an appExtension entry
+  // so disableNSE + liveActivities still registers the widget target.
+  if (!props.disableNSE || props.liveActivities) {
+    config = withEasManagedCredentials(config, props);
+  }
   return config;
 };
