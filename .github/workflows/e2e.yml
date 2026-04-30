@@ -168,8 +168,7 @@ jobs:
             -hideShellScriptEnvironment \
             CODE_SIGN_STYLE=Manual \
             COMPILER_INDEX_STORE_ENABLE=NO \
-            DEBUG_INFORMATION_FORMAT=dwarf \
-            STRIP_SWIFT_SYMBOLS=NO
+            DEBUG_INFORMATION_FORMAT=dwarf
           xcodebuild -exportArchive \
             -archivePath build/OneSignalDemo.xcarchive \
             -exportOptionsPlist ExportOptions.plist \
