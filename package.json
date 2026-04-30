@@ -1,7 +1,7 @@
 {
   "name": "onesignal-expo-plugin",
   "version": "2.5.0",
-  "description": "Some Changez",
+  "description": "OneSignal Expo config plugin for adding iOS and Android push notification support to managed Expo apps.",
   "keywords": [
     "EAS",
     "expo",

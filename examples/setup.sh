@@ -40,9 +40,6 @@ if [ "${FORCE_SETUP:-0}" != "1" ] \
    && [ -f "$TGZ_FILE" ] \
    && [ "$(cat "$STAMP_FILE")" = "$src_hash" ]; then
   echo "Plugin source unchanged, skipping rebuild. Set FORCE_SETUP=1 to override."
-  # Re-apply the glob workaround in case `vp install` ran since the last
-  # setup and re-hoisted glob@7. See the note at the bottom of this file.
-  rm -rf "$ORIGINAL_DIR/node_modules/glob"
   exit 0
 fi
 
@@ -72,14 +69,8 @@ cd "$ORIGINAL_DIR"
 # path is intentional — an absolute path would leak this machine's
 # layout into the lockfile.
 echo "Registering tarball with vp (refreshes bun.lock integrity hash)..."
-vp pm cache rm
 vp remove onesignal-expo-plugin 2>/dev/null || true
 vp add file:../../onesignal-expo-plugin.tgz
-
-# Workaround: bun hoists glob@7 from react-native, shadowing glob@13
-# needed by @expo/cli. Removing the hoisted copy forces resolution to
-# fall through to @expo/cli's own glob@13.
-rm -rf node_modules/glob
 
 # Record the hash only after a successful build/install so that an
 # interrupted run forces a full retry next time.
