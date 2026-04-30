@@ -109,7 +109,7 @@ export default ({ config }: ConfigContext): ExpoConfig =>
           sounds: ['./assets/vine_boom.wav'], // Optional: Custom notification sounds
 
           // Uncomment this to use the Objective-C version of the Notification Service Extension
-          iosNSEFilePath: './customNSE/NSE.m',
+          // iosNSEFilePath: './customNSE/NSE.m',
 
           liveActivities: {
             targetName: 'OneSignalWidget',

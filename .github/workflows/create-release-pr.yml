@@ -32,6 +32,12 @@ jobs:
           repository: OneSignal/onesignal-expo-plugin
           ref: ${{ needs.prep.outputs.release_branch }}
 
+      - name: Set up Vite+
+        uses: voidzero-dev/setup-vp@v1
+        with:
+          cache: true
+          run-install: false # no need to install deps just to bump version
+
       - name: Setup Git User
         uses: OneSignal/sdk-shared/.github/actions/setup-git-user@main
 
@@ -40,7 +46,7 @@ jobs:
           NEW_VERSION="${{ inputs.expo_version }}"
 
           # Update package.json version
-          vp pm pkg set version="$NEW_VERSION"
+          npm pkg set version="$NEW_VERSION"
 
           # Only commit if there are changes
           git add -A

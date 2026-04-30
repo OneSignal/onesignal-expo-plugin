@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Invoked from a demo dir (e.g. examples/demo/) via `bun run setup`.
+# Invoked from a demo dir (e.g. examples/demo/) via `vp run setup`.
 # ORIGINAL_DIR captures that dir so we can return to it after building
 # the plugin; PLUGIN_ROOT is two levels up (the plugin package itself).
 ORIGINAL_DIR=$(pwd)
@@ -15,7 +15,7 @@ INSTALLED_DIR="$ORIGINAL_DIR/node_modules/onesignal-expo-plugin"
 # combined list) instead of using `find -newer`, because mtimes get
 # bumped by routine git operations (checkout, branch switch, rebase)
 # even when the source is identical — that caused needless rebuilds.
-# Inputs match exactly what `bun pm pack` ships per package.json's "files"
+# Inputs match exactly what `vp pm pack` ships per package.json's "files"
 # field: src/ (transpiled to dist/), serviceExtensionFiles/,
 # widgetExtensionFiles/, plus the packaging-relevant configs (package.json,
 # tsconfig.json). build.gradle is intentionally excluded — it lives at the
@@ -40,41 +40,41 @@ if [ "${FORCE_SETUP:-0}" != "1" ] \
    && [ -f "$TGZ_FILE" ] \
    && [ "$(cat "$STAMP_FILE")" = "$src_hash" ]; then
   echo "Plugin source unchanged, skipping rebuild. Set FORCE_SETUP=1 to override."
-  # Re-apply the glob workaround in case `bun install` ran since the last
+  # Re-apply the glob workaround in case `vp install` ran since the last
   # setup and re-hoisted glob@7. See the note at the bottom of this file.
   rm -rf "$ORIGINAL_DIR/node_modules/glob"
   exit 0
 fi
 
 cd "$PLUGIN_ROOT"
-bun run build
+vp run build
 
-# `bun pm pack` honors package.json's "files" field (so the tarball matches
+# `vp pm pack` honors package.json's "files" field (so the tarball matches
 # what would actually be published). The version suffix in the filename
 # is unstable, so we normalize to onesignal-expo-plugin.tgz for a
 # deterministic path that package.json + the install step can reference.
 rm -f onesignal-expo-plugin*.tgz
-bun pm pack
+vp pm pack
 mv onesignal-expo-plugin-*.tgz onesignal-expo-plugin.tgz
 
 cd "$ORIGINAL_DIR"
 
-# Always go through bun add so bun.lock's integrity hash for the tarball
+# Always go through vp add so vp.lock's integrity hash for the tarball
 # stays in sync with the freshly-built tarball on disk. A previous version
 # of this script had a "hot path" that just untarred over node_modules
 # directly, which was faster but left a stale sha512 in bun.lock — any
-# subsequent `bun install` that re-resolved this entry (e.g. when the
+# subsequent `vp install` that re-resolved this entry (e.g. when the
 # lockfile was touched by another dep) would fail with IntegrityCheckFailed.
 #
-# `bun remove` first because bun verifies the existing integrity hash
+# `vp remove` first because vp verifies the existing integrity hash
 # before replacing the entry; without removing, a stale hash from a prior
-# build causes `bun add` itself to fail. The relative `file:../../...`
+# build causes `vp add` itself to fail. The relative `file:../../...`
 # path is intentional — an absolute path would leak this machine's
 # layout into the lockfile.
-echo "Registering tarball with bun (refreshes bun.lock integrity hash)..."
-bun pm cache rm
-bun remove onesignal-expo-plugin 2>/dev/null || true
-bun add file:../../onesignal-expo-plugin.tgz
+echo "Registering tarball with vp (refreshes bun.lock integrity hash)..."
+vp pm cache rm
+vp remove onesignal-expo-plugin 2>/dev/null || true
+vp add file:../../onesignal-expo-plugin.tgz
 
 # Workaround: bun hoists glob@7 from react-native, shadowing glob@13
 # needed by @expo/cli. Removing the hoisted copy forces resolution to
