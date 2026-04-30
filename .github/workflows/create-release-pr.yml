@@ -35,17 +35,12 @@ jobs:
       - name: Setup Git User
         uses: OneSignal/sdk-shared/.github/actions/setup-git-user@main
 
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: latest
-
       - name: Update sdk version
         run: |
           NEW_VERSION="${{ inputs.expo_version }}"
 
           # Update package.json version
-          bun pm pkg set version="$NEW_VERSION"
+          vp pm pkg set version="$NEW_VERSION"
 
           # Only commit if there are changes
           git add -A
