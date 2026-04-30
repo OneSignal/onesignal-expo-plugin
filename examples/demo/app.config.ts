@@ -13,9 +13,14 @@ type GradlePropertiesItem =
   | { type: 'property'; key: string; value: string };
 
 // Tweaks `android/gradle.properties` for faster local builds. Defined inline
-// (rather than `./plugins/...`) because @expo/config evaluates app.config.ts
-// through a TS transform applied only to this file — a relative `import`
-// from here resolves through Node's CJS resolver, which doesn't try `.ts`.
+// rather than as a `./plugins/...` file because @expo/config evaluates this
+// file through a TS transform applied only to app.config.ts — a relative
+// `import` resolves through Node's CJS resolver, which won't load `.ts`.
+// The iOS signing plugin lives in `./plugins/withIosManualReleaseSigning.js`
+// (plain JS, so the CJS path works) for an additional reason: it must
+// register *after* the OneSignal plugin so its mods see the NSE/Widget
+// targets. Listing it as a string entry in `plugins:` after `onesignal-...`
+// is the only way to control that registration order.
 const FAST_BUILD_PROPERTIES: Record<string, string> = {
   // Reuse compiled outputs (CMake, Kotlin, Java, dex) across builds.
   // Single biggest win for repeat builds; survives `./gradlew clean`.

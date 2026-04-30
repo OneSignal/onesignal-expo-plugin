@@ -81,6 +81,57 @@ jobs:
         working-directory: examples/demo
         run: cp ExportOptions.plist ios/ExportOptions.plist
 
+      # Patch the prebuilt pbxproj to use manual signing for Release on every
+      # target (main app, NSE, Live Activity widget). Done here instead of via
+      # an Expo config plugin to avoid mod-ordering issues — at this point the
+      # NSE/Widget targets already exist in the pbxproj.
+      - name: Pin Release signing for all iOS targets
+        working-directory: examples/demo/ios
+        env:
+          DEV_TEAM: '99SW8E36CT'
+        run: |
+          /usr/bin/python3 - <<'PY'
+          import os, re, pathlib
+
+          dev_team = os.environ['DEV_TEAM']
+          targets = {
+              'OneSignalDemo': 'Appium Demo - Main',
+              'OneSignalNotificationServiceExtension': 'Appium Demo - NSE',
+              'OneSignalWidget': 'Appium Demo - Live Activity',
+          }
+
+          pbx = pathlib.Path('OneSignalDemo.xcodeproj/project.pbxproj')
+          text = pbx.read_text()
+
+          def patch(block: str) -> str:
+              for tname, profile in targets.items():
+                  if (
+                      f'PRODUCT_NAME = "{tname}"' in block
+                      or f'PRODUCT_NAME = {tname}' in block
+                  ):
+                      block = re.sub(r'\n\s*CODE_SIGN_STYLE = \w+;', '', block)
+                      block = re.sub(r'\n\s*PROVISIONING_PROFILE_SPECIFIER = [^;]+;', '', block)
+                      block = re.sub(r'\n\s*CODE_SIGN_IDENTITY = [^;]+;', '', block)
+                      block = re.sub(r'\n\s*DEVELOPMENT_TEAM = [^;]+;', '', block)
+                      inject = (
+                          '\n\t\t\t\tCODE_SIGN_STYLE = Manual;'
+                          f'\n\t\t\t\tPROVISIONING_PROFILE_SPECIFIER = "{profile}";'
+                          '\n\t\t\t\tCODE_SIGN_IDENTITY = "Apple Development";'
+                          f'\n\t\t\t\tDEVELOPMENT_TEAM = {dev_team};'
+                      )
+                      block = block.replace('buildSettings = {', 'buildSettings = {' + inject, 1)
+                      print(f'patched target={tname} profile={profile}')
+                      break
+              return block
+
+          new_text = re.sub(
+              r'(/\* Release \*/ = \{[\s\S]*?name = Release;\s*\};)',
+              lambda m: patch(m.group(1)),
+              text,
+          )
+          pbx.write_text(new_text)
+          PY
+
       - name: Cache Xcode DerivedData
         uses: actions/cache@v5
         with:
