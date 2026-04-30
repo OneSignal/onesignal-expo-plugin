@@ -61,7 +61,10 @@ runs:
       if: inputs.install-pods == 'true'
       uses: actions/cache@v5
       with:
-        path: examples/demo/ios/Pods
+        path: |
+          examples/demo/ios/Pods
+          ~/Library/Caches/CocoaPods
+          ~/.cocoapods/repos
         # Hash Podfile (exists after `expo prebuild --no-install`) rather than
         # Podfile.lock — the lockfile isn't generated until the Install Pods
         # step below, so hashing it would always resolve to the empty string

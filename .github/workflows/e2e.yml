@@ -132,12 +132,17 @@ jobs:
           pbx.write_text(new_text)
           PY
 
+      # DerivedData is mostly invalidated by Xcode/Pods/source changes, but a
+      # warm partial cache lets Xcode skip a huge chunk of incremental work.
+      # The restore-keys fallback is what makes this useful — the exact key
+      # rarely matches across runs, so we deliberately rely on the prefix.
       - name: Cache Xcode DerivedData
         uses: actions/cache@v5
         with:
           path: examples/demo/ios/build
-          key: deriveddata-${{ runner.os }}-${{ hashFiles('examples/demo/ios/Podfile.lock') }}
-          restore-keys: deriveddata-${{ runner.os }}-
+          key: deriveddata-${{ runner.os }}-${{ hashFiles('examples/demo/package.json', 'examples/demo/app.config.ts', 'examples/demo/ios/Podfile') }}
+          restore-keys: |
+            deriveddata-${{ runner.os }}-
 
       - name: Set up iOS codesigning
         uses: OneSignal/sdk-shared/.github/actions/setup-ios-demo-codesigning@main
@@ -162,7 +167,9 @@ jobs:
             -quiet \
             -hideShellScriptEnvironment \
             CODE_SIGN_STYLE=Manual \
-            COMPILER_INDEX_STORE_ENABLE=NO
+            COMPILER_INDEX_STORE_ENABLE=NO \
+            DEBUG_INFORMATION_FORMAT=dwarf \
+            STRIP_SWIFT_SYMBOLS=NO
           xcodebuild -exportArchive \
             -archivePath build/OneSignalDemo.xcarchive \
             -exportOptionsPlist ExportOptions.plist \
