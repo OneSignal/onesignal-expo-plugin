@@ -47,6 +47,22 @@ jobs:
           onesignal-api-key: ${{ secrets.APPIUM_ONESIGNAL_API_KEY }}
           prebuild-platform: android
 
+      - name: Resolve OneSignal Android SDK version
+        id: android-sdk-version
+        # The expo plugin pulls com.onesignal:OneSignal:X transitively via
+        # react-native-onesignal, which is installed into the demo's
+        # node_modules by `setup-demo` (vp run setup). Read the version from
+        # there so the wait step gates against the actual artifact Gradle
+        # will resolve.
+        run: |
+          VERSION=$(grep "com.onesignal:OneSignal:" examples/demo/node_modules/react-native-onesignal/android/build.gradle | sed -E "s/.*OneSignal:([^\"']+).*/\1/")
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+
+      - name: Wait for OneSignal Android SDK on Maven Central
+        uses: OneSignal/sdk-shared/.github/actions/wait-for-maven-artifact@main
+        with:
+          version: ${{ steps.android-sdk-version.outputs.version }}
+
       - name: Build release APK
         working-directory: examples/demo/android
         run: ./gradlew assembleRelease --quiet --console=plain --warning-mode=summary

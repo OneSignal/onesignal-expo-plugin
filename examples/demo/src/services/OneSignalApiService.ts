@@ -3,6 +3,7 @@ import { UserData, userDataFromJson } from '../models/UserData';
 
 const ONESIGNAL_API_KEY = process.env.EXPO_PUBLIC_ONESIGNAL_API_KEY;
 const ANDROID_CHANNEL_ID = process.env.EXPO_PUBLIC_ONESIGNAL_ANDROID_CHANNEL_ID;
+const DEFAULT_ANDROID_CHANNEL_ID = 'b3b015d9-c050-4042-8548-dcc34aa44aa4';
 
 class OneSignalApiService {
   private static _instance: OneSignalApiService;
@@ -50,8 +51,7 @@ class OneSignalApiService {
         headings = { en: 'Sound Notification' };
         contents = { en: 'This notification plays a custom sound' };
         extra.ios_sound = 'vine_boom.wav';
-        extra.android_channel_id =
-          ANDROID_CHANNEL_ID?.trim() || 'b3b015d9-c050-4042-8548-dcc34aa44aa4';
+        extra.android_channel_id = ANDROID_CHANNEL_ID?.trim() || DEFAULT_ANDROID_CHANNEL_ID;
         break;
       default:
         return false;
