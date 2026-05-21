@@ -61,6 +61,7 @@ export type UseOneSignalReturn = {
   consentRequired: boolean;
   privacyConsentGiven: boolean;
   externalUserId: string | undefined;
+  oneSignalId: string | undefined;
   pushSubscriptionId: string | undefined;
   isPushEnabled: boolean;
   hasNotificationPermission: boolean;
@@ -114,6 +115,7 @@ function useOneSignalState(): UseOneSignalReturn {
   const [consentRequired, setConsentRequiredState] = useState(false);
   const [privacyConsentGiven, setPrivacyConsentGivenState] = useState(false);
   const [externalUserId, setExternalUserId] = useState<string | undefined>(undefined);
+  const [oneSignalId, setOneSignalId] = useState<string | undefined>(undefined);
   const [pushSubscriptionId, setPushSubscriptionId] = useState<string | undefined>(undefined);
   const [isPushEnabled, setIsPushEnabled] = useState(false);
   const [hasNotificationPermission, setHasNotificationPermission] = useState(false);
@@ -206,6 +208,8 @@ function useOneSignalState(): UseOneSignalReturn {
         `User changed: onesignalId=${nextOnesignalId ?? 'null'}, externalId=${event.current.externalId ?? 'null'}`,
       );
 
+      setOneSignalId(nextOnesignalId ?? undefined);
+
       if (nextOnesignalId === null) {
         return;
       }
@@ -279,6 +283,7 @@ function useOneSignalState(): UseOneSignalReturn {
       setIsReady(true);
 
       const initialOnesignalId = await OneSignal.User.getOnesignalId();
+      setOneSignalId(initialOnesignalId ?? undefined);
       if (initialOnesignalId) {
         await fetchUserDataFromApi();
       }
@@ -534,6 +539,7 @@ function useOneSignalState(): UseOneSignalReturn {
     consentRequired,
     privacyConsentGiven,
     externalUserId,
+    oneSignalId,
     pushSubscriptionId,
     isPushEnabled,
     hasNotificationPermission,
