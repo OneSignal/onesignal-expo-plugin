@@ -6,23 +6,40 @@ import { LogLevel, OneSignal } from 'react-native-onesignal';
 const appId = Constants.expoConfig?.extra?.oneSignalAppId ?? '';
 
 async function sendTestNotification(subscriptionId: string) {
-  const response = await fetch('https://onesignal.com/api/v1/notifications', {
-    method: 'POST',
-    headers: {
-      Accept: 'application/vnd.onesignal.v1+json',
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      app_id: appId,
-      include_subscription_ids: [subscriptionId],
-      headings: { en: 'Test Notification' },
-      contents: { en: 'This is a test push without the NSE.' },
-    }),
-  });
+  const maxAttempts = 3;
+  const body = {
+    app_id: appId,
+    include_subscription_ids: [subscriptionId],
+    headings: { en: 'Test Notification' },
+    contents: { en: 'This is a test push without the NSE.' },
+  };
 
-  if (!response.ok) {
-    const text = await response.text();
-    throw new Error(text);
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    const response = await fetch('https://onesignal.com/api/v1/notifications', {
+      method: 'POST',
+      headers: {
+        Accept: 'application/vnd.onesignal.v1+json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(body),
+    });
+
+    if (!response.ok) {
+      const text = await response.text();
+      throw new Error(text);
+    }
+
+    const data = await response.json().catch(() => undefined);
+    const invalidIds = data?.errors?.invalid_player_ids;
+    if (Array.isArray(invalidIds) && invalidIds.length > 0) {
+      if (attempt < maxAttempts) {
+        await new Promise((resolve) => setTimeout(resolve, 3_000 * attempt));
+        continue;
+      }
+      throw new Error(`invalid_player_ids ${JSON.stringify(invalidIds)}`);
+    }
+
+    return;
   }
 }
 
