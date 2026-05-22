@@ -14,7 +14,7 @@
         "vite-plus": "0.1.19",
       },
       "peerDependencies": {
-        "expo": ">=50.0.0",
+        "expo": ">=53.0.0",
         "react-native-onesignal": ">=5.0.0",
       },
     },
