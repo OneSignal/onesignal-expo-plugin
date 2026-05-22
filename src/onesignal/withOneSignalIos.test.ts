@@ -4,7 +4,7 @@ import { afterEach, beforeEach, describe, expect, test, vi } from 'vite-plus/tes
 import { OneSignalLog } from '../support/OneSignalLog';
 import type { OneSignalPluginProps } from '../types/types';
 
-vi.mock('@expo/config-plugins', () => {
+vi.mock('expo/config-plugins', () => {
   const passthrough = (_config: unknown, _fn: unknown) => _config;
   return {
     withEntitlementsPlist: passthrough,

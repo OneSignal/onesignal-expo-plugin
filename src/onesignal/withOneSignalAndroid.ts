@@ -6,9 +6,9 @@
 import { existsSync, mkdirSync, writeFileSync, copyFileSync } from 'fs';
 import { resolve, parse, basename } from 'path';
 
-import { ConfigPlugin, withDangerousMod, withStringsXml } from '@expo/config-plugins';
 import type { ExpoConfig } from '@expo/config-types';
 import { generateImageAsync } from '@expo/image-utils';
+import { ConfigPlugin, withDangerousMod, withStringsXml } from 'expo/config-plugins';
 
 import { parseColorToARGB } from '../support/helpers';
 import { OneSignalLog } from '../support/OneSignalLog';

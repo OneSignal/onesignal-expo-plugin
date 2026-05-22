@@ -11,7 +11,7 @@ import {
   withInfoPlist,
   withXcodeProject,
   withDangerousMod,
-} from '@expo/config-plugins';
+} from 'expo/config-plugins';
 
 import { FileManager } from '../support/FileManager';
 import { resolveDevTeam } from '../support/helpers';
