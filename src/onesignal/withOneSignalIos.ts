@@ -6,7 +6,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
-import { ExpoConfig } from '@expo/config-types';
+import { ExpoConfig } from 'expo/config';
 import {
   ConfigPlugin,
   IOSConfig,

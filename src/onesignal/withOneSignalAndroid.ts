@@ -6,8 +6,8 @@
 import { existsSync, mkdirSync, writeFileSync, copyFileSync } from 'fs';
 import { resolve, parse, basename } from 'path';
 
-import type { ExpoConfig } from '@expo/config-types';
 import { generateImageAsync } from '@expo/image-utils';
+import type { ExpoConfig } from 'expo/config';
 import { ConfigPlugin, withDangerousMod, withStringsXml } from 'expo/config-plugins';
 
 import { parseColorToARGB } from '../support/helpers';

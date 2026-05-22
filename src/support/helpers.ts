@@ -1,6 +1,6 @@
 import { extname } from 'path';
 
-import { ExpoConfig } from '@expo/config-types';
+import { ExpoConfig } from 'expo/config';
 
 import { ONESIGNAL_PLUGIN_PROPS, OneSignalPluginProps } from '../types/types';
 import { NSE_SOURCE_FILE } from './iosConstants';

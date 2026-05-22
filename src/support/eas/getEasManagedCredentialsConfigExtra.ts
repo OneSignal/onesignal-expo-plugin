@@ -1,4 +1,4 @@
-import { ExpoConfig } from '@expo/config-types';
+import { ExpoConfig } from 'expo/config';
 
 import { getAppGroupIdentifier } from '../helpers';
 import { LIVE_ACTIVITY_TARGET_NAME, NSE_TARGET_NAME } from '../iosConstants';
