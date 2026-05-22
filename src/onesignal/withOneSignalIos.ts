@@ -6,6 +6,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
+import { ExpoConfig } from 'expo/config';
 import {
   ConfigPlugin,
   IOSConfig,
@@ -13,8 +14,7 @@ import {
   withInfoPlist,
   withXcodeProject,
   withDangerousMod,
-} from '@expo/config-plugins';
-import { ExpoConfig } from '@expo/config-types';
+} from 'expo/config-plugins';
 
 import getEasManagedCredentialsConfigExtra from '../support/eas/getEasManagedCredentialsConfigExtra';
 import { FileManager } from '../support/FileManager';

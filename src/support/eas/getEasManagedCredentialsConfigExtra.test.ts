@@ -1,4 +1,4 @@
-import type { ExpoConfig } from '@expo/config-types';
+import type { ExpoConfig } from 'expo/config';
 import { describe, expect, test } from 'vite-plus/test';
 
 import getEasManagedCredentialsConfigExtra from './getEasManagedCredentialsConfigExtra';

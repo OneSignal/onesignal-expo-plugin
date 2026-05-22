@@ -3,7 +3,7 @@
  * @see https://documentation.onesignal.com/docs/react-native-sdk-setup#step-4-install-for-ios-using-cocoapods-for-ios-apps
  */
 
-import { ConfigPlugin } from '@expo/config-plugins';
+import { ConfigPlugin } from 'expo/config-plugins';
 
 import { validatePluginProps } from '../support/helpers';
 import { OneSignalPluginProps } from '../types/types';
