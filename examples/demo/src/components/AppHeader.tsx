@@ -1,4 +1,4 @@
-import { MaterialIcons as Icon } from '@expo/vector-icons';
+import Icon from '@expo/vector-icons/MaterialIcons';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackHeaderProps } from '@react-navigation/native-stack';
 import React from 'react';

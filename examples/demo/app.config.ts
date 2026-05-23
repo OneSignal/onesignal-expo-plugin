@@ -40,6 +40,12 @@ const FAST_BUILD_PROPERTIES: Record<string, string> = {
   // No effect on debug builds.
   'android.enableMinifyInReleaseBuilds': 'true',
   'android.enableShrinkResourcesInReleaseBuilds': 'true',
+  // Drop Fresco's animated-gif and webpsupport modules. The demo renders
+  // no raster images (only an SVG via react-native-svg + icon fonts), so
+  // shipping the GIF/WebP decoder .so files just wastes ~800 KB.
+  // Static PNG/JPG support stays through Fresco's core pipeline.
+  'expo.gif.enabled': 'false',
+  'expo.webp.enabled': 'false',
   // Local dev only ever targets the connected device's ABI. Apple Silicon
   // emulators and most physical test devices are arm64-v8a. Override on
   // the CLI when building multi-arch release artifacts:
