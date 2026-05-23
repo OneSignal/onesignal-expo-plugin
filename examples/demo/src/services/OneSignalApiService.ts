@@ -5,6 +5,17 @@ const ONESIGNAL_API_KEY = process.env.EXPO_PUBLIC_ONESIGNAL_API_KEY;
 const ANDROID_CHANNEL_ID = process.env.EXPO_PUBLIC_ONESIGNAL_ANDROID_CHANNEL_ID;
 const DEFAULT_ANDROID_CHANNEL_ID = 'b3b015d9-c050-4042-8548-dcc34aa44aa4';
 
+function isTransientSendFailure(data: unknown): boolean {
+  if (!data || typeof data !== 'object') return false;
+  const record = data as { id?: unknown; errors?: unknown };
+  const errors = record.errors;
+  const hasErrors =
+    (Array.isArray(errors) && errors.length > 0) ||
+    (errors != null && typeof errors === 'object' && Object.keys(errors).length > 0);
+  const missingId = typeof record.id !== 'string' || record.id.length === 0;
+  return hasErrors || missingId;
+}
+
 class OneSignalApiService {
   private static _instance: OneSignalApiService;
   private _appId: string = '';
@@ -84,9 +95,13 @@ class OneSignalApiService {
 
     const maxAttempts = 3;
 
-    // Retry on `invalid_player_ids` to absorb the brief race where the
-    // subscription has been created locally but is not yet visible to the
-    // /notifications endpoint.
+    // Retry while the OneSignal backend hasn't yet indexed the freshly
+    // created subscription. The /notifications endpoint reports this race in
+    // a few different shapes, all of which return HTTP 200:
+    //   {"errors":{"invalid_player_ids":[...]}}
+    //   {"id":"","errors":["All included players are not subscribed"]}
+    //   {"id":"","errors":[...]}
+    // Treat any 200 response without a real notification id as transient.
     for (let attempt = 1; attempt <= maxAttempts; attempt++) {
       try {
         const response = await fetch('https://onesignal.com/api/v1/notifications', {
@@ -105,15 +120,12 @@ class OneSignalApiService {
         }
 
         const data = await response.json().catch(() => undefined);
-        const invalidIds = data?.errors?.invalid_player_ids;
-        if (Array.isArray(invalidIds) && invalidIds.length > 0) {
+        if (isTransientSendFailure(data)) {
           if (attempt < maxAttempts) {
             await new Promise((resolve) => setTimeout(resolve, 3_000 * attempt));
             continue;
           }
-          console.error(
-            `Send notification failed: invalid_player_ids ${JSON.stringify(invalidIds)}`,
-          );
+          console.error(`Send notification failed: ${JSON.stringify(data)}`);
           return false;
         }
 
