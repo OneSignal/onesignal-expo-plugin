@@ -34,6 +34,12 @@ const FAST_BUILD_PROPERTIES: Record<string, string> = {
   // Modern AGP defaults that drop transitive R class generation.
   'android.nonTransitiveRClass': 'true',
   'android.nonFinalResIds': 'true',
+  // Run R8 on release builds. The generated app/build.gradle reads these
+  // findProperty() flags and gates `minifyEnabled` / `shrinkResources` on
+  // them; without these the e2e APK lands around 36 MB instead of ~20 MB.
+  // No effect on debug builds.
+  'android.enableMinifyInReleaseBuilds': 'true',
+  'android.enableShrinkResourcesInReleaseBuilds': 'true',
   // Local dev only ever targets the connected device's ABI. Apple Silicon
   // emulators and most physical test devices are arm64-v8a. Override on
   // the CLI when building multi-arch release artifacts:

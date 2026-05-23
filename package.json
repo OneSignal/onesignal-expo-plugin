@@ -1,6 +1,6 @@
 {
   "name": "onesignal-expo-plugin",
-  "version": "2.5.0",
+  "version": "2.5.1",
   "description": "OneSignal Expo config plugin for adding iOS and Android push notification support to managed Expo apps.",
   "keywords": [
     "EAS",
@@ -49,11 +49,11 @@
     "@types/node": "^22.19.3",
     "@vitest/coverage-v8": "^4.1.5",
     "typescript": "^6.0.3",
-    "vite-plus": "0.1.19"
+    "vite-plus": "0.1.22"
   },
   "peerDependencies": {
     "expo": ">=53.0.0",
     "react-native-onesignal": ">=5.0.0"
   },
-  "packageManager": "bun@1.3.13"
+  "packageManager": "bun@1.3.14"
 }
