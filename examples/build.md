@@ -7,6 +7,8 @@ https://raw.githubusercontent.com/OneSignal/sdk-shared/refs/heads/main/demo/buil
 
 Replace `{{PLATFORM}}` with `Expo` everywhere in that guide. Everything below either overrides or supplements sections from the shared guide.
 
+> Note: the sibling doc `examples/build_ios.md` is stale -- it still references `app.json` and a different app-group pattern. Prefer this `examples/build.md` as the source of truth and cross-reference it.
+
 ---
 
 ## Project Foundation
@@ -17,21 +19,20 @@ Create a new Expo project at `examples/demo/` using the TypeScript template:
 npx create-expo-app@latest examples/demo --template
 ```
 
-Use the Blank (TypeScript) template. Do not use Expo Router.
-If the generated project contains Expo Router scaffold, remove it:
+Use the Blank (TypeScript) template.
 
-```
-rm -rf examples/demo/app
-```
+The demo does NOT use Expo Router for routing -- it uses a React Navigation stack inside `App.tsx`. Note: `expo-router` IS still a dep and `'expo-router'` IS listed in `app.config.ts` plugins for compatibility, but there is no `app/` directory.
 
-Keep `examples/demo/App.tsx` as the only app entry file.
+Keep `examples/demo/App.tsx` as the only app entry file. `index.js` is the Metro entry and just registers `App`.
 
 Platform specifics:
 
-- React Context + useReducer for state management
-- TypeScript with strict mode enabled
-- App bar text: "Expo" (next to the OneSignal logo SVG)
-- Support for both Android and iOS
+- State managed by a single `OneSignalProvider` exposed via `useOneSignal()` (`src/hooks/useOneSignal.ts`) -- no Context+reducer, no repository class.
+- TypeScript with strict mode enabled.
+- App bar text: "Expo" (next to the OneSignal logo SVG) -- rendered by `src/components/AppHeader.tsx`.
+- Support for both Android and iOS.
+- `packageManager: bun@<version>` is pinned in `package.json`.
+- The `vp` toolchain drives setup (`vp run setup`, `vp add`) -- see `examples/setup.sh`.
 
 ### SVG Logo
 
@@ -52,20 +53,18 @@ curl -L "https://raw.githubusercontent.com/OneSignal/sdk-shared/refs/heads/main/
   -o "examples/demo/assets/images/icon.png"
 ```
 
-In `app.json`:
+In `app.config.ts`:
 
-```json
-"icon": "./assets/images/icon.png"
+```ts
+icon: './assets/images/icon.png',
 ```
 
-Reuse the same image for splash:
-
-```json
-["expo-splash-screen", { "image": "./assets/images/icon.png" }]
-```
+Reuse the same image for splash via the `expo-splash-screen` plugin entry (see Dependencies).
 
 Omit the "web" block and do not create `favicon.png`.
-Remove any `android.adaptiveIcon` image entries from `app.json`.
+Remove any `android.adaptiveIcon` image entries from `app.config.ts`.
+
+A separate `assets/images/small_icon.png` ships the Android status-bar icon; it's wired through the OneSignal plugin's `smallIcons` option.
 
 ### OneSignal Plugin + Config
 
@@ -75,49 +74,74 @@ Install the local Expo plugin from a packed tarball (Bun does not reliably handl
 "onesignal-expo-plugin": "file:../../onesignal-expo-plugin.tgz"
 ```
 
-Install the OneSignal runtime SDK from npm:
+Install the OneSignal runtime SDK from npm, pinned:
 
 ```json
-"react-native-onesignal": "<latest compatible version>"
+"react-native-onesignal": "5.4.3"
 ```
 
-Configure `app.json` with the plugin as the FIRST entry:
+Configure `app.config.ts` with the plugin as the FIRST entry, using the full options shape that the demo ships:
 
-```json
-"plugins": [
-  ["onesignal-expo-plugin", { "mode": "development" }]
-]
+```ts
+plugins: [
+  [
+    'onesignal-expo-plugin',
+    {
+      mode: 'development',
+      appGroupName: 'group.com.onesignal.example.onesignal',
+      nseBundleIdentifier: 'NSE',
+      smallIcons: ['./assets/images/small_icon.png'],
+      smallIconAccentColor: '#C0FFEE',
+      largeIcons: ['./assets/images/icon.png'],
+      sounds: ['./assets/vine_boom.wav'],
+      // iosNSEFilePath: './customNSE/NSE.m', // opt-in Obj-C NSE
+      liveActivities: {
+        targetName: 'OneSignalWidget',
+        bundleIdentifierSuffix: 'LA',
+        widgetFilePath: './customWidget/LiveActivity.swift',
+      },
+    },
+  ],
+  'expo-router',
+  [
+    'expo-splash-screen',
+    { image: './assets/images/icon.png', imageWidth: 200, resizeMode: 'contain', backgroundColor: '#ffffff' },
+  ],
+],
 ```
 
-Do not include "expo-router" in the plugins list.
-
-Set OneSignal App ID:
-
-```json
-"extra": {
-  "oneSignalAppId": "77e32082-ea27-42e3-a898-c72e141824ef"
-}
-```
+Set the OneSignal App ID via the env-var workflow, not `extra.oneSignalAppId` -- see "Environment variables" below.
 
 ### Prebuild & Run
 
 ```
 npx expo prebuild
-npx expo run:android
-npx expo run:ios
+npx expo run:android --device
+npx expo run:ios --device
 ```
 
-A `setup.sh` script in `examples/` handles building, packing, and installing automatically.
-Add these scripts to `package.json`:
+A `setup.sh` script in `examples/` handles building, packing, and installing the plugin tarball automatically; it is driven through `vp run setup` / `vp add`.
+
+`package.json` scripts:
 
 ```json
 "setup": "../setup.sh",
-"preandroid": "bun run setup",
-"preios": "bun run setup",
+"preandroid": "vp run setup",
+"preios": "vp run setup",
+"android": "expo run:android --device",
+"ios": "expo run:ios --device"
 ```
 
-Before first run: `bun run setup`
+Before first run: `vp run setup`
 Then use: `bun run android` / `bun run ios`
+
+### Environment variables
+
+The demo uses Expo's `EXPO_PUBLIC_` env prefix; values are inlined into the JS bundle at build time. `.env` is gitignored; `.env.example` is committed.
+
+- `EXPO_PUBLIC_ONESIGNAL_APP_ID` -- read by `src/hooks/useOneSignal.ts`. Hardcoded fallback: `77e32082-ea27-42e3-a898-c72e141824ef`.
+- `EXPO_PUBLIC_ONESIGNAL_API_KEY` -- required for Live Activity REST update/end calls in `OneSignalApiService`.
+- `EXPO_PUBLIC_ONESIGNAL_ANDROID_CHANNEL_ID` -- optional Android Notification Channel ID for the WITH-SOUND test notification.
 
 ---
 
@@ -127,30 +151,33 @@ dependencies:
 
 - expo: ~54.x
 - react-native: 0.81.x
-- react-native-onesignal: latest
+- react-native-onesignal: 5.4.3 (pinned)
 - onesignal-expo-plugin: file:../../onesignal-expo-plugin.tgz
-- @react-native-async-storage/async-storage: ^2.1.0
+- @react-native-async-storage/async-storage: 2.2.0
 - react-native-svg: ^15.8.0
 - @expo/vector-icons: ^15.0.0
-- @react-navigation/native: ^6.1.0
-- @react-navigation/native-stack: ^6.11.0
+- @react-navigation/native: ^7.1.8
+- @react-navigation/native-stack: ^7.13.0
 - react-native-screens: Expo-compatible version
 - react-native-safe-area-context: Expo-compatible version
-- react-native-gesture-handler: Expo-compatible version
-- react-native-reanimated: Expo-compatible version
-- react-native-toast-message: ^2.2.0
+- react-native-toast-message: ^2.3.3
+- expo-router: ~6.x (kept as a dep + plugin entry for compatibility; no `app/` dir)
+- expo-splash-screen: ~31.x (also registered in `app.config.ts` `plugins`)
+
+`react-native-gesture-handler` and `react-native-reanimated` are not direct deps -- they come in transitively via `expo-router`.
 
 devDependencies:
 
 - react-native-svg-transformer: ^1.5.3
-- @typescript-eslint/eslint-plugin: ^7.0.0
-- @typescript-eslint/parser: ^7.0.0
-- eslint: ^8.57.0
+- @types/react: ~19.1.x
+- typescript: ~5.9.x
+
+No ESLint config in the repo.
 
 Install with Expo to avoid version drift:
 
 ```
-npx expo install react-native-onesignal @react-native-async-storage/async-storage react-native-svg @expo/vector-icons @react-navigation/native @react-navigation/native-stack react-native-screens react-native-safe-area-context react-native-gesture-handler react-native-reanimated react-native-toast-message
+npx expo install react-native-onesignal @react-native-async-storage/async-storage react-native-svg @expo/vector-icons @react-navigation/native @react-navigation/native-stack react-native-screens react-native-safe-area-context react-native-toast-message expo-router expo-splash-screen
 ```
 
 ### Metro SVG Config
@@ -183,40 +210,52 @@ No manual Podfile or `android/app/build.gradle` edits needed. Expo prebuild + co
 
 ## Reuse and Port the RN Demo
 
-You MUST use the OneSignal React Native demo as the implementation base and port it into this Expo project. Do NOT rebuild from scratch.
+You MUST use the OneSignal React Native demo as the implementation base. Do NOT rebuild from scratch -- but expect significant divergence in the Expo port.
 
 Source: https://github.com/OneSignal/react-native-onesignal/tree/main/examples/demo
 
-Copy set (minimal edits):
+Dropped from the RN demo:
 
-- `src/models/*`
-- `src/services/*`
-- `src/repositories/*`
-- `src/context/*`
-- `src/components/*` and `src/components/modals/*`
-- `src/components/sections/*`
-- `src/screens/*`
+- `LogManager` service
+- `LoadingOverlay` component
+- `LogView` component
+- `OneSignalRepository`
+- `AppContext` (Context + reducer layer)
+- `LoginModal` (replaced by `SingleInputModal` inside `UserSection`)
+- `TrackEventSection` (folded into `CustomEventsSection`)
+
+Replaced with:
+
+- `src/hooks/useOneSignal.ts` -- `OneSignalProvider` + `useOneSignal()` hook holding all SDK state.
+- Inline `LoadingState` rendered directly inside list sections (no overlay).
+
+Added (Expo-specific):
+
+- `src/components/sections/UserSection.tsx`
+- `src/components/sections/CustomEventsSection.tsx`
+- `src/components/sections/LiveActivitySection.tsx`
+- `src/components/AppHeader.tsx`
+- `src/components/ToastProvider.tsx`
+- Env-var workflow (`.env`, `.env.example`, `EXPO_PUBLIC_*`).
+- Plugin config: live activities, NSE, custom small/large icons and sounds.
 
 ### Required Expo Adaptations
 
-1. **App entry**: Keep single root `App.tsx`. Initialize OneSignal with app ID from Expo config (`extra.oneSignalAppId`) or local state.
-
-2. **Config plugin**: `onesignal-expo-plugin` must be the first plugin in `app.json`. Run `npx expo prebuild` after config changes.
-
-3. **Icons**: Replace `react-native-vector-icons` imports with `@expo/vector-icons` exports. Keep icon names and behavior the same.
-
-4. **Navigation**: Keep React Navigation stack behavior identical to the RN demo.
-
-5. **Native folders**: No manual Podfile/Gradle edits. Let Expo prebuild regenerate native code.
+1. **App entry**: Keep single root `App.tsx`. SDK initialize happens inside `OneSignalProvider`, not in `App.tsx`.
+2. **Config plugin**: `onesignal-expo-plugin` must be the first plugin in `app.config.ts`. Run `npx expo prebuild` after config changes.
+3. **Icons**: Replace `react-native-vector-icons` imports with `@expo/vector-icons` exports. Only `MaterialIcons` is used in the demo.
+4. **Navigation**: Keep React Navigation stack behavior identical to the RN demo (now on `@react-navigation/*` v7).
+5. **Native folders**: No manual Podfile/Gradle edits. Let Expo prebuild regenerate native code -- with the exception of `ios/OneSignalWidget` (see "Native folder gitignore").
 
 ### Execution Order
 
-1. Copy models/services/repository/context
-2. Copy components + modals
-3. Copy section components + screens
-4. Integrate root app bootstrap and navigation
-5. Adapt icons/imports and path aliases
-6. Prebuild and run on Android/iOS
+1. Port models/services (drop `LogManager`).
+2. Wire `OneSignalProvider` / `useOneSignal()` and remove the repository/context layer.
+3. Port section components + screens; replace `LoginModal` use with `SingleInputModal` inside `UserSection`.
+4. Integrate root app bootstrap and navigation; wrap with `ToastProvider` + `OneSignalProvider`.
+5. Adapt icons/imports and path aliases.
+6. Add env-var workflow and plugin config (live activities, NSE, icons, sounds).
+7. Prebuild and run on Android/iOS.
 
 ### Completion Gate
 
@@ -225,18 +264,21 @@ Copy set (minimal edits):
 - Push permission prompt + toggle behavior match expected UX
 - IAM, tags, aliases, email, SMS, outcomes, triggers flows work
 - Tooltips load from remote URL
-- Toasts and LogView behave as expected
+- Toasts behave as expected
 
 ---
 
-## Expo-Specific SDK Initialization
+## State Management / Expo-Specific SDK Initialization
 
-In `App.tsx`, initialize before rendering:
+State lives in a single `OneSignalProvider` exposed via `useOneSignal()` (`src/hooks/useOneSignal.ts`). No Context+reducer, no repository class.
+
+SDK init runs inside `OneSignalProvider` / `useOneSignalState()`, NOT in `App.tsx`. `App.tsx` only sets up React Navigation and the `OneSignalProvider` + `ToastProvider` wrappers.
+
+App ID is resolved in `useOneSignal.ts` via `process.env.EXPO_PUBLIC_ONESIGNAL_APP_ID` with hardcoded fallback `77e32082-ea27-42e3-a898-c72e141824ef`. No `expo-constants` lookup, no `extra.oneSignalAppId`.
 
 ```typescript
-import Constants from 'expo-constants';
-
-const appId = Constants.expoConfig?.extra?.oneSignalAppId ?? '';
+const DEFAULT_APP_ID = '77e32082-ea27-42e3-a898-c72e141824ef';
+const appId = process.env.EXPO_PUBLIC_ONESIGNAL_APP_ID?.trim() || DEFAULT_APP_ID;
 
 OneSignal.Debug.setLogLevel(LogLevel.Verbose);
 OneSignal.setConsentRequired(cachedConsentRequired);
@@ -268,38 +310,47 @@ Always remove listeners in `useEffect` cleanup.
 
 ### Toast Messages
 
-Use `react-native-toast-message`:
+`ToastProvider` (`src/components/ToastProvider.tsx`) is rendered inside `App` in `App.tsx`, wrapping `OneSignalProvider` + `NavigationContainer`. It owns the lone `<Toast position="bottom" bottomOffset={20} />` host.
 
-```typescript
-<Toast position="bottom" bottomOffset={20} />
-```
+- Exports `useSnackbar()`; section components call `const showSnackbar = useSnackbar()` and invoke it from the allowed action handlers (Outcomes, Custom Events, Location check).
+- Replace-on-show via `Toast.hide()` before `Toast.show({ type: 'info', text1: message, visibilityTime: TOAST_DURATION_MS })`.
+- Uses the module-level constant `TOAST_DURATION_MS = 3000`.
 
-Place `<Toast />` at the root of `App.tsx` (outside NavigationContainer children).
+Do not introduce a second `<Toast />` host, do not call `Toast.show(...)` directly from sections, and do not hold toast state in the SDK hook.
+
+### Dialogs
+
+The home screen owns layout + `TooltipModal` only; sections own their action dialogs via local `useState` booleans and render modals from `src/components/modals/`. Login uses `SingleInputModal` inside `UserSection.tsx` (there is no dedicated `LoginModal`).
 
 ### Icons
 
-Use `@expo/vector-icons` (MaterialCommunityIcons / MaterialIcons) for all icons. IAM send buttons use:
-
-- TOP BANNER: `arrow-up-bold-box-outline`
-- BOTTOM BANNER: `arrow-down-bold-box-outline`
-- CENTER MODAL: `crop-square`
-- FULL SCREEN: `fullscreen`
+Use `@expo/vector-icons` (`MaterialIcons` only) for all icons.
 
 ### Accessibility / Appium
 
 Use the `testID` prop on all interactive elements for Appium test automation.
 
-### LogView
+### Logging
 
-- Sticky at top of screen, single horizontal ScrollView on the entire log list
-- Use `onLayout` + `minWidth` so content is at least screen-wide
-- Vertical ScrollView + mapped entries (not FlatList)
-- Trash icon via `@expo/vector-icons` delete icon
-- Auto-scroll to newest via `scrollToEnd` on ScrollView ref
+Logging uses `console.log` in `useOneSignal.ts`; no in-app log viewer.
 
 ### Theme
 
 Implement `AppTheme` mapping `styles.md` to `StyleSheet.create`, text style objects, and shared shadow/elevation styles for iOS/Android. Export `AppColors` and `AppSpacing` convenience constants.
+
+### Live Activities (iOS only)
+
+- `LiveActivitySection` is rendered in `HomeScreen`, iOS-only gated.
+- `customWidget/LiveActivity.swift` is hand-authored Swift paired with the plugin `liveActivities` config (see `app.config.ts`).
+- REST update / end is performed by `OneSignalApiService` using `EXPO_PUBLIC_ONESIGNAL_API_KEY`.
+
+### Native folder gitignore
+
+`.gitignore` treats most of `ios/` and `android/` as generated by `expo prebuild`. It tracks the `ios/OneSignalWidget` exception so the Live Activity target's hand-authored files are not blown away.
+
+### Expo experiments / new architecture
+
+`app.config.ts` sets `newArchEnabled: true` and `experiments: { typedRoutes: true, reactCompiler: true }`.
 
 ---
 
@@ -307,15 +358,30 @@ Implement `AppTheme` mapping `styles.md` to `StyleSheet.create`, text style obje
 
 ```
 examples/demo/
-├── app.json
+├── .env
+├── .env.example
+├── app.config.ts
 ├── App.tsx
+├── index.js
 ├── metro.config.js
 ├── tsconfig.json
 ├── package.json
+├── assets/
+│   ├── onesignal_logo.svg
+│   ├── vine_boom.wav
+│   └── images/
+│       ├── icon.png
+│       └── small_icon.png
+├── customNSE/
+│   └── NSE.m
+├── customWidget/
+│   └── LiveActivity.swift
 ├── types/
 │   └── svg.d.ts
 └── src/
     ├── theme.ts
+    ├── hooks/
+    │   └── useOneSignal.ts
     ├── models/
     │   ├── UserData.ts
     │   ├── NotificationType.ts
@@ -323,34 +389,29 @@ examples/demo/
     ├── services/
     │   ├── OneSignalApiService.ts
     │   ├── PreferencesService.ts
-    │   ├── TooltipHelper.ts
-    │   └── LogManager.ts
-    ├── repositories/
-    │   └── OneSignalRepository.ts
-    ├── context/
-    │   └── AppContext.tsx
+    │   └── TooltipHelper.ts
     ├── screens/
     │   ├── HomeScreen.tsx
     │   └── SecondaryScreen.tsx
     └── components/
+        ├── AppHeader.tsx
         ├── SectionCard.tsx
         ├── ToggleRow.tsx
         ├── ActionButton.tsx
         ├── ListWidgets.tsx
-        ├── LoadingOverlay.tsx
-        ├── LogView.tsx
+        ├── ToastProvider.tsx
         ├── modals/
         │   ├── SingleInputModal.tsx
         │   ├── PairInputModal.tsx
         │   ├── MultiPairInputModal.tsx
         │   ├── MultiSelectRemoveModal.tsx
-        │   ├── LoginModal.tsx
         │   ├── OutcomeModal.tsx
         │   ├── TrackEventModal.tsx
         │   ├── CustomNotificationModal.tsx
         │   └── TooltipModal.tsx
         └── sections/
             ├── AppSection.tsx
+            ├── UserSection.tsx
             ├── PushSection.tsx
             ├── SendPushSection.tsx
             ├── InAppSection.tsx
@@ -361,34 +422,56 @@ examples/demo/
             ├── TagsSection.tsx
             ├── OutcomesSection.tsx
             ├── TriggersSection.tsx
-            ├── TrackEventSection.tsx
+            ├── CustomEventsSection.tsx
+            ├── LiveActivitySection.tsx
             └── LocationSection.tsx
 ```
 
-Native `ios` and `android` folders are generated by `npx expo prebuild`.
+Native `ios` and `android` folders are generated by `npx expo prebuild`, except for `ios/OneSignalWidget` which is tracked.
 
 ---
 
 ## Configuration
 
-In `app.json`:
+In `app.config.ts`:
 
-```json
+```ts
 {
-  "expo": {
-    "extra": {
-      "oneSignalAppId": "77e32082-ea27-42e3-a898-c72e141824ef"
+  name: 'OneSignal Demo',
+  slug: 'demo',
+  icon: './assets/images/icon.png',
+  scheme: 'demo',
+  newArchEnabled: true,
+  ios: {
+    appleTeamId: '99SW8E36CT',
+    icon: './assets/images/icon.png',
+    bundleIdentifier: 'com.onesignal.example',
+    infoPlist: {
+      UIBackgroundModes: ['remote-notification'],
+      NSLocationWhenInUseUsageDescription: 'This app uses your location to...',
+      NSSupportsLiveActivities: true,
     },
-    "android": {
-      "package": "com.onesignal.example"
+    entitlements: {
+      'aps-environment': 'development',
+      // Placeholder app group; the actual OneSignal app group is supplied
+      // through the plugin's `appGroupName` option below.
+      'com.apple.security.application-groups': ['group.expoNotUsed'],
     },
-    "ios": {
-      "bundleIdentifier": "com.onesignal.example"
-    }
-  }
+    supportsTablet: true,
+  },
+  android: {
+    package: 'com.onesignal.example',
+    permissions: [
+      'android.permission.ACCESS_COARSE_LOCATION',
+      'android.permission.ACCESS_FINE_LOCATION',
+    ],
+  },
+  experiments: { typedRoutes: true, reactCompiler: true },
 }
 ```
 
-Identifiers MUST be `com.onesignal.example` to match existing `google-services.json` and `agconnect-services.json`.
+The OneSignal plugin sets the real app group via `appGroupName: 'group.com.onesignal.example.onesignal'` (see "OneSignal Plugin + Config"). `group.expoNotUsed` is a placeholder slot in `entitlements.application-groups` for cases where you want to add additional app groups.
 
-REST API key is NOT required for the fetchUser endpoint.
+Identifiers must match whatever you wire up in Firebase / Huawei AGC manually. There are no `google-services.json` or `agconnect-services.json` files committed in `examples/demo/`.
+
+REST API key is NOT required for the fetchUser endpoint, but `EXPO_PUBLIC_ONESIGNAL_API_KEY` IS required for Live Activity REST update/end calls.
