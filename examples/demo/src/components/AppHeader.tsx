@@ -1,6 +1,6 @@
 import Icon from '@expo/vector-icons/MaterialIcons';
-import { useNavigation } from '@react-navigation/native';
-import type { NativeStackHeaderProps } from '@react-navigation/native-stack';
+import type { NativeStackHeaderProps } from 'expo-router/build/react-navigation/native-stack';
+import { useNavigation } from 'expo-router/react-navigation';
 import React from 'react';
 import { Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
