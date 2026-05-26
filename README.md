@@ -58,18 +58,17 @@ Add the plugin to the **front** of the [plugin array](https://docs.expo.dev/vers
 
 or
 
-**app.config.js**
+**app.config.js/ts**
 
 ```js
+import { oneSignalExpoPlugin } from "onesignal-expo-plugin/plugin";
+
 export default {
   ...
   plugins: [
-    [
-      "onesignal-expo-plugin",
-      {
-        mode: "development",
-      }
-    ]
+    oneSignalExpoPlugin({
+      mode: "development",
+    })
   ]
 };
 ```

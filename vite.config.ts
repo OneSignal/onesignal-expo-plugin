@@ -19,7 +19,10 @@ export default defineConfig({
     },
   },
   pack: {
-    entry: { index: 'src/onesignal/withOneSignal.ts' },
+    entry: {
+      index: 'src/onesignal/withOneSignal.ts',
+      plugin: 'src/onesignal/plugin.ts',
+    },
     format: 'cjs',
     fixedExtension: false,
     dts: true,
