@@ -61,15 +61,15 @@ or
 **app.config.js/ts**
 
 ```js
-import { oneSignalExpoPlugin } from "onesignal-expo-plugin/plugin";
+import withOneSignal from 'onesignal-expo-plugin/plugin';
 
 export default {
   ...
   plugins: [
-    oneSignalExpoPlugin({
-      mode: "development",
-    })
-  ]
+    withOneSignal({
+      mode: 'development',
+    }),
+  ],
 };
 ```
 

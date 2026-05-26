@@ -1,7 +1,7 @@
 import { ConfigContext, ExpoConfig } from '@expo/config';
 import type { ConfigPlugin } from '@expo/config-plugins';
 import { withGradleProperties } from '@expo/config-plugins';
-import type { OneSignalPluginProps } from 'onesignal-expo-plugin';
+import withOneSignal from 'onesignal-expo-plugin/plugin';
 
 // Inline mirror of `@expo/config-plugins`'s `PropertiesItem` discriminated
 // union — re-declared here because the type lives at a deep import path
@@ -114,27 +114,24 @@ export default ({ config }: ConfigContext): ExpoConfig =>
       ],
     },
     plugins: [
-      [
-        'onesignal-expo-plugin',
-        {
-          mode: 'development',
-          appGroupName: 'group.com.onesignal.example.onesignal', // Optional: If you had your own app group name, you can set it here
-          nseBundleIdentifier: 'NSE', // Optional: Custom bundle identifier for the Notification Service Extension
-          smallIcons: ['./assets/images/small_icon.png'], // Optional: Custom notification icon (left side icon)
-          smallIconAccentColor: '#C0FFEE', // Optional: For Android only
-          largeIcons: ['./assets/images/icon.png'], // Optional: For Android only (right side icon)
-          sounds: ['./assets/vine_boom.wav'], // Optional: Custom notification sounds
+      withOneSignal({
+        mode: 'development',
+        appGroupName: 'group.com.onesignal.example.onesignal', // Optional: If you had your own app group name, you can set it here
+        nseBundleIdentifier: 'NSE', // Optional: Custom bundle identifier for the Notification Service Extension
+        smallIcons: ['./assets/images/small_icon.png'], // Optional: Custom notification icon (left side icon)
+        smallIconAccentColor: '#C0FFEE', // Optional: For Android only
+        largeIcons: ['./assets/images/icon.png'], // Optional: For Android only (right side icon)
+        sounds: ['./assets/vine_boom.wav'], // Optional: Custom notification sounds
 
-          // Uncomment this to use the Objective-C version of the Notification Service Extension
-          // iosNSEFilePath: './customNSE/NSE.m',
+        // Uncomment this to use the Objective-C version of the Notification Service Extension
+        // iosNSEFilePath: './customNSE/NSE.m',
 
-          liveActivities: {
-            targetName: 'OneSignalWidget',
-            bundleIdentifierSuffix: 'LA',
-            widgetFilePath: './customWidget/LiveActivity.swift',
-          },
-        } satisfies OneSignalPluginProps,
-      ],
+        liveActivities: {
+          targetName: 'OneSignalWidget',
+          bundleIdentifierSuffix: 'LA',
+          widgetFilePath: './customWidget/LiveActivity.swift',
+        },
+      }),
       'expo-router',
       [
         'expo-splash-screen',

@@ -106,18 +106,3 @@ export type OneSignalPluginProps = {
    */
   liveActivities?: OneSignalLiveActivityProps;
 };
-
-export const ONESIGNAL_PLUGIN_PROPS: string[] = [
-  'mode',
-  'devTeam',
-  'iPhoneDeploymentTarget',
-  'smallIcons',
-  'largeIcons',
-  'iosNSEFilePath',
-  'smallIconAccentColor',
-  'appGroupName',
-  'nseBundleIdentifier',
-  'disableNSE',
-  'sounds',
-  'liveActivities',
-];

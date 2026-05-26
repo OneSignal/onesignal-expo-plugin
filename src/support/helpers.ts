@@ -2,12 +2,34 @@ import { extname } from 'path';
 
 import { ExpoConfig } from 'expo/config';
 
-import { ONESIGNAL_PLUGIN_PROPS, OneSignalPluginProps } from '../types/types';
+import { OneSignalLiveActivityProps, OneSignalPluginProps } from '../types';
 import { NSE_SOURCE_FILE } from './iosConstants';
 import { OneSignalLog } from './OneSignalLog';
 
 const HEX_COLOR_6_REGEX = /^#?[0-9A-Fa-f]{6}$/;
 const HEX_COLOR_8_REGEX = /^#?[0-9A-Fa-f]{8}$/;
+
+const ONESIGNAL_PLUGIN_PROPS = [
+  'mode',
+  'devTeam',
+  'iPhoneDeploymentTarget',
+  'smallIcons',
+  'largeIcons',
+  'iosNSEFilePath',
+  'smallIconAccentColor',
+  'appGroupName',
+  'nseBundleIdentifier',
+  'disableNSE',
+  'sounds',
+  'liveActivities',
+] satisfies (keyof OneSignalPluginProps)[];
+
+const LIVE_ACTIVITY_PROPS = [
+  'targetName',
+  'bundleIdentifierSuffix',
+  'widgetFilePath',
+  'deploymentTarget',
+] satisfies (keyof OneSignalLiveActivityProps)[];
 
 /**
  * Converts a hex color string (#RGB, #RRGGBB, or #AARRGGBB) to an
@@ -108,14 +130,8 @@ export function validatePluginProps(props: any): void {
     }
 
     const liveActivities = props.liveActivities;
-    const liveActivityProps = [
-      'targetName',
-      'bundleIdentifierSuffix',
-      'widgetFilePath',
-      'deploymentTarget',
-    ];
     for (const prop of Object.keys(liveActivities)) {
-      if (!liveActivityProps.includes(prop)) {
+      if (!LIVE_ACTIVITY_PROPS.some((allowedProp) => allowedProp === prop)) {
         throw new Error(
           `OneSignal Expo Plugin: You have provided an invalid property "${prop}" to 'liveActivities'.`,
         );
@@ -130,7 +146,7 @@ export function validatePluginProps(props: any): void {
   const inputProps = Object.keys(props);
 
   for (const prop of inputProps) {
-    if (!ONESIGNAL_PLUGIN_PROPS.includes(prop)) {
+    if (!ONESIGNAL_PLUGIN_PROPS.some((allowedProp) => allowedProp === prop)) {
       throw new Error(
         `OneSignal Expo Plugin: You have provided an invalid property "${prop}" to the OneSignal plugin.`,
       );

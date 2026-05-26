@@ -17,6 +17,8 @@ repositories {
 apply plugin: 'com.diffplug.spotless'
 
 spotless {
+  lineEndings 'UNIX'
+
   kotlin {
     target 'examples/demo/android/app/src/**/*.kt'
     targetExclude '**/build/**'

@@ -1,7 +1,4 @@
 import { name } from '../../package.json';
-import { type OneSignalPluginProps as PluginProps } from '../types/types';
+import { type OneSignalPluginProps as PluginProps } from '../types';
 
-export const oneSignalExpoPlugin = (props: PluginProps): [typeof name, PluginProps] => [
-  name,
-  props,
-];
+export default (props: PluginProps): [typeof name, PluginProps] => [name, props];

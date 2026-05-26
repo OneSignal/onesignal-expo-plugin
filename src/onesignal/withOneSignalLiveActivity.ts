@@ -30,7 +30,7 @@ import {
   liveActivityPodfileSnippet,
 } from '../support/iosConstants';
 import { OneSignalLog } from '../support/OneSignalLog';
-import { OneSignalPluginProps } from '../types/types';
+import { OneSignalPluginProps } from '../types';
 
 /** Resolve the widget extension target name, defaulting when unset. */
 export function resolveLiveActivityTargetName(props: OneSignalPluginProps): string {

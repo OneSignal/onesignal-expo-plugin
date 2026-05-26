@@ -12,7 +12,7 @@ import { ConfigPlugin, withDangerousMod, withStringsXml } from 'expo/config-plug
 
 import { parseColorToARGB } from '../support/helpers';
 import { OneSignalLog } from '../support/OneSignalLog';
-import { OneSignalPluginProps } from '../types/types';
+import { OneSignalPluginProps } from '../types';
 
 const RESOURCE_ROOT_PATH = 'android/app/src/main/res/';
 

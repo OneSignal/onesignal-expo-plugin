@@ -2,7 +2,7 @@ import type { ExpoConfig } from 'expo/config';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vite-plus/test';
 
 import { OneSignalLog } from '../support/OneSignalLog';
-import type { OneSignalPluginProps } from '../types/types';
+import type { OneSignalPluginProps } from '../types';
 
 vi.mock('expo/config-plugins', () => {
   const passthrough = (_config: unknown, _fn: unknown) => _config;

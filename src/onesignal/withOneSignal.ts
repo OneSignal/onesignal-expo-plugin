@@ -6,7 +6,7 @@
 import { ConfigPlugin } from 'expo/config-plugins';
 
 import { validatePluginProps } from '../support/helpers';
-import { OneSignalPluginProps } from '../types/types';
+import { OneSignalPluginProps } from '../types';
 import { withOneSignalAndroid } from './withOneSignalAndroid';
 import { withOneSignalIos } from './withOneSignalIos';
 
@@ -27,4 +27,4 @@ const withOneSignal: ConfigPlugin<OneSignalPluginProps> = (config, props) => {
 };
 
 export default withOneSignal;
-export type { OneSignalPluginProps } from '../types/types';
+export type { OneSignalPluginProps } from '../types';

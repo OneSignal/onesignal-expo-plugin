@@ -30,7 +30,7 @@ import {
 import NseUpdaterManager from '../support/NseUpdaterManager';
 import { OneSignalLog } from '../support/OneSignalLog';
 import { updatePodfile } from '../support/updatePodfile';
-import { OneSignalPluginProps } from '../types/types';
+import { OneSignalPluginProps } from '../types';
 import { withOneSignalLiveActivity } from './withOneSignalLiveActivity';
 
 /**
