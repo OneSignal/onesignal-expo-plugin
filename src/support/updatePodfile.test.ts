@@ -4,7 +4,7 @@ import path from 'path';
 
 import { afterEach, describe, expect, test } from 'vite-plus/test';
 
-import { updatePodfileLocationModule } from './updatePodfile';
+import { updatePodfile, updatePodfileLocationModule } from './updatePodfile';
 
 const tempDirs: string[] = [];
 
@@ -55,6 +55,24 @@ describe('updatePodfileLocationModule', () => {
 
     await expect(readPodfile(iosPath)).resolves.toBe(
       "ENV['ONESIGNAL_DISABLE_LOCATION'] = 'true'\nplatform :ios, '15.1'\n",
+    );
+  });
+});
+
+describe('updatePodfile', () => {
+  afterEach(async () => {
+    await Promise.all(tempDirs.splice(0).map((dir) => rm(dir, { recursive: true, force: true })));
+  });
+
+  test('adds the no-location NSE target dependency when location is disabled', async () => {
+    const iosPath = await createIosProject("platform :ios, '15.1'\n");
+
+    await updatePodfile(iosPath, true);
+
+    const podfile = await readPodfile(iosPath);
+    expect(podfile).toContain("pod 'OneSignalXCFramework/OneSignal', '>= 5.0', '< 6.0'");
+    expect(podfile).toContain(
+      "pod 'OneSignalXCFramework/OneSignalInAppMessages', '>= 5.0', '< 6.0'",
     );
   });
 });

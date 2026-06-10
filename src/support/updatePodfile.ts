@@ -1,14 +1,14 @@
 import fs from 'fs/promises';
 
 import { FileManager } from './FileManager';
-import { NSE_TARGET_NAME, NSE_PODFILE_REGEX, NSE_PODFILE_SNIPPET } from './iosConstants';
+import { NSE_TARGET_NAME, NSE_PODFILE_REGEX, nsePodfileSnippet } from './iosConstants';
 import { OneSignalLog } from './OneSignalLog';
 
 const ONESIGNAL_DISABLE_LOCATION_ENV = "ENV['ONESIGNAL_DISABLE_LOCATION']";
 const ONESIGNAL_DISABLE_LOCATION_REGEX =
   /^(?:ENV\[['"]ONESIGNAL_DISABLE_LOCATION['"]\]\s*=\s*['"](true|false)['"]|\$OneSignalDisableLocation\s*=\s*(true|false))\s*$/m;
 
-export async function updatePodfile(iosPath: string) {
+export async function updatePodfile(iosPath: string, disableLocation = false) {
   const podfile = await FileManager.readFile(`${iosPath}/Podfile`);
   const matches = podfile.match(NSE_PODFILE_REGEX);
 
@@ -17,7 +17,7 @@ export async function updatePodfile(iosPath: string) {
     return;
   }
 
-  await fs.appendFile(`${iosPath}/Podfile`, NSE_PODFILE_SNIPPET);
+  await fs.appendFile(`${iosPath}/Podfile`, nsePodfileSnippet(disableLocation));
   OneSignalLog.log(`${NSE_TARGET_NAME} target added to Podfile.`);
 }
 

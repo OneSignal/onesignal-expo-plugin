@@ -13,9 +13,17 @@ export const NSE_TARGET_NAME = 'OneSignalNotificationServiceExtension';
 /** Default Swift template shipped under serviceExtensionFiles/. */
 export const NSE_SOURCE_FILE = 'NotificationService.swift';
 
-export const NSE_PODFILE_SNIPPET = `
+const onesignalExtensionPodDependencies = (disableLocation: boolean): string =>
+  disableLocation
+    ? [
+        "pod 'OneSignalXCFramework/OneSignal', '>= 5.0', '< 6.0'",
+        "pod 'OneSignalXCFramework/OneSignalInAppMessages', '>= 5.0', '< 6.0'",
+      ].join('\n  ')
+    : "pod 'OneSignalXCFramework', '>= 5.0', '< 6.0'";
+
+export const nsePodfileSnippet = (disableLocation = false): string => `
 target '${NSE_TARGET_NAME}' do
-  pod 'OneSignalXCFramework', '>= 5.0', '< 6.0'
+  ${onesignalExtensionPodDependencies(disableLocation)}
   use_frameworks! :linkage => podfile_properties['ios.useFrameworks'].to_sym if podfile_properties['ios.useFrameworks']
 end`;
 
@@ -29,9 +37,9 @@ export const LIVE_ACTIVITY_BUNDLE_FILE = 'OneSignalWidgetBundle.swift';
 export const LIVE_ACTIVITY_WIDGET_FILE = 'OneSignalWidgetLiveActivity.swift';
 export const LIVE_ACTIVITY_INFO_PLIST_FILE = `${LIVE_ACTIVITY_TARGET_NAME}-Info.plist`;
 
-export const liveActivityPodfileSnippet = (targetName: string): string => `
+export const liveActivityPodfileSnippet = (targetName: string, disableLocation = false): string => `
 target '${targetName}' do
-  pod 'OneSignalXCFramework', '>= 5.0', '< 6.0'
+  ${onesignalExtensionPodDependencies(disableLocation)}
   use_frameworks! :linkage => podfile_properties['ios.useFrameworks'].to_sym if podfile_properties['ios.useFrameworks']
 end`;
 

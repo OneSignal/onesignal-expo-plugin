@@ -219,7 +219,7 @@ jobs:
       platform: android
       app-artifact: demo-apk
       app-filename: app-release.apk
-      sdk-type: react-native
+      sdk-type: expo
       build-name: expo-android-${{ github.ref_name }}-${{ github.run_number }}
 
   e2e-ios:
@@ -230,5 +230,5 @@ jobs:
       platform: ios
       app-artifact: demo-ipa
       app-filename: OneSignalDemo.ipa
-      sdk-type: react-native
+      sdk-type: expo
       build-name: expo-ios-${{ github.ref_name }}-${{ github.run_number }}

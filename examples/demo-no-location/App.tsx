@@ -15,6 +15,7 @@ import { OneSignal } from 'react-native-onesignal';
 
 const ONESIGNAL_APP_ID =
   process.env.EXPO_PUBLIC_ONESIGNAL_APP_ID?.trim() || 'YOUR-ONESIGNAL-APP-ID';
+const TEST_IMAGE_URL = 'https://media.onesignal.com/automated_push_templates/ratings_template.png';
 const ANDROID_STATUS_BAR_HEIGHT = Platform.OS === 'android' ? (StatusBar.currentHeight ?? 0) : 0;
 
 const isPlaceholder = (value: string) => value.toLowerCase().startsWith('your-');
@@ -23,7 +24,7 @@ export default function App() {
   const [hasNotificationPermission, setHasNotificationPermission] = useState<boolean | null>(null);
   const [pushSubscriptionId, setPushSubscriptionId] = useState<string | null>(null);
   const [requestingPermission, setRequestingPermission] = useState(false);
-  const [sending, setSending] = useState(false);
+  const [sendingNotification, setSendingNotification] = useState<'image' | 'text' | null>(null);
 
   const refreshPushState = useCallback(() => {
     void OneSignal.Notifications.getPermissionAsync()
@@ -41,8 +42,23 @@ export default function App() {
   }, []);
 
   useEffect(() => {
+    const handlePushSubscriptionChange = (event: { current: { id?: string } }) => {
+      setPushSubscriptionId(event.current.id ?? null);
+    };
+
     OneSignal.initialize(ONESIGNAL_APP_ID);
+    if (Platform.OS === 'ios') {
+      OneSignal.LiveActivities.setupDefault({
+        enablePushToStart: true,
+        enablePushToUpdate: true,
+      });
+    }
+    OneSignal.User.pushSubscription.addEventListener('change', handlePushSubscriptionChange);
     refreshPushState();
+
+    return () => {
+      OneSignal.User.pushSubscription.removeEventListener('change', handlePushSubscriptionChange);
+    };
   }, [refreshPushState]);
 
   const requestNotificationPermission = useCallback(async () => {
@@ -66,53 +82,103 @@ export default function App() {
     }
   }, []);
 
-  const sendTestNotification = useCallback(async () => {
-    if (isPlaceholder(ONESIGNAL_APP_ID)) {
-      Alert.alert(
-        'Configure OneSignal',
-        'Set EXPO_PUBLIC_ONESIGNAL_APP_ID in .env before sending a test push.',
-      );
-      return;
-    }
-
-    if (!hasNotificationPermission) {
-      Alert.alert(
-        'Notifications Disabled',
-        'Request notification permission before sending a test push.',
-      );
-      return;
-    }
-
-    if (!pushSubscriptionId) {
-      Alert.alert('No Push Subscription', 'Allow notifications, then wait for a push ID.');
-      return;
-    }
-
-    setSending(true);
-    try {
-      const response = await fetch('https://onesignal.com/api/v1/notifications', {
-        method: 'POST',
-        headers: {
-          Accept: 'application/vnd.onesignal.v1+json',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          app_id: ONESIGNAL_APP_ID,
-          include_subscription_ids: [pushSubscriptionId],
-          headings: { en: 'OneSignal No-Location Demo' },
-          contents: { en: 'This test push was sent without linking the location module.' },
-        }),
-      });
-
-      if (!response.ok) {
-        Alert.alert('Send Failed', await response.text());
+  const sendNotification = useCallback(
+    async (
+      payload: {
+        headings: { en: string };
+        contents: { en: string };
+        big_picture?: string;
+        ios_attachments?: Record<string, string>;
+      },
+      type: 'image' | 'text',
+    ) => {
+      if (isPlaceholder(ONESIGNAL_APP_ID)) {
+        Alert.alert(
+          'Configure OneSignal',
+          'Set EXPO_PUBLIC_ONESIGNAL_APP_ID in .env before sending a test push.',
+        );
+        return;
       }
+
+      if (!hasNotificationPermission) {
+        Alert.alert(
+          'Notifications Disabled',
+          'Request notification permission before sending a test push.',
+        );
+        return;
+      }
+
+      if (!pushSubscriptionId) {
+        Alert.alert('No Push Subscription', 'Allow notifications, then wait for a push ID.');
+        return;
+      }
+
+      setSendingNotification(type);
+      try {
+        const response = await fetch('https://onesignal.com/api/v1/notifications', {
+          method: 'POST',
+          headers: {
+            Accept: 'application/vnd.onesignal.v1+json',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            app_id: ONESIGNAL_APP_ID,
+            include_subscription_ids: [pushSubscriptionId],
+            ...payload,
+          }),
+        });
+
+        if (!response.ok) {
+          Alert.alert('Send Failed', await response.text());
+        }
+      } catch (error) {
+        Alert.alert('Send Failed', String(error));
+      } finally {
+        setSendingNotification(null);
+      }
+    },
+    [hasNotificationPermission, pushSubscriptionId],
+  );
+
+  const sendTestNotification = useCallback(async () => {
+    await sendNotification(
+      {
+        headings: { en: 'OneSignal No-Location Demo' },
+        contents: { en: 'This test push was sent without linking the location module.' },
+      },
+      'text',
+    );
+  }, [sendNotification]);
+
+  const sendImageNotification = useCallback(async () => {
+    await sendNotification(
+      {
+        headings: { en: 'OneSignal Image Demo' },
+        contents: { en: 'This image push was sent without linking the location module.' },
+        big_picture: TEST_IMAGE_URL,
+        ios_attachments: {
+          demo_image: TEST_IMAGE_URL,
+        },
+      },
+      'image',
+    );
+  }, [sendNotification]);
+
+  const testLiveActivity = useCallback(() => {
+    try {
+      OneSignal.LiveActivities.startDefault(
+        'demo-no-location-activity',
+        { orderNumber: 'ORD-1234' },
+        {
+          status: 'preparing',
+          message: 'Preparing your no-location demo order',
+          progress: 0.25,
+        },
+      );
     } catch (error) {
-      Alert.alert('Send Failed', String(error));
-    } finally {
-      setSending(false);
+      Alert.alert('Live Activity Failed', String(error));
     }
-  }, [hasNotificationPermission, pushSubscriptionId]);
+  }, []);
 
   return (
     <View style={styles.root}>
@@ -172,19 +238,52 @@ export default function App() {
             </TouchableOpacity>
             <View style={styles.buttonSpacer} />
             <TouchableOpacity
-              style={[styles.button, sending && styles.buttonDisabled]}
+              style={[styles.button, sendingNotification != null && styles.buttonDisabled]}
               onPress={sendTestNotification}
-              disabled={sending}
+              disabled={sendingNotification != null}
               activeOpacity={0.8}
             >
-              {sending ? (
+              {sendingNotification === 'text' ? (
                 <ActivityIndicator color="#FFFFFF" />
               ) : (
                 <Text style={styles.buttonText}>SEND TEST NOTIFICATION</Text>
               )}
             </TouchableOpacity>
+            <View style={styles.buttonSpacer} />
+            <TouchableOpacity
+              style={[styles.button, sendingNotification != null && styles.buttonDisabled]}
+              onPress={sendImageNotification}
+              disabled={sendingNotification != null}
+              activeOpacity={0.8}
+            >
+              {sendingNotification === 'image' ? (
+                <ActivityIndicator color="#FFFFFF" />
+              ) : (
+                <Text style={styles.buttonText}>SEND IMAGE NOTIFICATION</Text>
+              )}
+            </TouchableOpacity>
           </View>
         </View>
+
+        {Platform.OS === 'ios' && (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Live Activity</Text>
+            <View style={styles.card}>
+              <Text style={styles.body}>
+                Starts a default OneSignal Live Activity with sample order data.
+              </Text>
+              <View style={styles.locationButtonWrap}>
+                <TouchableOpacity
+                  style={styles.button}
+                  onPress={testLiveActivity}
+                  activeOpacity={0.8}
+                >
+                  <Text style={styles.buttonText}>TEST LIVE ACTIVITY</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        )}
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Location Module</Text>

@@ -87,7 +87,10 @@ const withLiveActivityPodfile: ConfigPlugin<OneSignalPluginProps> = (config, pro
         return config;
       }
 
-      await fs.promises.appendFile(podfilePath, liveActivityPodfileSnippet(targetName));
+      await fs.promises.appendFile(
+        podfilePath,
+        liveActivityPodfileSnippet(targetName, props.disableLocation === true),
+      );
       OneSignalLog.log(`${targetName} target added to Podfile.`);
       return config;
     },
