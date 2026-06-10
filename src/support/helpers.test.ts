@@ -97,6 +97,20 @@ describe('validatePluginProps', () => {
     expect(() => validatePluginProps(validProps)).not.toThrow();
   });
 
+  test('accepts disableLocation as true', () => {
+    expect(() => validatePluginProps({ ...validProps, disableLocation: true })).not.toThrow();
+  });
+
+  test('accepts disableLocation as false', () => {
+    expect(() => validatePluginProps({ ...validProps, disableLocation: false })).not.toThrow();
+  });
+
+  test('rejects non-boolean disableLocation', () => {
+    expect(() => validatePluginProps({ ...validProps, disableLocation: 'true' })).toThrow(
+      "'disableLocation' must be a boolean",
+    );
+  });
+
   test('accepts valid 6-digit hex smallIconAccentColor', () => {
     expect(() =>
       validatePluginProps({ ...validProps, smallIconAccentColor: '#FF0000' }),
