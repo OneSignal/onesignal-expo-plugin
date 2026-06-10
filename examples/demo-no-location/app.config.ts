@@ -1,146 +1,31 @@
 import { ConfigContext, ExpoConfig } from '@expo/config';
-import type { ConfigPlugin } from '@expo/config-plugins';
-import { withGradleProperties } from '@expo/config-plugins';
 import withOneSignal from 'onesignal-expo-plugin/plugin';
 
-// Inline mirror of `@expo/config-plugins`'s `PropertiesItem` discriminated
-// union — re-declared here because the type lives at a deep import path
-// (`@expo/config-plugins/build/utils/Properties`) that isn't part of the
-// package's public type exports.
-type GradlePropertiesItem =
-  | { type: 'comment'; value: string }
-  | { type: 'empty' }
-  | { type: 'property'; key: string; value: string };
-
-// Tweaks `android/gradle.properties` for faster local builds. Defined inline
-// rather than as a `./plugins/...` file because @expo/config evaluates this
-// file through a TS transform applied only to app.config.ts — a relative
-// `import` resolves through Node's CJS resolver, which won't load `.ts`.
-// The iOS signing plugin lives in `./plugins/withIosManualReleaseSigning.js`
-// (plain JS, so the CJS path works) for an additional reason: it must
-// register *after* the OneSignal plugin so its mods see the NSE/Widget
-// targets. Listing it as a string entry in `plugins:` after `onesignal-...`
-// is the only way to control that registration order.
-const FAST_BUILD_PROPERTIES: Record<string, string> = {
-  // Reuse compiled outputs (CMake, Kotlin, Java, dex) across builds.
-  // Single biggest win for repeat builds; survives `./gradlew clean`.
-  'org.gradle.caching': 'true',
-  // Configure only the subprojects required for the requested tasks.
-  'org.gradle.configureondemand': 'true',
-  // Daemon is on by default; explicit for clarity.
-  'org.gradle.daemon': 'true',
-  // RN + new arch routinely needs >2GB; G1GC reduces long pauses.
-  'org.gradle.jvmargs': '-Xmx4096m -XX:MaxMetaspaceSize=1024m -XX:+UseG1GC -Dfile.encoding=UTF-8',
-  // Modern AGP defaults that drop transitive R class generation.
-  'android.nonTransitiveRClass': 'true',
-  'android.nonFinalResIds': 'true',
-  // Run R8 on release builds. The generated app/build.gradle reads these
-  // findProperty() flags and gates `minifyEnabled` / `shrinkResources` on
-  // them; without these the e2e APK lands around 36 MB instead of ~20 MB.
-  // No effect on debug builds.
-  'android.enableMinifyInReleaseBuilds': 'true',
-  'android.enableShrinkResourcesInReleaseBuilds': 'true',
-  // Drop Fresco's animated-gif and webpsupport modules. The demo renders
-  // no raster images (only an SVG via react-native-svg + icon fonts), so
-  // shipping the GIF/WebP decoder .so files just wastes ~800 KB.
-  // Static PNG/JPG support stays through Fresco's core pipeline.
-  'expo.gif.enabled': 'false',
-  'expo.webp.enabled': 'false',
-  // Local dev only ever targets the connected device's ABI. Apple Silicon
-  // emulators and most physical test devices are arm64-v8a. Override on
-  // the CLI when building multi-arch release artifacts:
-  //   ./gradlew assembleRelease -PreactNativeArchitectures=arm64-v8a,x86_64
-  reactNativeArchitectures: 'arm64-v8a',
-};
-
-const withFastGradleProperties: ConfigPlugin = (cfg) =>
-  withGradleProperties(cfg, (mod) => {
-    for (const [key, value] of Object.entries(FAST_BUILD_PROPERTIES)) {
-      const props = mod.modResults as GradlePropertiesItem[];
-      const existing = props.findIndex((entry) => entry.type === 'property' && entry.key === key);
-      const next: GradlePropertiesItem = { type: 'property', key, value };
-      if (existing >= 0) {
-        props[existing] = next;
-      } else {
-        props.push(next);
-      }
-    }
-    return mod;
-  });
-
-// `plugins` only accepts the JSON-serializable form (string or [string,
-// props]) per the ExpoConfig type, so inline `ConfigPlugin` functions
-// like `withFastGradleProperties` are applied by calling them on the
-// finished config instead.
-export default ({ config }: ConfigContext): ExpoConfig =>
-  withFastGradleProperties({
-    ...config,
-    name: 'OneSignal Demo',
-    slug: 'demo',
-    version: '1.0.0',
-    orientation: 'portrait',
-    icon: './assets/images/icon.png',
-    scheme: 'demo',
-    userInterfaceStyle: 'automatic',
-    newArchEnabled: true,
-    ios: {
-      appleTeamId: '99SW8E36CT',
-      icon: './assets/images/icon.png',
-      bundleIdentifier: 'com.onesignal.example',
-      infoPlist: {
-        // For push notifications support when app is not in foreground
-        UIBackgroundModes: ['remote-notification'],
-
-        // Enable iOS Live Activities (ActivityKit). Required by the
-        // OneSignalWidget extension; without this the widget runs but the
-        // system never starts/updates activities.
-        NSSupportsLiveActivities: true,
-      },
-      entitlements: {
-        'aps-environment': 'development', // For push notifications support
-        'com.apple.security.application-groups': ['group.expoNotUsed'], // Additional app groups if needed (you can have multiple app groups)
-      },
-      supportsTablet: true,
+export default ({ config }: ConfigContext): ExpoConfig => ({
+  ...config,
+  name: 'OneSignal No-Location Demo',
+  slug: 'demo-no-location',
+  version: '1.0.0',
+  orientation: 'portrait',
+  scheme: 'demo-no-location',
+  userInterfaceStyle: 'automatic',
+  ios: {
+    bundleIdentifier: 'com.onesignal.example',
+    infoPlist: {
+      UIBackgroundModes: ['remote-notification'],
     },
-    android: {
-      package: 'com.onesignal.example',
+    entitlements: {
+      'aps-environment': 'development',
     },
-    plugins: [
-      withOneSignal({
-        mode: 'development',
-        disableLocation: true,
-        appGroupName: 'group.com.onesignal.example.onesignal', // Optional: If you had your own app group name, you can set it here
-        nseBundleIdentifier: 'NSE', // Optional: Custom bundle identifier for the Notification Service Extension
-        smallIcons: ['./assets/images/small_icon.png'], // Optional: Custom notification icon (left side icon)
-        smallIconAccentColor: '#C0FFEE', // Optional: For Android only
-        largeIcons: ['./assets/images/icon.png'], // Optional: For Android only (right side icon)
-        sounds: ['./assets/vine_boom.wav'], // Optional: Custom notification sounds
-
-        // Uncomment this to use the Objective-C version of the Notification Service Extension
-        // iosNSEFilePath: './customNSE/NSE.m',
-
-        liveActivities: {
-          targetName: 'OneSignalWidget',
-          bundleIdentifierSuffix: 'LA',
-          widgetFilePath: './customWidget/LiveActivity.swift',
-        },
-      }),
-      'expo-router',
-      [
-        'expo-splash-screen',
-        {
-          image: './assets/images/icon.png',
-          imageWidth: 200,
-          resizeMode: 'contain',
-          backgroundColor: '#ffffff',
-          dark: {
-            backgroundColor: '#000000',
-          },
-        },
-      ],
-    ],
-    experiments: {
-      typedRoutes: true,
-      reactCompiler: true,
-    },
-  });
+    supportsTablet: true,
+  },
+  android: {
+    package: 'com.onesignal.example',
+  },
+  plugins: [
+    withOneSignal({
+      mode: 'development',
+      disableLocation: true,
+    }),
+  ],
+});
