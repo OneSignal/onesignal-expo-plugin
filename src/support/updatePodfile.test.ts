@@ -69,8 +69,10 @@ describe('updatePodfile', () => {
 
     await updatePodfile(iosPath, true);
 
-    await expect(readPodfile(iosPath)).resolves.toContain(
-      "pod 'OneSignalXCFramework/OneSignalExtension', '>= 5.0', '< 6.0'",
+    const podfile = await readPodfile(iosPath);
+    expect(podfile).toContain("pod 'OneSignalXCFramework/OneSignal', '>= 5.0', '< 6.0'");
+    expect(podfile).toContain(
+      "pod 'OneSignalXCFramework/OneSignalInAppMessages', '>= 5.0', '< 6.0'",
     );
   });
 });

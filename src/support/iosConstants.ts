@@ -15,7 +15,10 @@ export const NSE_SOURCE_FILE = 'NotificationService.swift';
 
 const onesignalNsePodDependency = (disableLocation: boolean): string =>
   disableLocation
-    ? "pod 'OneSignalXCFramework/OneSignalExtension', '>= 5.0', '< 6.0'"
+    ? [
+        "pod 'OneSignalXCFramework/OneSignal', '>= 5.0', '< 6.0'",
+        "pod 'OneSignalXCFramework/OneSignalInAppMessages', '>= 5.0', '< 6.0'",
+      ].join('\n  ')
     : "pod 'OneSignalXCFramework', '>= 5.0', '< 6.0'";
 
 export const nsePodfileSnippet = (disableLocation = false): string => `

@@ -28,6 +28,9 @@ describe('NSE iOS constants', () => {
     const snippet = nsePodfileSnippet(true);
 
     expect(snippet).toContain("target 'OneSignalNotificationServiceExtension' do");
-    expect(snippet).toContain("pod 'OneSignalXCFramework/OneSignalExtension', '>= 5.0', '< 6.0'");
+    expect(snippet).toContain("pod 'OneSignalXCFramework/OneSignal', '>= 5.0', '< 6.0'");
+    expect(snippet).toContain(
+      "pod 'OneSignalXCFramework/OneSignalInAppMessages', '>= 5.0', '< 6.0'",
+    );
   });
 });
