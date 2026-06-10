@@ -14,6 +14,16 @@ describe('Live Activity iOS constants', () => {
     expect(snippet).toContain("pod 'OneSignalXCFramework', '>= 5.0', '< 6.0'");
     expect(liveActivityPodfileRegex('OneSignalWidget').test(snippet)).toBe(true);
   });
+
+  test('creates the no-location Podfile snippet', () => {
+    const snippet = liveActivityPodfileSnippet('OneSignalWidget', true);
+
+    expect(snippet).toContain("target 'OneSignalWidget' do");
+    expect(snippet).toContain("pod 'OneSignalXCFramework/OneSignal', '>= 5.0', '< 6.0'");
+    expect(snippet).toContain(
+      "pod 'OneSignalXCFramework/OneSignalInAppMessages', '>= 5.0', '< 6.0'",
+    );
+  });
 });
 
 describe('NSE iOS constants', () => {

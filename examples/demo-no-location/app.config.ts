@@ -27,6 +27,10 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     withOneSignal({
       mode: 'development',
       disableLocation: true,
+      liveActivities: {
+        targetName: 'OneSignalWidget',
+        bundleIdentifierSuffix: 'LA',
+      },
     }),
   ],
 });
