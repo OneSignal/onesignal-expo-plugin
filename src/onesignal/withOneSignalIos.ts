@@ -29,7 +29,7 @@ import {
 } from '../support/iosConstants';
 import NseUpdaterManager from '../support/NseUpdaterManager';
 import { OneSignalLog } from '../support/OneSignalLog';
-import { updatePodfile } from '../support/updatePodfile';
+import { updatePodfile, updatePodfileLocationModule } from '../support/updatePodfile';
 import { OneSignalPluginProps } from '../types';
 import { withOneSignalLiveActivity } from './withOneSignalLiveActivity';
 
@@ -127,6 +127,22 @@ const withOneSignalPodfile: ConfigPlugin<OneSignalPluginProps> = (config) => {
     async (config) => {
       const iosRoot = path.join(config.modRequest.projectRoot, 'ios');
       await updatePodfile(iosRoot);
+      return config;
+    },
+  ]);
+};
+
+const withLocationModulePodfile: ConfigPlugin<OneSignalPluginProps> = (config, props) => {
+  const disableLocation = props.disableLocation;
+  if (disableLocation == null) {
+    return config;
+  }
+
+  return withDangerousMod(config, [
+    'ios',
+    async (config) => {
+      const iosRoot = path.join(config.modRequest.projectRoot, 'ios');
+      await updatePodfileLocationModule(iosRoot, disableLocation);
       return config;
     },
   ]);
@@ -317,6 +333,7 @@ const withSoundFiles: ConfigPlugin<OneSignalPluginProps> = (config, onesignalPro
 export const withOneSignalIos: ConfigPlugin<OneSignalPluginProps> = (config, props) => {
   config = withAppEnvironment(config, props);
   config = withRemoteNotificationsPermissions(config, props);
+  config = withLocationModulePodfile(config, props);
   if (!props.disableNSE) {
     config = withCustomAppGroupsKey(config, props);
     config = withAppGroupPermissions(config, props);

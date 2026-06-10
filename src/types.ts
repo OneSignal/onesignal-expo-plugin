@@ -93,6 +93,12 @@ export type OneSignalPluginProps = {
   disableNSE?: boolean;
 
   /**
+   * (optional) If true, the native OneSignal location module will be excluded from iOS and Android builds.
+   * OneSignal.Location APIs will not collect location and will no-op or return false.
+   */
+  disableLocation?: boolean;
+
+  /**
    * (optional) An array of local paths to custom notification sound files (.wav only).
    * Files are added to the iOS app bundle and Android res/raw/.
    * @see https://documentation.onesignal.com/docs/customize-notification-sounds

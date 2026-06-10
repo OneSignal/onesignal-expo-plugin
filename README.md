@@ -89,8 +89,22 @@ You can pass props to the plugin config object to configure:
 | `appGroupName`           | optional       | Used to configure a custom iOS [App Group](https://documentation.onesignal.com/docs/ios-sdk-setup#step-3-create-an-app-group) name. If not provided, defaults to `"group.{ios.bundleIdentifier}.onesignal"`. e.g: `"group.com.example.myapp.onesignal2"`.                                                                                                                     |
 | `nseBundleIdentifier`    | optional       | Used to configure a custom bundle identifier suffix for the iOS Notification Service Extension. The full bundle identifier will be `"{ios.bundleIdentifier}.{nseBundleIdentifier}"`. If not provided, defaults to `"OneSignalNotificationServiceExtension"`.                                                                                                                  |
 | `disableNSE`             | optional       | If `true`, the iOS Notification Service Extension (NSE) will not be added to the project. The NSE is required for badges, confirmed delivery, media attachments, and action buttons. Only disable this if you only need basic push notifications.                                                                                                                             |
+| `disableLocation`        | optional       | If `true`, the native OneSignal location module will be excluded from iOS and Android builds. Use this if your app does not call `OneSignal.Location` and should not link native location APIs. Android builds must run with `ONESIGNAL_DISABLE_LOCATION=true` in the environment so Gradle can resolve the no-location dependency set.                                       |
 | `sounds`                 | optional       | An array of local paths to custom notification sound files (`.wav` only, ≤30 seconds). Files are copied into the app bundle on iOS and `res/raw/` on Android. e.g: `["./assets/notification_sound.wav"]`. See https://documentation.onesignal.com/docs/customize-notification-sounds.                                                                                         |
 | `liveActivities`         | optional       | Opt in to scaffolding an iOS Widget Extension target for OneSignal Live Activities. Use `{}` for the default `OneSignalWidget` target, or pass `targetName`, `bundleIdentifierSuffix`, `widgetFilePath`, or `deploymentTarget` to customize it. See [Live Activities](#live-activities).                                                                                      |
+
+### Disabling Location
+
+When `disableLocation` is enabled, the plugin writes the iOS Podfile environment
+setting used by `react-native-onesignal` during CocoaPods resolution. For
+Android, make sure the Gradle build also receives the environment variable:
+
+```yaml
+env:
+  ONESIGNAL_DISABLE_LOCATION: true
+```
+
+The value is case-insensitive, and `1` is also accepted.
 
 ### Live Activities
 

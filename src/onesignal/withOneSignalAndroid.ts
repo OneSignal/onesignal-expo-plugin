@@ -15,6 +15,7 @@ import { OneSignalLog } from '../support/OneSignalLog';
 import { OneSignalPluginProps } from '../types';
 
 const RESOURCE_ROOT_PATH = 'android/app/src/main/res/';
+const ONESIGNAL_DISABLE_LOCATION_ENV = 'ONESIGNAL_DISABLE_LOCATION';
 
 // The name of each small icon folder resource, and the icon size for that folder.
 const SMALL_ICON_DIRS_TO_SIZE: { [name: string]: number } = {
@@ -122,6 +123,15 @@ const withSmallIconAccentColor: ConfigPlugin<OneSignalPluginProps> = (config, on
   });
 };
 
+const withLocationModuleEnv: ConfigPlugin<OneSignalPluginProps> = (config, onesignalProps) => {
+  if (onesignalProps.disableLocation == null) {
+    return config;
+  }
+
+  process.env[ONESIGNAL_DISABLE_LOCATION_ENV] = onesignalProps.disableLocation ? 'true' : 'false';
+  return config;
+};
+
 async function saveIconsArrayAsync(
   projectRoot: string,
   icons: string[],
@@ -201,6 +211,7 @@ export const withOneSignalAndroid: ConfigPlugin<OneSignalPluginProps> = (config,
   config = withSmallIcons(config, props);
   config = withLargeIcons(config, props);
   config = withSmallIconAccentColor(config, props);
+  config = withLocationModuleEnv(config, props);
   config = withSoundFiles(config, props);
   return config;
 };

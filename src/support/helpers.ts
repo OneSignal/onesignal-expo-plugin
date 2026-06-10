@@ -20,6 +20,7 @@ const ONESIGNAL_PLUGIN_PROPS = [
   'appGroupName',
   'nseBundleIdentifier',
   'disableNSE',
+  'disableLocation',
   'sounds',
   'liveActivities',
 ] satisfies (keyof OneSignalPluginProps)[];
@@ -102,6 +103,10 @@ export function validatePluginProps(props: any): void {
 
   if (props.disableNSE !== undefined && typeof props.disableNSE !== 'boolean') {
     throw new Error("OneSignal Expo Plugin: 'disableNSE' must be a boolean.");
+  }
+
+  if (props.disableLocation !== undefined && typeof props.disableLocation !== 'boolean') {
+    throw new Error("OneSignal Expo Plugin: 'disableLocation' must be a boolean.");
   }
 
   if (props.sounds !== undefined) {
