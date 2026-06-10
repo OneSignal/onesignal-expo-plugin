@@ -13,9 +13,14 @@ export const NSE_TARGET_NAME = 'OneSignalNotificationServiceExtension';
 /** Default Swift template shipped under serviceExtensionFiles/. */
 export const NSE_SOURCE_FILE = 'NotificationService.swift';
 
-export const NSE_PODFILE_SNIPPET = `
+const onesignalNsePodDependency = (disableLocation: boolean): string =>
+  disableLocation
+    ? "pod 'OneSignalXCFramework/OneSignalExtension', '>= 5.0', '< 6.0'"
+    : "pod 'OneSignalXCFramework', '>= 5.0', '< 6.0'";
+
+export const nsePodfileSnippet = (disableLocation = false): string => `
 target '${NSE_TARGET_NAME}' do
-  pod 'OneSignalXCFramework', '>= 5.0', '< 6.0'
+  ${onesignalNsePodDependency(disableLocation)}
   use_frameworks! :linkage => podfile_properties['ios.useFrameworks'].to_sym if podfile_properties['ios.useFrameworks']
 end`;
 

@@ -16,7 +16,7 @@
     "onesignal-expo-plugin": "file:../../onesignal-expo-plugin.tgz",
     "react": "19.1.0",
     "react-native": "0.81.5",
-    "react-native-onesignal": "5.5.0"
+    "react-native-onesignal": "5.5.1"
   },
   "devDependencies": {
     "@types/node": "^25.9.2",

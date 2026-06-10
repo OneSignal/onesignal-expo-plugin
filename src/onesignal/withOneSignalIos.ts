@@ -121,12 +121,12 @@ const withEasManagedCredentials: ConfigPlugin<OneSignalPluginProps> = (config, p
   return config;
 };
 
-const withOneSignalPodfile: ConfigPlugin<OneSignalPluginProps> = (config) => {
+const withOneSignalPodfile: ConfigPlugin<OneSignalPluginProps> = (config, props) => {
   return withDangerousMod(config, [
     'ios',
     async (config) => {
       const iosRoot = path.join(config.modRequest.projectRoot, 'ios');
-      await updatePodfile(iosRoot);
+      await updatePodfile(iosRoot, props.disableLocation === true);
       return config;
     },
   ]);

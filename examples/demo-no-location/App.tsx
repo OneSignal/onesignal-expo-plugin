@@ -41,8 +41,17 @@ export default function App() {
   }, []);
 
   useEffect(() => {
+    const handlePushSubscriptionChange = (event: { current: { id?: string } }) => {
+      setPushSubscriptionId(event.current.id ?? null);
+    };
+
     OneSignal.initialize(ONESIGNAL_APP_ID);
+    OneSignal.User.pushSubscription.addEventListener('change', handlePushSubscriptionChange);
     refreshPushState();
+
+    return () => {
+      OneSignal.User.pushSubscription.removeEventListener('change', handlePushSubscriptionChange);
+    };
   }, [refreshPushState]);
 
   const requestNotificationPermission = useCallback(async () => {
