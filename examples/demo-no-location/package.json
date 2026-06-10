@@ -1,0 +1,27 @@
+{
+  "name": "demo-no-location",
+  "version": "1.0.0",
+  "main": "./index.js",
+  "scripts": {
+    "clean": "vp run setup && ONESIGNAL_DISABLE_LOCATION=true npx expo prebuild --clean",
+    "setup": "../setup.sh",
+    "preandroid": "vp run setup",
+    "preios": "vp run setup",
+    "start": "expo start",
+    "android": "ONESIGNAL_DISABLE_LOCATION=true expo run:android --device",
+    "ios": "ONESIGNAL_DISABLE_LOCATION=true expo run:ios --device"
+  },
+  "dependencies": {
+    "expo": "~54.0.33",
+    "onesignal-expo-plugin": "file:../../onesignal-expo-plugin.tgz",
+    "react": "19.1.0",
+    "react-native": "0.81.5",
+    "react-native-onesignal": "5.5.0"
+  },
+  "devDependencies": {
+    "@types/node": "^25.9.2",
+    "@types/react": "~19.1.0",
+    "typescript": "~5.9.2"
+  },
+  "packageManager": "bun@1.3.14"
+}
