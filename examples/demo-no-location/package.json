@@ -3,13 +3,13 @@
   "version": "1.0.0",
   "main": "./index.js",
   "scripts": {
-    "clean": "vp run setup && ONESIGNAL_DISABLE_LOCATION=true npx expo prebuild --clean",
+    "clean": "vp run setup && npx expo prebuild --clean",
     "setup": "../setup.sh",
     "preandroid": "vp run setup",
     "preios": "vp run setup",
     "start": "expo start",
-    "android": "ONESIGNAL_DISABLE_LOCATION=true expo run:android --device",
-    "ios": "ONESIGNAL_DISABLE_LOCATION=true expo run:ios --device"
+    "android": "expo run:android --device",
+    "ios": "expo run:ios --device"
   },
   "dependencies": {
     "expo": "~54.0.33",

@@ -21,7 +21,7 @@ vp run ios
 vp run android
 ```
 
-The scripts export `ONESIGNAL_DISABLE_LOCATION=true` so native dependencies resolve without the OneSignal location module.
+The OneSignal Expo plugin configures native dependency resolution so the app builds without the OneSignal location module.
 
 ## Native Configuration
 
@@ -30,3 +30,4 @@ The scripts export `ONESIGNAL_DISABLE_LOCATION=true` so native dependencies reso
 - `disableLocation: true` for the OneSignal plugin
 - `com.onesignal.example` as the iOS bundle ID and Android package
 - iOS remote-notification background mode and development push entitlement
+- `onesignal.disableLocation=true` in the generated Android Gradle properties

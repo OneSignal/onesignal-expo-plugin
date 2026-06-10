@@ -8,14 +8,19 @@ import { resolve, parse, basename } from 'path';
 
 import { generateImageAsync } from '@expo/image-utils';
 import type { ExpoConfig } from 'expo/config';
-import { ConfigPlugin, withDangerousMod, withStringsXml } from 'expo/config-plugins';
+import {
+  ConfigPlugin,
+  withDangerousMod,
+  withGradleProperties,
+  withStringsXml,
+} from 'expo/config-plugins';
 
 import { parseColorToARGB } from '../support/helpers';
 import { OneSignalLog } from '../support/OneSignalLog';
 import { OneSignalPluginProps } from '../types';
 
 const RESOURCE_ROOT_PATH = 'android/app/src/main/res/';
-const ONESIGNAL_DISABLE_LOCATION_ENV = 'ONESIGNAL_DISABLE_LOCATION';
+const ONESIGNAL_DISABLE_LOCATION_GRADLE_PROPERTY = 'onesignal.disableLocation';
 
 // The name of each small icon folder resource, and the icon size for that folder.
 const SMALL_ICON_DIRS_TO_SIZE: { [name: string]: number } = {
@@ -123,13 +128,39 @@ const withSmallIconAccentColor: ConfigPlugin<OneSignalPluginProps> = (config, on
   });
 };
 
-const withLocationModuleEnv: ConfigPlugin<OneSignalPluginProps> = (config, onesignalProps) => {
+type GradlePropertiesItem =
+  | { type: 'comment'; value: string }
+  | { type: 'empty' }
+  | { type: 'property'; key: string; value: string };
+
+const withLocationModuleGradleProperty: ConfigPlugin<OneSignalPluginProps> = (
+  config,
+  onesignalProps,
+) => {
   if (onesignalProps.disableLocation == null) {
     return config;
   }
 
-  process.env[ONESIGNAL_DISABLE_LOCATION_ENV] = onesignalProps.disableLocation ? 'true' : 'false';
-  return config;
+  return withGradleProperties(config, (config) => {
+    const properties = config.modResults as GradlePropertiesItem[];
+    const existingIndex = properties.findIndex(
+      (entry) =>
+        entry.type === 'property' && entry.key === ONESIGNAL_DISABLE_LOCATION_GRADLE_PROPERTY,
+    );
+    const property: GradlePropertiesItem = {
+      type: 'property',
+      key: ONESIGNAL_DISABLE_LOCATION_GRADLE_PROPERTY,
+      value: onesignalProps.disableLocation ? 'true' : 'false',
+    };
+
+    if (existingIndex === -1) {
+      properties.push(property);
+    } else {
+      properties[existingIndex] = property;
+    }
+
+    return config;
+  });
 };
 
 async function saveIconsArrayAsync(
@@ -211,7 +242,7 @@ export const withOneSignalAndroid: ConfigPlugin<OneSignalPluginProps> = (config,
   config = withSmallIcons(config, props);
   config = withLargeIcons(config, props);
   config = withSmallIconAccentColor(config, props);
-  config = withLocationModuleEnv(config, props);
+  config = withLocationModuleGradleProperty(config, props);
   config = withSoundFiles(config, props);
   return config;
 };

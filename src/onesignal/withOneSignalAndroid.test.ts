@@ -3,6 +3,14 @@ import { describe, expect, test, vi } from 'vite-plus/test';
 
 vi.mock('expo/config-plugins', () => ({
   withDangerousMod: (config: ExpoConfig) => config,
+  withGradleProperties: (
+    config: ExpoConfig,
+    action: (config: ExpoConfig & { modResults: any[] }) => ExpoConfig,
+  ) =>
+    action({
+      ...config,
+      modResults: [],
+    }),
   withStringsXml: (config: ExpoConfig) => config,
 }));
 
@@ -14,23 +22,17 @@ function makeConfig(): ExpoConfig {
 }
 
 describe('withOneSignalAndroid', () => {
-  test('sets the disable location environment variable when configured', async () => {
+  test('sets the disable location Gradle property when configured', async () => {
     const { withOneSignalAndroid } = await import('./withOneSignalAndroid');
-    const previousValue = process.env.ONESIGNAL_DISABLE_LOCATION;
+    const config = withOneSignalAndroid(makeConfig(), {
+      mode: 'production',
+      disableLocation: true,
+    }) as ExpoConfig & { modResults: Array<{ type: string; key: string; value: string }> };
 
-    try {
-      withOneSignalAndroid(makeConfig(), {
-        mode: 'production',
-        disableLocation: true,
-      });
-
-      expect(process.env.ONESIGNAL_DISABLE_LOCATION).toBe('true');
-    } finally {
-      if (previousValue == null) {
-        delete process.env.ONESIGNAL_DISABLE_LOCATION;
-      } else {
-        process.env.ONESIGNAL_DISABLE_LOCATION = previousValue;
-      }
-    }
+    expect(config.modResults).toContainEqual({
+      type: 'property',
+      key: 'onesignal.disableLocation',
+      value: 'true',
+    });
   });
 });
