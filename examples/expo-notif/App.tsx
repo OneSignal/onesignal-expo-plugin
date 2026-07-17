@@ -11,7 +11,7 @@ import {
   Text,
   View,
 } from 'react-native';
-import { LogLevel, OneSignal } from 'react-native-onesignal';
+import { LogLevel, OneSignal, type NotificationWillDisplayEvent } from 'react-native-onesignal';
 
 const ONESIGNAL_APP_ID =
   process.env.EXPO_PUBLIC_ONESIGNAL_APP_ID?.trim() || 'YOUR-ONESIGNAL-APP-ID';
@@ -67,6 +67,7 @@ export default function App() {
       detail,
     };
 
+    console.log(`[${source}] ${title}`, detail ?? '');
     setLogs((current) => [event, ...current].slice(0, 20));
   }, []);
 
@@ -157,12 +158,26 @@ export default function App() {
       appendLog('OneSignal', `Permission ${granted ? 'granted' : 'not granted'}`);
     };
 
+    const handleOneSignalForegroundWillDisplay = (event: NotificationWillDisplayEvent) => {
+      const notification = event.getNotification();
+      appendLog(
+        'OneSignal foreground',
+        notification.title ?? 'OneSignal notification received',
+        summarizeData(notification.additionalData),
+      );
+      notification.display();
+    };
+
     OneSignal.Debug.setLogLevel(LogLevel.Verbose);
     OneSignal.initialize(ONESIGNAL_APP_ID);
     OneSignal.login(TEST_EXTERNAL_ID);
     OneSignal.User.pushSubscription.addEventListener('change', handlePushSubscriptionChange);
     OneSignal.Notifications.addEventListener('click', handleOneSignalClick);
     OneSignal.Notifications.addEventListener('permissionChange', handleOneSignalPermissionChange);
+    OneSignal.Notifications.addEventListener(
+      'foregroundWillDisplay',
+      handleOneSignalForegroundWillDisplay,
+    );
     refreshState();
 
     return () => {
@@ -173,6 +188,10 @@ export default function App() {
       OneSignal.Notifications.removeEventListener(
         'permissionChange',
         handleOneSignalPermissionChange,
+      );
+      OneSignal.Notifications.removeEventListener(
+        'foregroundWillDisplay',
+        handleOneSignalForegroundWillDisplay,
       );
     };
   }, [appendLog, refreshState]);
