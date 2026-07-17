@@ -48,5 +48,5 @@ vp run android
 
 - `expo-notifications` before `onesignal-expo-plugin` in the plugin list
 - OneSignal development mode
-- `com.onesignal.exponotif` as the iOS bundle ID and Android package
+- `com.onesignal.example` as the iOS bundle ID and Android package
 - iOS remote-notification background mode and development push entitlement

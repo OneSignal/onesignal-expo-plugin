@@ -12,7 +12,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   newArchEnabled: true,
   ios: {
     appleTeamId: '99SW8E36CT',
-    bundleIdentifier: 'com.onesignal.exponotif',
+    bundleIdentifier: 'com.onesignal.example',
     infoPlist: {
       UIBackgroundModes: ['remote-notification'],
     },
@@ -22,7 +22,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     supportsTablet: true,
   },
   android: {
-    package: 'com.onesignal.exponotif',
+    package: 'com.onesignal.example',
   },
   plugins: [
     'expo-notifications',
