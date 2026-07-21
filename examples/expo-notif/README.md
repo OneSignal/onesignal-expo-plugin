@@ -50,3 +50,15 @@ vp run android
 - OneSignal development mode
 - `com.onesignal.example` as the iOS bundle ID and Android package
 - iOS remote-notification background mode and development push entitlement
+
+### iOS compatibility workaround
+
+This example currently sets Expo's `NotificationCenterManager` as the
+`UNUserNotificationCenter` delegate before OneSignal initializes. This ordering
+allows Expo's local notification listeners and OneSignal's notification
+callbacks to work together, but it is a workaround rather than a guaranteed
+compatibility contract between the two SDKs.
+
+In the future, we want the OneSignal SDK to support local notifications
+directly so apps do not need to install another notification plugin with
+overlapping responsibilities.
