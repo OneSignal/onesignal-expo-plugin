@@ -47,17 +47,23 @@ vp run android
 `app.config.ts` enables:
 
 - `expo-notifications` before `onesignal-expo-plugin` in the plugin list
+- The local `withExpoNotificationsDelegate` compatibility plugin
 - OneSignal development mode
 - `com.onesignal.example` as the iOS bundle ID and Android package
 - iOS remote-notification background mode and development push entitlement
 
 ### iOS compatibility workaround
 
-This example currently sets Expo's `NotificationCenterManager` as the
-`UNUserNotificationCenter` delegate before OneSignal initializes. This ordering
-allows Expo's local notification listeners and OneSignal's notification
-callbacks to work together, but it is a workaround rather than a guaranteed
-compatibility contract between the two SDKs.
+The tracked `plugins/withExpoNotificationsDelegate.js` config plugin updates the
+generated `AppDelegate.swift` during prebuild. It imports `EXNotifications` and
+`UserNotifications`, then sets Expo's `NotificationCenterManager` as the
+`UNUserNotificationCenter` delegate before OneSignal initializes.
+
+This ordering allows Expo's local notification listeners and OneSignal's
+notification callbacks to work together, but it is a workaround rather than a
+guaranteed compatibility contract between the two SDKs. Keep the generated
+`ios` directory ignored; running `vp run clean` reapplies the workaround through
+the config plugin.
 
 In the future, we want the OneSignal SDK to support local notifications
 directly so apps do not need to install another notification plugin with
