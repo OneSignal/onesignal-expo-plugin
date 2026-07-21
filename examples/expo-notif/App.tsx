@@ -98,7 +98,7 @@ export default function App() {
   }, [appendLog]);
 
   useEffect(() => {
-    appendLog('App', 'Registering expo-notifications listeners before OneSignal');
+    appendLog('App', 'Registering Expo and OneSignal notification listeners');
 
     const receivedSubscription = Notifications.addNotificationReceivedListener((notification) => {
       appendLog(
@@ -293,8 +293,8 @@ export default function App() {
       <ScrollView contentContainerStyle={styles.content}>
         <Text style={styles.title}>OneSignal + expo-notifications</Text>
         <Text style={styles.description}>
-          Use this app to test whether Expo notification response listeners still fire when
-          OneSignal is installed and initialized.
+          Expo handles local notifications while OneSignal handles remote push notifications. Both
+          libraries report notification interactions below.
         </Text>
 
         <View style={styles.card}>

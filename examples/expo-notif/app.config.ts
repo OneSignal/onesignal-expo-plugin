@@ -26,6 +26,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   },
   plugins: [
     'expo-notifications',
+    './plugins/withExpoNotificationsCompatibility',
     withOneSignal({
       mode: 'development',
     }),
