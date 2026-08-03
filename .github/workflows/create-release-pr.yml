@@ -4,8 +4,8 @@ on:
   workflow_dispatch:
     inputs:
       expo_version:
-        description: 'New OneSignal Expo Plugin Version (e.g., 2.1.0 or 2.1.0-beta.1)'
-        required: true
+        description: 'Override the auto-detected version (e.g., 2.1.0 or 2.1.0-beta.1). Leave blank to auto-detect.'
+        required: false
         type: string
       target_branch:
         description: 'Target branch to create the release PR on. Defaults to main.'
@@ -14,15 +14,33 @@ on:
         default: main
 
 jobs:
+  determine_version:
+    runs-on: ubuntu-latest
+    outputs:
+      expo_version: ${{ inputs.expo_version || steps.next_version.outputs.version }}
+      release_needed: ${{ inputs.expo_version != '' || steps.next_version.outputs.release-needed == 'true' }}
+
+    steps:
+      - name: Determine OneSignal Expo Plugin version
+        if: github.event_name == 'workflow_dispatch' && inputs.expo_version == ''
+        id: next_version
+        uses: OneSignal/sdk-shared/.github/actions/determine-next-version@main
+        with:
+          github-token: ${{ secrets.GH_PUSH_TOKEN || github.token }}
+          target-repo: OneSignal/onesignal-expo-plugin
+          target-branch: ${{ inputs.target_branch }}
+
   prep:
+    needs: determine_version
+    if: needs.determine_version.outputs.release_needed == 'true'
     uses: OneSignal/sdk-shared/.github/workflows/prep-release.yml@main
     with:
       target_repo: OneSignal/onesignal-expo-plugin
-      version: ${{ inputs.expo_version }}
+      version: ${{ needs.determine_version.outputs.expo_version }}
 
   # Expo Plugin specific steps
   update_version:
-    needs: prep
+    needs: [determine_version, prep]
     runs-on: macos-latest
     steps:
       - name: Checkout
@@ -42,9 +60,9 @@ jobs:
         uses: OneSignal/sdk-shared/.github/actions/setup-git-user@main
 
       - name: Update sdk version
+        env:
+          NEW_VERSION: ${{ needs.determine_version.outputs.expo_version }}
         run: |
-          NEW_VERSION="${{ inputs.expo_version }}"
-
           # Update package.json version
           npm pkg set version="$NEW_VERSION"
 
