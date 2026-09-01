@@ -5,16 +5,26 @@ const ONESIGNAL_API_KEY = process.env.EXPO_PUBLIC_ONESIGNAL_API_KEY;
 const ANDROID_CHANNEL_ID = process.env.EXPO_PUBLIC_ONESIGNAL_ANDROID_CHANNEL_ID;
 const DEFAULT_ANDROID_CHANNEL_ID = 'b3b015d9-c050-4042-8548-dcc34aa44aa4';
 
-function isTransientSendFailure(data: unknown): boolean {
-  if (!data || typeof data !== 'object') return false;
-  const record = data as { id?: unknown; errors?: unknown; recipients?: unknown };
-  const errors = record.errors;
-  const hasErrors =
-    (Array.isArray(errors) && errors.length > 0) ||
-    (errors != null && typeof errors === 'object' && Object.keys(errors).length > 0);
-  const missingId = typeof record.id !== 'string' || record.id.length === 0;
-  const zeroRecipients = typeof record.recipients === 'number' && record.recipients === 0;
-  return hasErrors || missingId || zeroRecipients;
+function isTransientSendFailure(data: Record<string, unknown>): boolean {
+  if (data.recipients === 0 && typeof data.id === 'string') {
+    return true;
+  }
+
+  const errors = data.errors;
+  if (Array.isArray(errors)) {
+    return errors.some(
+      (error) =>
+        typeof error === 'string' &&
+        error.toLowerCase().includes('all included players are not subscribed'),
+    );
+  }
+
+  if (errors !== null && typeof errors === 'object') {
+    const invalidPlayerIds = (errors as Record<string, unknown>).invalid_player_ids;
+    return Array.isArray(invalidPlayerIds) && invalidPlayerIds.length > 0;
+  }
+
+  return false;
 }
 
 class OneSignalApiService {
@@ -98,12 +108,10 @@ class OneSignalApiService {
 
     // Retry while the OneSignal backend hasn't yet indexed the freshly
     // created subscription. The /notifications endpoint reports this race in
-    // a few different shapes, all of which return HTTP 200:
+    // a few recognized shapes, all of which return HTTP 200:
     //   {"id":"...","recipients":0}                       (user just switched, push token not yet attached)
     //   {"id":"...","errors":{"invalid_player_ids":[...]}}
     //   {"id":"","errors":["All included players are not subscribed"]}
-    //   {"id":"","errors":[...]}
-    // Treat any 200 response with no real id, populated errors, or recipients=0 as transient.
     for (let attempt = 1; attempt <= maxAttempts; attempt++) {
       try {
         const response = await fetch('https://onesignal.com/api/v1/notifications', {
@@ -121,7 +129,11 @@ class OneSignalApiService {
           return false;
         }
 
-        const data = await response.json().catch(() => undefined);
+        const data: unknown = await response.json();
+        if (data === null || typeof data !== 'object' || Array.isArray(data)) {
+          console.error('Send notification failed: invalid response');
+          return false;
+        }
         if (isTransientSendFailure(data)) {
           if (attempt < maxAttempts) {
             await new Promise((resolve) => setTimeout(resolve, 3_000 * attempt));

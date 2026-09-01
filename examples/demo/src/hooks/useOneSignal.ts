@@ -18,6 +18,7 @@ import {
   type InAppMessageWillDisplayEvent,
   type NotificationClickEvent,
   type NotificationWillDisplayEvent,
+  type PushSubscriptionChangedState,
   type UserChangedState,
 } from 'react-native-onesignal';
 
@@ -138,10 +139,10 @@ function useOneSignalState(): UseOneSignalReturn {
 
     try {
       const onesignalId = await OneSignal.User.getOnesignalId();
-      if (!onesignalId) return;
+      if (!onesignalId || requestSequenceRef.current !== requestId) return;
 
       const userData = await apiService.fetchUser(onesignalId);
-      if (!userData) return;
+      if (!userData || requestSequenceRef.current !== requestId) return;
 
       const externalId = await OneSignal.User.getExternalId();
 
@@ -152,6 +153,8 @@ function useOneSignalState(): UseOneSignalReturn {
       setEmailsList((prev) => mergeUnique(prev, userData.emails));
       setSmsNumbersList((prev) => mergeUnique(prev, userData.smsNumbers));
       setExternalUserId(externalId ?? userData.externalId);
+    } catch (err) {
+      console.error(`Fetch user error: ${String(err)}`);
     } finally {
       if (requestSequenceRef.current === requestId) {
         setIsLoading(false);
@@ -160,6 +163,11 @@ function useOneSignalState(): UseOneSignalReturn {
   }, []);
 
   useEffect(() => {
+    let cancelled = false;
+    let pushChanged = false;
+    let permissionChanged = false;
+    let userChanged = false;
+
     const handleIamWillDisplay = (e: InAppMessageWillDisplayEvent) => {
       console.log(`IAM willDisplay: ${e.message.messageId}`);
     };
@@ -189,28 +197,30 @@ function useOneSignalState(): UseOneSignalReturn {
       e.getNotification().display();
     };
 
-    const pushSubHandler = async () => {
-      const [id, optedIn] = await Promise.all([
-        OneSignal.User.pushSubscription.getIdAsync(),
-        OneSignal.User.pushSubscription.getOptedInAsync(),
-      ]);
-      setPushSubscriptionId(id ?? undefined);
-      setIsPushEnabled(optedIn);
+    const pushSubHandler = (event: PushSubscriptionChangedState) => {
+      pushChanged = true;
+      setPushSubscriptionId(event.current.id ?? undefined);
+      setIsPushEnabled(event.current.optedIn);
     };
 
     const permissionHandler = (granted: boolean) => {
+      permissionChanged = true;
       setHasNotificationPermission(granted);
     };
 
     const userChangeHandler = (event: UserChangedState) => {
+      userChanged = true;
+      requestSequenceRef.current++;
       const nextOnesignalId = event.current.onesignalId ?? null;
       console.log(
         `User changed: onesignalId=${nextOnesignalId ?? 'null'}, externalId=${event.current.externalId ?? 'null'}`,
       );
 
       setOneSignalId(nextOnesignalId ?? undefined);
+      setExternalUserId(event.current.externalId ?? undefined);
 
       if (nextOnesignalId === null) {
+        setIsLoading(false);
         return;
       }
 
@@ -227,6 +237,7 @@ function useOneSignalState(): UseOneSignalReturn {
           preferences.getLocationShared(),
         ]);
       const storedExternalUserId = (await preferences.getExternalUserId()) ?? undefined;
+      if (cancelled) return;
 
       apiService.setAppId(nextAppId);
 
@@ -264,37 +275,43 @@ function useOneSignalState(): UseOneSignalReturn {
 
       console.log(`OneSignal initialized with app ID: ${nextAppId}`);
 
-      const externalId = await OneSignal.User.getExternalId();
-      const [pushId, pushOptedIn, hasPerm] = await Promise.all([
+      const [externalId, initialOnesignalId, pushId, pushOptedIn, hasPerm] = await Promise.all([
+        OneSignal.User.getExternalId(),
+        OneSignal.User.getOnesignalId(),
         OneSignal.User.pushSubscription.getIdAsync(),
         OneSignal.User.pushSubscription.getOptedInAsync(),
         OneSignal.Notifications.getPermissionAsync(),
       ]);
+      if (cancelled) return;
 
       setAppId(nextAppId);
       setConsentRequiredState(nextConsentRequired);
       setPrivacyConsentGivenState(nextPrivacyConsentGiven);
       setInAppMessagesPaused(nextIamPaused);
       setLocationSharedState(nextLocationShared);
-      setExternalUserId(externalId ?? storedExternalUserId);
-      setPushSubscriptionId(pushId ?? undefined);
-      setIsPushEnabled(pushOptedIn);
-      setHasNotificationPermission(hasPerm);
+      if (!pushChanged) {
+        setPushSubscriptionId(pushId ?? undefined);
+        setIsPushEnabled(pushOptedIn);
+      }
+      if (!permissionChanged) setHasNotificationPermission(hasPerm);
       setIsReady(true);
 
-      const initialOnesignalId = await OneSignal.User.getOnesignalId();
-      setOneSignalId(initialOnesignalId ?? undefined);
-      if (initialOnesignalId) {
-        await fetchUserDataFromApi();
+      if (!userChanged) {
+        setExternalUserId(externalId ?? storedExternalUserId);
+        setOneSignalId(initialOnesignalId ?? undefined);
+        if (initialOnesignalId) await fetchUserDataFromApi();
       }
     };
 
     void load().catch((err) => {
+      if (cancelled) return;
       console.error(`Initial load error: ${String(err)}`);
       setIsLoading(false);
     });
 
     return () => {
+      cancelled = true;
+      requestSequenceRef.current++;
       OneSignal.InAppMessages.removeEventListener('willDisplay', handleIamWillDisplay);
       OneSignal.InAppMessages.removeEventListener('didDisplay', handleIamDidDisplay);
       OneSignal.InAppMessages.removeEventListener('willDismiss', handleIamWillDismiss);
@@ -312,6 +329,7 @@ function useOneSignalState(): UseOneSignalReturn {
   }, [fetchUserDataFromApi]);
 
   const loginUser = async (nextExternalUserId: string) => {
+    requestSequenceRef.current++;
     setAliasesList([]);
     setEmailsList([]);
     setSmsNumbersList([]);
@@ -333,6 +351,8 @@ function useOneSignalState(): UseOneSignalReturn {
   };
 
   const logoutUser = async () => {
+    requestSequenceRef.current++;
+    setIsLoading(false);
     OneSignal.logout();
     await preferences.setExternalUserId(null);
     setExternalUserId(undefined);
