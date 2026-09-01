@@ -68,6 +68,21 @@ describe('OneSignalApiService notification responses', () => {
     expect(fetchMock).toHaveBeenCalledTimes(1);
   });
 
+  test.each([
+    ['an ambiguous object', {}],
+    ['an unrecognized error', { id: 'notification-id', errors: ['Unknown failure'] }],
+  ])('rejects %s without retrying', async (_label, data) => {
+    fetchMock.mockResolvedValue(successResponse(data));
+
+    await expect(
+      OneSignalApiService.getInstance().sendNotification(
+        NotificationType.Simple,
+        'subscription-id',
+      ),
+    ).resolves.toBe(false);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
   test('retries a recognized transient subscription-indexing failure', async () => {
     fetchMock.mockResolvedValue(
       successResponse({

@@ -28,6 +28,22 @@ function isTransientSendFailure(data: object): boolean {
   return false;
 }
 
+function isSuccessfulSend(data: object): boolean {
+  const record = data as Record<string, unknown>;
+  if (typeof record.id !== 'string' || record.id.length === 0) {
+    return false;
+  }
+
+  const errors = record.errors;
+  if (Array.isArray(errors)) {
+    return errors.length === 0;
+  }
+  if (errors !== null && typeof errors === 'object') {
+    return Object.keys(errors).length === 0;
+  }
+  return errors == null;
+}
+
 class OneSignalApiService {
   private static _instance: OneSignalApiService;
   private _appId: string = '';
@@ -140,6 +156,10 @@ class OneSignalApiService {
             await new Promise((resolve) => setTimeout(resolve, 3_000 * attempt));
             continue;
           }
+          console.error(`Send notification failed: ${JSON.stringify(data)}`);
+          return false;
+        }
+        if (!isSuccessfulSend(data)) {
           console.error(`Send notification failed: ${JSON.stringify(data)}`);
           return false;
         }
