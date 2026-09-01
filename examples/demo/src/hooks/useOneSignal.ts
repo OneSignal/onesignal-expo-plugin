@@ -224,7 +224,7 @@ function useOneSignalState(): UseOneSignalReturn {
         return;
       }
 
-      fetchUserDataFromApi();
+      void fetchUserDataFromApi();
     };
 
     const load = async () => {

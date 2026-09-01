@@ -5,12 +5,13 @@ const ONESIGNAL_API_KEY = process.env.EXPO_PUBLIC_ONESIGNAL_API_KEY;
 const ANDROID_CHANNEL_ID = process.env.EXPO_PUBLIC_ONESIGNAL_ANDROID_CHANNEL_ID;
 const DEFAULT_ANDROID_CHANNEL_ID = 'b3b015d9-c050-4042-8548-dcc34aa44aa4';
 
-function isTransientSendFailure(data: Record<string, unknown>): boolean {
-  if (data.recipients === 0 && typeof data.id === 'string') {
+function isTransientSendFailure(data: object): boolean {
+  const record = data as Record<string, unknown>;
+  if (record.recipients === 0 && typeof record.id === 'string') {
     return true;
   }
 
-  const errors = data.errors;
+  const errors = record.errors;
   if (Array.isArray(errors)) {
     return errors.some(
       (error) =>
