@@ -1,60 +1,36 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Invoked from a demo dir (e.g. examples/demo/) via `vp run setup`.
-# ORIGINAL_DIR captures that dir so we can return to it after building
-# the plugin; PLUGIN_ROOT is two levels up (the plugin package itself).
-ORIGINAL_DIR=$(pwd)
-PLUGIN_ROOT="$(cd ../../ && pwd)"
-STAMP_FILE="$PLUGIN_ROOT/.expo-plugin-source.stamp"
-TGZ_FILE="$PLUGIN_ROOT/onesignal-expo-plugin.tgz"
-INSTALLED_DIR="$ORIGINAL_DIR/node_modules/onesignal-expo-plugin"
-
-# Content hash of every input that can affect the published tarball.
-# We deliberately hash file contents (shasum each file, then shasum the
-# combined list) instead of using `find -newer`, because mtimes get
-# bumped by routine git operations (checkout, branch switch, rebase)
-# even when the source is identical — that caused needless rebuilds.
-# Inputs match exactly what `vp pm pack` ships per package.json's "files"
-# field: src/ (transpiled to dist/), serviceExtensionFiles/,
-# widgetExtensionFiles/, plus the packaging-relevant configs (package.json,
-# tsconfig.json). build.gradle is intentionally excluded — it lives at the
-# repo root for spotless formatting only and is not part of the tarball.
-src_hash=$(find "$PLUGIN_ROOT/src" "$PLUGIN_ROOT/serviceExtensionFiles" \
-                "$PLUGIN_ROOT/widgetExtensionFiles" \
-                "$PLUGIN_ROOT/package.json" "$PLUGIN_ROOT/tsconfig.json" \
-           -type f 2>/dev/null \
-           | sort \
-           | xargs shasum 2>/dev/null \
-           | shasum \
-           | awk '{print $1}')
-
-# Skip the whole rebuild when:
-#   - the demo already has the plugin installed,
-#   - the cached tarball is still on disk, and
-#   - the source hash matches the last successful build.
-# FORCE_SETUP=1 bypasses the cache when something feels off.
-if [ "${FORCE_SETUP:-0}" != "1" ] \
-   && [ -d "$INSTALLED_DIR" ] \
-   && [ -f "$STAMP_FILE" ] \
-   && [ -f "$TGZ_FILE" ] \
-   && [ "$(cat "$STAMP_FILE")" = "$src_hash" ]; then
-  echo "Plugin source unchanged, skipping rebuild. Set FORCE_SETUP=1 to override."
-  exit 0
-fi
+DEMO_DIR=$(pwd -P)
+PLUGIN_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)"
+TARBALL="$PLUGIN_ROOT/onesignal-expo-plugin.tgz"
+INSTALL_STAMP="$DEMO_DIR/.expo-plugin-source.stamp"
+INSTALLED_DIR="$DEMO_DIR/node_modules/onesignal-expo-plugin"
 
 cd "$PLUGIN_ROOT"
 vp run build
 
-# `vp pm pack` honors package.json's "files" field (so the tarball matches
-# what would actually be published). The version suffix in the filename
-# is unstable, so we normalize to onesignal-expo-plugin.tgz for a
-# deterministic path that package.json + the install step can reference.
-rm -f onesignal-expo-plugin*.tgz
+# Keep the stable archive when its bytes are unchanged so file dependency
+# installers do not invalidate their caches unnecessarily.
+rm -f onesignal-expo-plugin-*.tgz
 vp pm pack
-mv onesignal-expo-plugin-*.tgz onesignal-expo-plugin.tgz
+new_tarball=(onesignal-expo-plugin-*.tgz)
+if [ -f "$TARBALL" ] && cmp -s "${new_tarball[0]}" "$TARBALL"; then
+  rm "${new_tarball[0]}"
+  echo "Plugin package unchanged; using cached onesignal-expo-plugin.tgz."
+else
+  mv "${new_tarball[0]}" "$TARBALL"
+  echo "Plugin package changed; refreshed onesignal-expo-plugin.tgz."
+fi
 
-cd "$ORIGINAL_DIR"
+tarball_hash=$(shasum "$TARBALL" | awk '{print $1}')
+if [ "${FORCE_SETUP:-0}" != "1" ] \
+   && [ -d "$INSTALLED_DIR" ] \
+   && [ -f "$INSTALL_STAMP" ] \
+   && [ "$(cat "$INSTALL_STAMP")" = "$tarball_hash" ]; then
+  echo "Demo already has this plugin package; skipping reinstall."
+  exit 0
+fi
 
 # Always go through vp add so vp.lock's integrity hash for the tarball
 # stays in sync with the freshly-built tarball on disk. A previous version
@@ -68,10 +44,10 @@ cd "$ORIGINAL_DIR"
 # build causes `vp add` itself to fail. The relative `file:../../...`
 # path is intentional — an absolute path would leak this machine's
 # layout into the lockfile.
+cd "$DEMO_DIR"
 echo "Registering tarball with vp (refreshes bun.lock integrity hash)..."
 vp remove onesignal-expo-plugin 2>/dev/null || true
 vp add file:../../onesignal-expo-plugin.tgz
 
-# Record the hash only after a successful build/install so that an
-# interrupted run forces a full retry next time.
-echo "$src_hash" > "$STAMP_FILE"
+# Record the installed archive only after a successful install.
+echo "$tarball_hash" > "$INSTALL_STAMP"

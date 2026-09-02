@@ -43,7 +43,9 @@ class OneSignalApiService {
   async sendNotification(type: NotificationType, subscriptionId: string): Promise<boolean> {
     let headings: Record<string, string>;
     let contents: Record<string, string>;
-    const extra: Record<string, unknown> = {};
+    const extra: Record<string, unknown> = {
+      android_group: 'demo-group',
+    };
 
     switch (type) {
       case NotificationType.Simple:
@@ -121,7 +123,11 @@ class OneSignalApiService {
           return false;
         }
 
-        const data = await response.json().catch(() => undefined);
+        const data: unknown = await response.json();
+        if (data === null || typeof data !== 'object' || Array.isArray(data)) {
+          console.error('Send notification failed: invalid response');
+          return false;
+        }
         if (isTransientSendFailure(data)) {
           if (attempt < maxAttempts) {
             await new Promise((resolve) => setTimeout(resolve, 3_000 * attempt));
@@ -130,7 +136,6 @@ class OneSignalApiService {
           console.error(`Send notification failed: ${JSON.stringify(data)}`);
           return false;
         }
-
         return true;
       } catch (err) {
         console.error(`Send notification error: ${String(err)}`);

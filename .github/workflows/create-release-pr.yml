@@ -37,6 +37,7 @@ jobs:
     with:
       target_repo: OneSignal/onesignal-expo-plugin
       version: ${{ needs.determine_version.outputs.expo_version }}
+      target_branch: ${{ inputs.target_branch }}
 
   # Expo Plugin specific steps
   update_version:
