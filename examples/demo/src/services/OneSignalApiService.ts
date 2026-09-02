@@ -5,43 +5,16 @@ const ONESIGNAL_API_KEY = process.env.EXPO_PUBLIC_ONESIGNAL_API_KEY;
 const ANDROID_CHANNEL_ID = process.env.EXPO_PUBLIC_ONESIGNAL_ANDROID_CHANNEL_ID;
 const DEFAULT_ANDROID_CHANNEL_ID = 'b3b015d9-c050-4042-8548-dcc34aa44aa4';
 
-function isTransientSendFailure(data: object): boolean {
-  const record = data as Record<string, unknown>;
-  if (record.recipients === 0 && typeof record.id === 'string') {
-    return true;
-  }
-
+function isTransientSendFailure(data: unknown): boolean {
+  if (!data || typeof data !== 'object') return false;
+  const record = data as { id?: unknown; errors?: unknown; recipients?: unknown };
   const errors = record.errors;
-  if (Array.isArray(errors)) {
-    return errors.some(
-      (error) =>
-        typeof error === 'string' &&
-        error.toLowerCase().includes('all included players are not subscribed'),
-    );
-  }
-
-  if (errors !== null && typeof errors === 'object') {
-    const invalidPlayerIds = (errors as Record<string, unknown>).invalid_player_ids;
-    return Array.isArray(invalidPlayerIds) && invalidPlayerIds.length > 0;
-  }
-
-  return false;
-}
-
-function isSuccessfulSend(data: object): boolean {
-  const record = data as Record<string, unknown>;
-  if (typeof record.id !== 'string' || record.id.length === 0) {
-    return false;
-  }
-
-  const errors = record.errors;
-  if (Array.isArray(errors)) {
-    return errors.length === 0;
-  }
-  if (errors !== null && typeof errors === 'object') {
-    return Object.keys(errors).length === 0;
-  }
-  return errors == null;
+  const hasErrors =
+    (Array.isArray(errors) && errors.length > 0) ||
+    (errors != null && typeof errors === 'object' && Object.keys(errors).length > 0);
+  const missingId = typeof record.id !== 'string' || record.id.length === 0;
+  const zeroRecipients = typeof record.recipients === 'number' && record.recipients === 0;
+  return hasErrors || missingId || zeroRecipients;
 }
 
 class OneSignalApiService {
@@ -70,7 +43,9 @@ class OneSignalApiService {
   async sendNotification(type: NotificationType, subscriptionId: string): Promise<boolean> {
     let headings: Record<string, string>;
     let contents: Record<string, string>;
-    const extra: Record<string, unknown> = {};
+    const extra: Record<string, unknown> = {
+      android_group: 'demo-group',
+    };
 
     switch (type) {
       case NotificationType.Simple:
@@ -125,10 +100,12 @@ class OneSignalApiService {
 
     // Retry while the OneSignal backend hasn't yet indexed the freshly
     // created subscription. The /notifications endpoint reports this race in
-    // a few recognized shapes, all of which return HTTP 200:
+    // a few different shapes, all of which return HTTP 200:
     //   {"id":"...","recipients":0}                       (user just switched, push token not yet attached)
     //   {"id":"...","errors":{"invalid_player_ids":[...]}}
     //   {"id":"","errors":["All included players are not subscribed"]}
+    //   {"id":"","errors":[...]}
+    // Treat any 200 response with no real id, populated errors, or recipients=0 as transient.
     for (let attempt = 1; attempt <= maxAttempts; attempt++) {
       try {
         const response = await fetch('https://onesignal.com/api/v1/notifications', {
@@ -159,11 +136,6 @@ class OneSignalApiService {
           console.error(`Send notification failed: ${JSON.stringify(data)}`);
           return false;
         }
-        if (!isSuccessfulSend(data)) {
-          console.error(`Send notification failed: ${JSON.stringify(data)}`);
-          return false;
-        }
-
         return true;
       } catch (err) {
         console.error(`Send notification error: ${String(err)}`);

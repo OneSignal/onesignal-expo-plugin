@@ -12,6 +12,13 @@ function successResponse(data: unknown): Response {
   } as unknown as Response;
 }
 
+function resolveRetryDelaysImmediately(): void {
+  vi.spyOn(globalThis, 'setTimeout').mockImplementation((callback) => {
+    if (typeof callback === 'function') callback();
+    return 0 as unknown as ReturnType<typeof setTimeout>;
+  });
+}
+
 describe('OneSignalApiService notification responses', () => {
   beforeEach(() => {
     vi.stubGlobal('fetch', fetchMock);
@@ -71,8 +78,9 @@ describe('OneSignalApiService notification responses', () => {
   test.each([
     ['an ambiguous object', {}],
     ['an unrecognized error', { id: 'notification-id', errors: ['Unknown failure'] }],
-  ])('rejects %s without retrying', async (_label, data) => {
+  ])('retries and rejects %s', async (_label, data) => {
     fetchMock.mockResolvedValue(successResponse(data));
+    resolveRetryDelaysImmediately();
 
     await expect(
       OneSignalApiService.getInstance().sendNotification(
@@ -80,7 +88,7 @@ describe('OneSignalApiService notification responses', () => {
         'subscription-id',
       ),
     ).resolves.toBe(false);
-    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(fetchMock).toHaveBeenCalledTimes(3);
   });
 
   test('retries a recognized transient subscription-indexing failure', async () => {
@@ -90,10 +98,7 @@ describe('OneSignalApiService notification responses', () => {
         errors: ['All included players are not subscribed'],
       }),
     );
-    vi.spyOn(globalThis, 'setTimeout').mockImplementation((callback) => {
-      if (typeof callback === 'function') callback();
-      return 0 as unknown as ReturnType<typeof setTimeout>;
-    });
+    resolveRetryDelaysImmediately();
 
     await expect(
       OneSignalApiService.getInstance().sendNotification(
