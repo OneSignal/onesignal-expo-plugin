@@ -107,6 +107,10 @@ export default ({ config }: ConfigContext): ExpoConfig =>
     },
     android: {
       package: 'com.onesignal.example',
+      // Firebase Installation ID registration needs the app's own Firebase
+      // project. The file is gitignored; copy one whose client entry matches
+      // `package` above. Expo applies the Google Services Gradle plugin for it.
+      googleServicesFile: process.env.GOOGLE_SERVICES_JSON ?? './google-services.json',
       // For OneSignal location permissions
       permissions: [
         'android.permission.ACCESS_COARSE_LOCATION',
@@ -122,6 +126,7 @@ export default ({ config }: ConfigContext): ExpoConfig =>
         smallIconAccentColor: '#C0FFEE', // Optional: For Android only
         largeIcons: ['./assets/images/icon.png'], // Optional: For Android only (right side icon)
         sounds: ['./assets/vine_boom.wav'], // Optional: Custom notification sounds
+        enableFirebaseInstallationId: true, // Optional: Android FID registration path (needs googleServicesFile)
 
         // Uncomment this to use the Objective-C version of the Notification Service Extension
         // iosNSEFilePath: './customNSE/NSE.m',
@@ -132,6 +137,10 @@ export default ({ config }: ConfigContext): ExpoConfig =>
           widgetFilePath: './customWidget/LiveActivity.swift',
         },
       }),
+      // Resolves com.onesignal:* from mavenLocal() (Android SDK
+      // firebase-installation-ids build) and forces firebase-messaging 25.1.2+.
+      // Plain JS string entry so it registers after the OneSignal plugin.
+      './plugins/withOneSignalLocalMaven',
       'expo-router',
       [
         'expo-splash-screen',
