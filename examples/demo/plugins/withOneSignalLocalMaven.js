@@ -2,7 +2,7 @@ const { withProjectBuildGradle } = require('expo/config-plugins');
 
 // Version published to ~/.m2 from the OneSignal-Android-SDK
 // `firebase-installation-ids` branch via `./gradlew publishToMavenLocal`.
-const ONESIGNAL_ANDROID_VERSION = process.env.ONESIGNAL_ANDROID_VERSION ?? '5.11.0-fid-local';
+const ONESIGNAL_ANDROID_VERSION = process.env.ONESIGNAL_ANDROID_VERSION ?? '5.11.0-rc';
 
 // FID registration needs firebase-messaging 25.1.0+; the OneSignal
 // notifications module only prefers 24.0.0, so pin it at the app level.
