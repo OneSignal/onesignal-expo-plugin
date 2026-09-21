@@ -104,7 +104,7 @@ export type OneSignalPluginProps = {
    * Requires the app's own Firebase project (`android.googleServicesFile`), `firebase-messaging` 25.1.0+
    * and a OneSignal Android SDK with FID support. Defaults to false (no manifest change).
    */
-  enableFirebaseInstallationIds?: boolean;
+  enableFirebaseInstallationId?: boolean;
 
   /**
    * (optional) An array of local paths to custom notification sound files (.wav only).

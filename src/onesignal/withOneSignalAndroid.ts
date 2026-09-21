@@ -172,7 +172,7 @@ const withFirebaseInstallationIdManifest: ConfigPlugin<OneSignalPluginProps> = (
   config,
   onesignalProps,
 ) => {
-  if (!onesignalProps.enableFirebaseInstallationIds) {
+  if (!onesignalProps.enableFirebaseInstallationId) {
     return config;
   }
 

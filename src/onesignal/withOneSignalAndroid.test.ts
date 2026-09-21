@@ -67,7 +67,7 @@ describe('withOneSignalAndroid', () => {
     });
   });
 
-  describe('enableFirebaseInstallationIds', () => {
+  describe('enableFirebaseInstallationId', () => {
     test('adds the FID meta-data to the main application when true', async () => {
       const { withOneSignalAndroid, FIREBASE_INSTALLATION_ID_META_DATA } =
         await import('./withOneSignalAndroid');
@@ -75,7 +75,7 @@ describe('withOneSignalAndroid', () => {
 
       const config = withOneSignalAndroid(makeConfig(), {
         mode: 'production',
-        enableFirebaseInstallationIds: true,
+        enableFirebaseInstallationId: true,
       });
 
       expect(withAndroidManifestMock).toHaveBeenCalledTimes(1);
@@ -102,7 +102,7 @@ describe('withOneSignalAndroid', () => {
 
       const config = withOneSignalAndroid(makeConfig(), {
         mode: 'production',
-        enableFirebaseInstallationIds: true,
+        enableFirebaseInstallationId: true,
       });
 
       const fidEntries = getMetaData(config).filter(
@@ -130,7 +130,7 @@ describe('withOneSignalAndroid', () => {
 
       withOneSignalAndroid(makeConfig(), {
         mode: 'production',
-        enableFirebaseInstallationIds: false,
+        enableFirebaseInstallationId: false,
       });
 
       expect(withAndroidManifestMock).not.toHaveBeenCalled();
