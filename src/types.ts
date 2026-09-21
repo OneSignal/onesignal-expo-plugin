@@ -99,12 +99,12 @@ export type OneSignalPluginProps = {
   disableLocation?: boolean;
 
   /**
-   * (optional) If true, sets `firebase_messaging_installation_id_enabled=true` in the Android manifest so
+   * (optional, Android only) If true, sets `firebase_messaging_installation_id_enabled=true` in the Android manifest so
    * push registration uses the Firebase Installation ID (FID) path instead of the legacy FCM token API.
    * Requires the app's own Firebase project (`android.googleServicesFile`), `firebase-messaging` 25.1.0+
    * and a OneSignal Android SDK with FID support. Defaults to false (no manifest change).
    */
-  androidFirebaseInstallationId?: boolean;
+  enableFirebaseInstallationIds?: boolean;
 
   /**
    * (optional) An array of local paths to custom notification sound files (.wav only).
