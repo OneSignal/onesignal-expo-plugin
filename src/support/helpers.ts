@@ -21,6 +21,7 @@ const ONESIGNAL_PLUGIN_PROPS = [
   'nseBundleIdentifier',
   'disableNSE',
   'disableLocation',
+  'androidFirebaseInstallationId',
   'sounds',
   'liveActivities',
 ] satisfies (keyof OneSignalPluginProps)[];
@@ -107,6 +108,13 @@ export function validatePluginProps(props: any): void {
 
   if (props.disableLocation !== undefined && typeof props.disableLocation !== 'boolean') {
     throw new Error("OneSignal Expo Plugin: 'disableLocation' must be a boolean.");
+  }
+
+  if (
+    props.androidFirebaseInstallationId !== undefined &&
+    typeof props.androidFirebaseInstallationId !== 'boolean'
+  ) {
+    throw new Error("OneSignal Expo Plugin: 'androidFirebaseInstallationId' must be a boolean.");
   }
 
   if (props.sounds !== undefined) {

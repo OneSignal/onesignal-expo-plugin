@@ -9,7 +9,9 @@ import { resolve, parse, basename } from 'path';
 import { generateImageAsync } from '@expo/image-utils';
 import type { ExpoConfig } from 'expo/config';
 import {
+  AndroidConfig,
   ConfigPlugin,
+  withAndroidManifest,
   withDangerousMod,
   withGradleProperties,
   withStringsXml,
@@ -21,6 +23,7 @@ import { OneSignalPluginProps } from '../types';
 
 const RESOURCE_ROOT_PATH = 'android/app/src/main/res/';
 const ONESIGNAL_DISABLE_LOCATION_GRADLE_PROPERTY = 'onesignal.disableLocation';
+export const FIREBASE_INSTALLATION_ID_META_DATA = 'firebase_messaging_installation_id_enabled';
 
 // The name of each small icon folder resource, and the icon size for that folder.
 const SMALL_ICON_DIRS_TO_SIZE: { [name: string]: number } = {
@@ -163,6 +166,27 @@ const withLocationModuleGradleProperty: ConfigPlugin<OneSignalPluginProps> = (
   });
 };
 
+// Opt-in only: the flag is app-wide and other SDKs may already contribute it via
+// manifest merging, so an unset prop must leave the manifest untouched.
+const withFirebaseInstallationIdManifest: ConfigPlugin<OneSignalPluginProps> = (
+  config,
+  onesignalProps,
+) => {
+  if (!onesignalProps.androidFirebaseInstallationId) {
+    return config;
+  }
+
+  return withAndroidManifest(config, (config) => {
+    const mainApplication = AndroidConfig.Manifest.getMainApplicationOrThrow(config.modResults);
+    AndroidConfig.Manifest.addMetaDataItemToMainApplication(
+      mainApplication,
+      FIREBASE_INSTALLATION_ID_META_DATA,
+      'true',
+    );
+    return config;
+  });
+};
+
 async function saveIconsArrayAsync(
   projectRoot: string,
   icons: string[],
@@ -243,6 +267,7 @@ export const withOneSignalAndroid: ConfigPlugin<OneSignalPluginProps> = (config,
   config = withLargeIcons(config, props);
   config = withSmallIconAccentColor(config, props);
   config = withLocationModuleGradleProperty(config, props);
+  config = withFirebaseInstallationIdManifest(config, props);
   config = withSoundFiles(config, props);
   return config;
 };

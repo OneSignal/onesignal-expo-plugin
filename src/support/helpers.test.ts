@@ -111,6 +111,21 @@ describe('validatePluginProps', () => {
     );
   });
 
+  test('accepts androidFirebaseInstallationId as a boolean', () => {
+    expect(() =>
+      validatePluginProps({ ...validProps, androidFirebaseInstallationId: true }),
+    ).not.toThrow();
+    expect(() =>
+      validatePluginProps({ ...validProps, androidFirebaseInstallationId: false }),
+    ).not.toThrow();
+  });
+
+  test('rejects non-boolean androidFirebaseInstallationId', () => {
+    expect(() =>
+      validatePluginProps({ ...validProps, androidFirebaseInstallationId: 'true' }),
+    ).toThrow("'androidFirebaseInstallationId' must be a boolean");
+  });
+
   test('accepts valid 6-digit hex smallIconAccentColor', () => {
     expect(() =>
       validatePluginProps({ ...validProps, smallIconAccentColor: '#FF0000' }),
