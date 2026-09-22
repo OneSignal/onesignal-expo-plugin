@@ -43,7 +43,7 @@ export type OneSignalPluginProps = {
 
   /**
    * (optional) Target IPHONEOS_DEPLOYMENT_TARGET value to be used when adding the iOS NSE. A deployment target is nothing more than
-   * the minimum version of the operating system the application can run on. This value should match the value in your Podfile e.g: "12.0".
+   * the minimum version of the operating system the application can run on. This value should match the value in your Podfile e.g: "15.0".
    */
   iPhoneDeploymentTarget?: string;
 
