@@ -52,7 +52,7 @@ jobs:
           ref: ${{ needs.prep.outputs.release_branch }}
 
       - name: Set up Vite+
-        uses: voidzero-dev/setup-vp@v1
+        uses: voidzero-dev/setup-vp@v1.21.1
         with:
           cache: true
           run-install: false # no need to install deps just to bump version

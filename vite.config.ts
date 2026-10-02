@@ -18,6 +18,11 @@ export default defineConfig({
     options: { typeAware: true, typeCheck: true },
   },
   test: {
+    // Vitest v4 compatibility: preserve mock call history.
+    // Remove after tests no longer rely on calls from setup or earlier tests.
+    // https://viteplus.dev/guide/vitest-v5#remove-unneeded-compatibility-settings
+    // https://vitest.dev/guide/migration/#clearmocks-is-enabled-by-default
+    clearMocks: false,
     coverage: {
       enabled: true,
       reporter: ['text-summary', 'lcov'],
@@ -32,6 +37,12 @@ export default defineConfig({
     format: 'cjs',
     fixedExtension: false,
     dts: true,
-    deps: { onlyBundle: [] },
+    deps: {
+      // tsdown <0.23 compatibility: resolve external dependency subpaths.
+      // Remove to preserve subpath imports as written (the new default).
+      // https://tsdown.dev/options/dependencies#deps-resolvedepsubpath
+      resolveDepSubpath: true,
+      onlyBundle: [],
+    },
   },
 });
