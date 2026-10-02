@@ -1,6 +1,5 @@
 import Icon from '@expo/vector-icons/MaterialIcons';
-import { useNavigation } from '@react-navigation/native';
-import type { NativeStackHeaderProps } from '@react-navigation/native-stack';
+import { useRouter, type NativeStackHeaderProps } from 'expo-router';
 import React from 'react';
 import { Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -8,7 +7,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { AppColors } from '../theme';
 
 export default function AppHeader({ options, back }: NativeStackHeaderProps) {
-  const navigation = useNavigation();
+  const router = useRouter();
   const insets = useSafeAreaInsets();
 
   const titleNode =
@@ -24,7 +23,7 @@ export default function AppHeader({ options, back }: NativeStackHeaderProps) {
         <View style={styles.side}>
           {back ? (
             <Pressable
-              onPress={navigation.goBack}
+              onPress={() => router.back()}
               hitSlop={12}
               style={({ pressed }) => [styles.backBtn, pressed && styles.pressed]}
             >

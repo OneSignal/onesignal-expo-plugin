@@ -82,7 +82,6 @@ export default ({ config }: ConfigContext): ExpoConfig =>
     icon: './assets/images/icon.png',
     scheme: 'demo',
     userInterfaceStyle: 'automatic',
-    newArchEnabled: true,
     ios: {
       appleTeamId: '99SW8E36CT',
       icon: './assets/images/icon.png',
