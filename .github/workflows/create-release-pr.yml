@@ -34,6 +34,9 @@ jobs:
     needs: determine_version
     if: needs.determine_version.outputs.release_needed == 'true'
     uses: OneSignal/sdk-shared/.github/workflows/prep-release.yml@main
+    secrets:
+      # Pushes made with the default GITHUB_TOKEN don't trigger the rel/** E2E workflow
+      GH_PUSH_TOKEN: ${{ secrets.GH_PUSH_TOKEN }}
     with:
       target_repo: OneSignal/onesignal-expo-plugin
       version: ${{ needs.determine_version.outputs.expo_version }}
@@ -50,6 +53,7 @@ jobs:
           # Need repository otherwise caller would set github.repository to the caller itself (e.g. sdk-shared)
           repository: OneSignal/onesignal-expo-plugin
           ref: ${{ needs.prep.outputs.release_branch }}
+          token: ${{ secrets.GH_PUSH_TOKEN || github.token }}
 
       - name: Set up Vite+
         uses: voidzero-dev/setup-vp@v1.21.1
@@ -75,6 +79,8 @@ jobs:
   create-pr:
     needs: [prep, update_version]
     uses: OneSignal/sdk-shared/.github/workflows/create-release.yml@main
+    secrets:
+      GH_PUSH_TOKEN: ${{ secrets.GH_PUSH_TOKEN }}
     with:
       # Need target_repo otherwise caller would set github.repository to the caller itself (e.g. sdk-shared)
       target_repo: OneSignal/onesignal-expo-plugin
