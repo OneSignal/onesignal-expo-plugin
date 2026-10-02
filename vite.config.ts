@@ -23,8 +23,10 @@ export default defineConfig({
     // https://viteplus.dev/guide/vitest-v5#remove-unneeded-compatibility-settings
     // https://vitest.dev/guide/migration/#clearmocks-is-enabled-by-default
     clearMocks: false,
+    include: ['src/**/*.test.ts'],
     coverage: {
       enabled: true,
+      include: ['src/**'],
       reporter: ['text-summary', 'lcov'],
       reportOnFailure: true,
     },
