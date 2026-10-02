@@ -1,4 +1,4 @@
-import { useNavigation } from '@react-navigation/native';
+import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { Platform, ScrollView, StyleSheet, View } from 'react-native';
 
@@ -26,7 +26,7 @@ import TooltipHelper, { TooltipData } from '../services/TooltipHelper';
 import { AppColors } from '../theme';
 
 export default function HomeScreen() {
-  const navigation = useNavigation();
+  const router = useRouter();
   const os = useOneSignal();
 
   const [tooltipOpen, setTooltipOpen] = useState(false);
@@ -171,7 +171,7 @@ export default function HomeScreen() {
         <View style={styles.nextButtonContainer}>
           <ActionButton
             label="NEXT SCREEN"
-            onPress={() => navigation.navigate('Secondary' as never)}
+            onPress={() => router.push('/secondary')}
             testID="next_screen_button"
           />
         </View>
