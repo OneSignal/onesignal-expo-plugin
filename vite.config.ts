@@ -18,6 +18,7 @@ export default defineConfig({
     options: { typeAware: true, typeCheck: true },
   },
   test: {
+    include: ['src/**/*.test.ts'],
     coverage: {
       enabled: true,
       reporter: ['text-summary', 'lcov'],
@@ -32,6 +33,8 @@ export default defineConfig({
     format: 'cjs',
     fixedExtension: false,
     dts: true,
-    deps: { onlyBundle: [] },
+    deps: {
+      onlyBundle: [],
+    },
   },
 });

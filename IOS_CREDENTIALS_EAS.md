@@ -33,10 +33,11 @@ Due to this, there are two setup paths:
 2. A more **complex setup** is one in which you have other capabilities.
 
 This also affects how you should set up your credentials. Use the following table to know whether to proceed with local or managed credentials:
-| Push Notification capability only | |
-|-----------------------------------|-----------------------------------------------------------------------|
-| Local credentials | Works but unnecessary to go through extra effort to use local signing |
-| Managed credentials | Works (simple setup) |
+
+| Push Notification capability only |                                                                       |
+| --------------------------------- | --------------------------------------------------------------------- |
+| Local credentials                 | Works but unnecessary to go through extra effort to use local signing |
+| Managed credentials               | Works (simple setup)                                                  |
 
 | Multiple capabilities |                                  |
 | --------------------- | -------------------------------- |
