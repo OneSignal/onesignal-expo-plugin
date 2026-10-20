@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Platform, ScrollView, StyleSheet, View } from 'react-native';
 
 import ActionButton from '../components/ActionButton';
+import LogView from '../components/LogView';
 import TooltipModal from '../components/modals/TooltipModal';
 import AliasesSection from '../components/sections/AliasesSection';
 import AppSection from '../components/sections/AppSection';
@@ -46,6 +47,8 @@ export default function HomeScreen() {
 
   return (
     <View style={styles.root}>
+      <LogView />
+
       <ScrollView
         style={styles.scroll}
         contentContainerStyle={styles.content}
