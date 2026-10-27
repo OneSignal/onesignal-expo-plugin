@@ -154,7 +154,7 @@ export default function UserSection({
         selectedValue={language}
         onSelect={(code) => void onLanguageChange(code)}
         onClose={() => setLanguageAnchor(null)}
-        testIDPrefix="user_language_picker_option"
+        testIDPrefix="language_option"
       />
     </SectionCard>
   );
