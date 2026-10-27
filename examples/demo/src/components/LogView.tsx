@@ -1,6 +1,14 @@
 import Icon from '@expo/vector-icons/MaterialIcons';
 import React, { useRef, useState } from 'react';
-import { Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import {
+  Platform,
+  Pressable,
+  ScrollView,
+  type ScrollViewInstance,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 
 import { clearLogs, useLogs } from '../services/LogService';
 import { AppColors } from '../theme';
@@ -9,7 +17,7 @@ const MONOSPACE = Platform.select({ ios: 'Menlo', default: 'monospace' });
 
 export default function LogView() {
   const logs = useLogs();
-  const scrollRef = useRef<ScrollView>(null);
+  const scrollRef = useRef<ScrollViewInstance>(null);
   const [collapsed, setCollapsed] = useState(false);
   const scrollToEnd = () => scrollRef.current?.scrollToEnd({ animated: false });
 
