@@ -39,11 +39,11 @@
   "scripts": {
     "build": "vp pack",
     "format:spotless": "./examples/demo/android/gradlew spotlessApply",
-    "format": "vp fmt && npm run format:spotless",
+    "format": "vp fmt && vp run format:spotless",
     "format:check:spotless": "./examples/demo/android/gradlew spotlessCheck",
-    "format:check": "vp fmt --check && npm run format:check:spotless",
-    "lint": "vp check src && npm run format:check",
-    "lint:fix": "vp check --fix src && npm run format",
+    "format:check": "vp fmt --check && vp run format:check:spotless",
+    "lint": "vp check src && vp run format:check",
+    "lint:fix": "vp check --fix src && vp run format",
     "test": "vp test"
   },
   "dependencies": {
@@ -51,19 +51,23 @@
   },
   "devDependencies": {
     "@types/node": "^22.19.3",
-    "@vitest/coverage-v8": "5.0.1",
-    "typescript": "^6.0.3",
-    "vite": "npm:@voidzero-dev/vite-plus-core@1.0.0",
-    "vite-plus": "1.0.0",
-    "vitest": "5.0.1"
+    "@vitest/coverage-v8": "5.0.5",
+    "typescript": "^7.0.2",
+    "vite": "npm:@voidzero-dev/vite-plus-core@1.4.0",
+    "vite-plus": "1.4.0"
   },
   "peerDependencies": {
     "expo": ">=53.0.0",
     "react-native-onesignal": ">=5.0.0"
   },
   "overrides": {
-    "vite": "npm:@voidzero-dev/vite-plus-core@1.0.0",
-    "vitest": "5.0.1"
+    "vite": "npm:@voidzero-dev/vite-plus-core@1.4.0"
   },
-  "packageManager": "bun@1.4.2"
+  "devEngines": {
+    "packageManager": {
+      "name": "bun",
+      "version": "1.4.4",
+      "onFail": "download"
+    }
+  }
 }
