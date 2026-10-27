@@ -8,7 +8,6 @@
     "preandroid": "vp run setup",
     "preios": "vp run setup",
     "start": "expo start",
-    "reset-project": "node ./scripts/reset-project.js",
     "android": "expo run:android --device",
     "ios": "expo run:ios --device",
     "open:ios": "open ios/OneSignalDemo.xcworkspace"
