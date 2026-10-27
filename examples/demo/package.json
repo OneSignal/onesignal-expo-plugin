@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "expo-router/entry",
   "scripts": {
-    "clean": "vp run setup && npx expo prebuild --clean",
+    "clean": "vp run setup && vp exec expo prebuild --clean",
     "setup": "../setup.sh",
     "preandroid": "vp run setup",
     "preios": "vp run setup",

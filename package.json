@@ -39,11 +39,11 @@
   "scripts": {
     "build": "vp pack",
     "format:spotless": "./examples/demo/android/gradlew spotlessApply",
-    "format": "vp fmt && npm run format:spotless",
+    "format": "vp fmt && vp run format:spotless",
     "format:check:spotless": "./examples/demo/android/gradlew spotlessCheck",
-    "format:check": "vp fmt --check && npm run format:check:spotless",
-    "lint": "vp check src && npm run format:check",
-    "lint:fix": "vp check --fix src && npm run format",
+    "format:check": "vp fmt --check && vp run format:check:spotless",
+    "lint": "vp check src && vp run format:check",
+    "lint:fix": "vp check --fix src && vp run format",
     "test": "vp test"
   },
   "dependencies": {
