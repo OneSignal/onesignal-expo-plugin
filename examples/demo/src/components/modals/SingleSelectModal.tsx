@@ -69,7 +69,7 @@ const styles = StyleSheet.create({
     maxHeight: '70%',
   },
   scroll: {
-    maxHeight: 400,
+    maxHeight: 320,
   },
   row: {
     flexDirection: 'row',
