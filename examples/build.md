@@ -35,7 +35,7 @@ Platform specifics:
 - TypeScript with strict mode enabled.
 - App bar text: "Expo" (next to the OneSignal logo SVG) -- rendered by `src/components/AppHeader.tsx`.
 - Support for both Android and iOS.
-- `packageManager: bun@<version>` is pinned in `package.json`.
+- Bun is pinned via `devEngines.packageManager` in `package.json`, so use `vp` (not npm/npx).
 - The `vp` toolchain drives setup (`vp run setup`, `vp add`) -- see `examples/setup.sh`.
 
 ### SVG Logo
@@ -81,7 +81,7 @@ Install the local Expo plugin from a packed tarball (Bun does not reliably handl
 Install the OneSignal runtime SDK from npm, pinned:
 
 ```json
-"react-native-onesignal": "5.4.3"
+"react-native-onesignal": "5.5.15"
 ```
 
 Configure `app.config.ts` with the plugin as the FIRST entry, using the full options shape that the demo ships:
@@ -155,19 +155,19 @@ dependencies:
 
 - expo: ~58.x
 - react-native: 0.88.x
-- react-native-onesignal: 5.5.9 (pinned)
+- react-native-onesignal: 5.5.15 (pinned)
 - onesignal-expo-plugin: file:../../onesignal-expo-plugin.tgz
 - @react-native-async-storage/async-storage: 2.2.0
 - react-native-svg: Expo-compatible version
 - @expo/vector-icons: ^15.0.0
 - react-native-screens: Expo-compatible version
 - react-native-safe-area-context: Expo-compatible version
-- react-native-toast-message: ^2.3.3
+- react-native-toast-message: ^2.5.2
 - expo-router: ~58.x (routing; also registered in `app.config.ts` `plugins`)
 - expo-constants, expo-linking, expo-font: Expo-compatible versions (required peers of `expo-router` / `@expo/vector-icons`)
 - expo-splash-screen: ~58.x (also registered in `app.config.ts` `plugins`)
 
-`react-native-gesture-handler` and `react-native-reanimated` are not direct deps -- they come in transitively via `expo-router`.
+`react-native-gesture-handler` and `react-native-reanimated` are not direct deps -- they are optional peers of `expo-router` (via `react-native-drawer-layout`), installed transitively.
 
 devDependencies:
 
