@@ -1,58 +1,58 @@
 import Icon from '@expo/vector-icons/MaterialIcons';
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import React, { useRef, useState } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, type ViewInstance } from 'react-native';
 
 import { AppColors, AppTextStyles, AppTheme, AppSpacing } from '../../theme';
 import ActionButton from '../ActionButton';
+import DropdownMenu, { type DropdownAnchor, type DropdownOption } from '../DropdownMenu';
 import SingleInputModal from '../modals/SingleInputModal';
-import SingleSelectModal from '../modals/SingleSelectModal';
 import SectionCard from '../SectionCard';
 
-const LANGUAGE_OPTIONS: [string, string][] = [
-  ['Device Default', ''],
-  ['English', 'en'],
-  ['Arabic', 'ar'],
-  ['Azerbaijani', 'az'],
-  ['Bosnian', 'bs'],
-  ['Catalan', 'ca'],
-  ['Chinese (Simplified)', 'zh-Hans'],
-  ['Chinese (Traditional)', 'zh-Hant'],
-  ['Croatian', 'hr'],
-  ['Czech', 'cs'],
-  ['Danish', 'da'],
-  ['Dutch', 'nl'],
-  ['Estonian', 'et'],
-  ['Finnish', 'fi'],
-  ['French', 'fr'],
-  ['Georgian', 'ka'],
-  ['Bulgarian', 'bg'],
-  ['German', 'de'],
-  ['Greek', 'el'],
-  ['Hindi', 'hi'],
-  ['Hebrew', 'he'],
-  ['Hungarian', 'hu'],
-  ['Indonesian', 'id'],
-  ['Italian', 'it'],
-  ['Japanese', 'ja'],
-  ['Korean', 'ko'],
-  ['Latvian', 'lv'],
-  ['Lithuanian', 'lt'],
-  ['Malay', 'ms'],
-  ['Norwegian', 'nb'],
-  ['Persian', 'fa'],
-  ['Polish', 'pl'],
-  ['Portuguese', 'pt'],
-  ['Punjabi', 'pa'],
-  ['Romanian', 'ro'],
-  ['Russian', 'ru'],
-  ['Serbian', 'sr'],
-  ['Slovak', 'sk'],
-  ['Spanish', 'es'],
-  ['Swedish', 'sv'],
-  ['Thai', 'th'],
-  ['Turkish', 'tr'],
-  ['Ukrainian', 'uk'],
-  ['Vietnamese', 'vi'],
+const LANGUAGE_OPTIONS: DropdownOption[] = [
+  { label: 'Device Default', value: '' },
+  { label: 'English', value: 'en' },
+  { label: 'Arabic', value: 'ar' },
+  { label: 'Azerbaijani', value: 'az' },
+  { label: 'Bosnian', value: 'bs' },
+  { label: 'Catalan', value: 'ca' },
+  { label: 'Chinese (Simplified)', value: 'zh-Hans' },
+  { label: 'Chinese (Traditional)', value: 'zh-Hant' },
+  { label: 'Croatian', value: 'hr' },
+  { label: 'Czech', value: 'cs' },
+  { label: 'Danish', value: 'da' },
+  { label: 'Dutch', value: 'nl' },
+  { label: 'Estonian', value: 'et' },
+  { label: 'Finnish', value: 'fi' },
+  { label: 'French', value: 'fr' },
+  { label: 'Georgian', value: 'ka' },
+  { label: 'Bulgarian', value: 'bg' },
+  { label: 'German', value: 'de' },
+  { label: 'Greek', value: 'el' },
+  { label: 'Hindi', value: 'hi' },
+  { label: 'Hebrew', value: 'he' },
+  { label: 'Hungarian', value: 'hu' },
+  { label: 'Indonesian', value: 'id' },
+  { label: 'Italian', value: 'it' },
+  { label: 'Japanese', value: 'ja' },
+  { label: 'Korean', value: 'ko' },
+  { label: 'Latvian', value: 'lv' },
+  { label: 'Lithuanian', value: 'lt' },
+  { label: 'Malay', value: 'ms' },
+  { label: 'Norwegian', value: 'nb' },
+  { label: 'Persian', value: 'fa' },
+  { label: 'Polish', value: 'pl' },
+  { label: 'Portuguese', value: 'pt' },
+  { label: 'Punjabi', value: 'pa' },
+  { label: 'Romanian', value: 'ro' },
+  { label: 'Russian', value: 'ru' },
+  { label: 'Serbian', value: 'sr' },
+  { label: 'Slovak', value: 'sk' },
+  { label: 'Spanish', value: 'es' },
+  { label: 'Swedish', value: 'sv' },
+  { label: 'Thai', value: 'th' },
+  { label: 'Turkish', value: 'tr' },
+  { label: 'Ukrainian', value: 'uk' },
+  { label: 'Vietnamese', value: 'vi' },
 ];
 
 interface Props {
@@ -71,9 +71,11 @@ export default function UserSection({
   onLogout,
 }: Props) {
   const [loginOpen, setLoginOpen] = useState(false);
-  const [languageOpen, setLanguageOpen] = useState(false);
+  const [languageAnchor, setLanguageAnchor] = useState<DropdownAnchor | null>(null);
+  const languageButtonRef = useRef<ViewInstance>(null);
   const isLoggedIn = !!externalUserId;
-  const languageName = LANGUAGE_OPTIONS.find(([, code]) => code === language)?.[0] ?? language;
+  const languageName =
+    LANGUAGE_OPTIONS.find((option) => option.value === language)?.label ?? language;
 
   const handleLogin = async (userId: string) => {
     await onLogin(userId);
@@ -81,6 +83,12 @@ export default function UserSection({
 
   const handleLogout = async () => {
     await onLogout();
+  };
+
+  const openLanguageMenu = () => {
+    languageButtonRef.current?.measureInWindow((x, y, width, height) => {
+      setLanguageAnchor({ x, y, width, height });
+    });
   };
 
   return (
@@ -106,8 +114,9 @@ export default function UserSection({
         <View style={styles.row}>
           <Text style={styles.label}>Language</Text>
           <TouchableOpacity
+            ref={languageButtonRef}
             style={styles.dropdown}
-            onPress={() => setLanguageOpen(true)}
+            onPress={openLanguageMenu}
             testID="user_language_dropdown"
           >
             <Text style={styles.dropdownText} testID="user_language_value">
@@ -139,14 +148,13 @@ export default function UserSection({
         onClose={() => setLoginOpen(false)}
         testID="login_user_id_input"
       />
-      <SingleSelectModal
-        visible={languageOpen}
-        title="Language"
+      <DropdownMenu
+        anchor={languageAnchor}
         options={LANGUAGE_OPTIONS}
         selectedValue={language}
         onSelect={(code) => void onLanguageChange(code)}
-        onClose={() => setLanguageOpen(false)}
-        testID="user_language_picker"
+        onClose={() => setLanguageAnchor(null)}
+        testIDPrefix="user_language_picker_option"
       />
     </SectionCard>
   );
