@@ -67,12 +67,15 @@ export default function HomeScreen() {
 
         <UserSection
           externalUserId={os.externalUserId}
+          language={os.language}
+          onLanguageChange={os.setLanguage}
           onLogin={os.loginUser}
           onLogout={os.logoutUser}
         />
 
         <PushSection
           pushSubscriptionId={os.pushSubscriptionId}
+          pushSubscriptionToken={os.pushSubscriptionToken}
           isPushEnabled={os.isPushEnabled}
           hasNotificationPermission={os.hasNotificationPermission}
           onSetPushEnabled={os.setPushEnabled}
