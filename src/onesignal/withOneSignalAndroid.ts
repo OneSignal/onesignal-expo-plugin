@@ -9,7 +9,10 @@ import { resolve, parse, basename } from 'path';
 import { generateImageAsync } from '@expo/image-utils';
 import type { ExpoConfig } from 'expo/config';
 import {
+  AndroidConfig,
   ConfigPlugin,
+  WarningAggregator,
+  withAndroidManifest,
   withDangerousMod,
   withGradleProperties,
   withStringsXml,
@@ -21,6 +24,7 @@ import { OneSignalPluginProps } from '../types';
 
 const RESOURCE_ROOT_PATH = 'android/app/src/main/res/';
 const ONESIGNAL_DISABLE_LOCATION_GRADLE_PROPERTY = 'onesignal.disableLocation';
+export const FIREBASE_INSTALLATION_ID_META_DATA = 'firebase_messaging_installation_id_enabled';
 
 // The name of each small icon folder resource, and the icon size for that folder.
 const SMALL_ICON_DIRS_TO_SIZE: { [name: string]: number } = {
@@ -163,6 +167,43 @@ const withLocationModuleGradleProperty: ConfigPlugin<OneSignalPluginProps> = (
   });
 };
 
+// The flag is app-wide and other SDKs may contribute it via manifest merging, so
+// unset leaves the manifest alone and false only removes the app's own entry
+// (left behind by an earlier prebuild without --clean) rather than writing "false".
+const withFirebaseInstallationIdManifest: ConfigPlugin<OneSignalPluginProps> = (
+  config,
+  onesignalProps,
+) => {
+  const enabled = onesignalProps.enableFirebaseInstallationId;
+  if (enabled == null) {
+    return config;
+  }
+
+  if (enabled && !config.android?.googleServicesFile) {
+    WarningAggregator.addWarningAndroid(
+      'onesignal-expo-plugin',
+      "'enableFirebaseInstallationId' is true but 'android.googleServicesFile' is not set. Firebase Installation ID push registration needs your own Firebase project's google-services.json.",
+    );
+  }
+
+  return withAndroidManifest(config, (config) => {
+    const mainApplication = AndroidConfig.Manifest.getMainApplicationOrThrow(config.modResults);
+    if (enabled) {
+      AndroidConfig.Manifest.addMetaDataItemToMainApplication(
+        mainApplication,
+        FIREBASE_INSTALLATION_ID_META_DATA,
+        'true',
+      );
+    } else {
+      AndroidConfig.Manifest.removeMetaDataItemFromMainApplication(
+        mainApplication,
+        FIREBASE_INSTALLATION_ID_META_DATA,
+      );
+    }
+    return config;
+  });
+};
+
 async function saveIconsArrayAsync(
   projectRoot: string,
   icons: string[],
@@ -243,6 +284,7 @@ export const withOneSignalAndroid: ConfigPlugin<OneSignalPluginProps> = (config,
   config = withLargeIcons(config, props);
   config = withSmallIconAccentColor(config, props);
   config = withLocationModuleGradleProperty(config, props);
+  config = withFirebaseInstallationIdManifest(config, props);
   config = withSoundFiles(config, props);
   return config;
 };

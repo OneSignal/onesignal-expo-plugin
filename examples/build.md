@@ -81,10 +81,10 @@ Install the local Expo plugin from a packed tarball (Bun does not reliably handl
 Install the OneSignal runtime SDK from npm, pinned:
 
 ```json
-"react-native-onesignal": "5.5.15"
+"react-native-onesignal": "5.5.16"
 ```
 
-Configure `app.config.ts` with the plugin as the FIRST entry, using the full options shape that the demo ships:
+Configure `app.config.ts` with the plugin as the FIRST entry, using the full options shape that the demo ships. `googleServicesFile` is `'./google-services.json'` when that gitignored file exists in the demo root and `undefined` otherwise. It is also set as `android.googleServicesFile`, and when present the demo forces `firebase-messaging` 25.1.2 in `android/build.gradle`:
 
 ```ts
 plugins: [
@@ -98,6 +98,7 @@ plugins: [
       smallIconAccentColor: '#C0FFEE',
       largeIcons: ['./assets/images/icon.png'],
       sounds: ['./assets/vine_boom.wav'],
+      enableFirebaseInstallationId: !!googleServicesFile, // Android FID, see below
       // iosNSEFilePath: './customNSE/NSE.m', // opt-in Obj-C NSE
       liveActivities: {
         targetName: 'OneSignalWidget',
@@ -155,7 +156,7 @@ dependencies:
 
 - expo: ~58.x
 - react-native: 0.88.x
-- react-native-onesignal: 5.5.15 (pinned)
+- react-native-onesignal: 5.5.16 (pinned, minimum for Android Firebase Installation ID support)
 - onesignal-expo-plugin: file:../../onesignal-expo-plugin.tgz
 - @react-native-async-storage/async-storage: 2.2.0
 - react-native-svg: Expo-compatible version

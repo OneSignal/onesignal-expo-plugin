@@ -38,3 +38,16 @@ Join our community of developers creating universal apps.
 
 - [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
 - [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+
+## Firebase Installation ID (Android)
+
+The demo enables `enableFirebaseInstallationId` only when `examples/demo/google-services.json` exists (gitignored). Use one from a Firebase project whose client entry matches `com.onesignal.example`. The demo also forces `firebase-messaging` 25.1.2, which FID registration requires.
+
+```bash
+vp exec expo prebuild --platform android --clean
+vp exec expo run:android
+```
+
+Run prebuild explicitly after adding or changing the file. `expo run:android` skips prebuild because `android/` already exists (the Gradle wrapper is committed), so it would build without FID.
+
+Confirm `firebase_messaging_installation_id_enabled` is `true` in `android/app/src/main/AndroidManifest.xml`. Expo Go is not supported.
