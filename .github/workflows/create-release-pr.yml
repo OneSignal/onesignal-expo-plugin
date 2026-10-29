@@ -69,7 +69,7 @@ jobs:
           NEW_VERSION: ${{ needs.determine_version.outputs.expo_version }}
         run: |
           # Update package.json version
-          npm pkg set version="$NEW_VERSION"
+          vp pm pkg set version="$NEW_VERSION"
 
           # Only commit if there are changes
           git add -A
