@@ -12,3 +12,6 @@ dist/
 # Coverage
 coverage/
 .vitest/
+
+# Firebase client config for example apps
+google-services.json

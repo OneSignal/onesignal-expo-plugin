@@ -99,6 +99,14 @@ export type OneSignalPluginProps = {
   disableLocation?: boolean;
 
   /**
+   * (optional, Android only) If true, sets `firebase_messaging_installation_id_enabled=true` in the Android manifest so
+   * push registration uses the Firebase Installation ID (FID) path instead of the legacy FCM token API.
+   * Requires the app's own Firebase project (`android.googleServicesFile`), `firebase-messaging` 25.1.0+
+   * and `react-native-onesignal` 5.5.16+ (OneSignal Android SDK 5.11.0+). Defaults to false (no manifest change).
+   */
+  enableFirebaseInstallationId?: boolean;
+
+  /**
    * (optional) An array of local paths to custom notification sound files (.wav only).
    * Files are added to the iOS app bundle and Android res/raw/.
    * @see https://documentation.onesignal.com/docs/customize-notification-sounds

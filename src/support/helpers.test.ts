@@ -111,6 +111,21 @@ describe('validatePluginProps', () => {
     );
   });
 
+  test('accepts enableFirebaseInstallationId as a boolean', () => {
+    expect(() =>
+      validatePluginProps({ ...validProps, enableFirebaseInstallationId: true }),
+    ).not.toThrow();
+    expect(() =>
+      validatePluginProps({ ...validProps, enableFirebaseInstallationId: false }),
+    ).not.toThrow();
+  });
+
+  test('rejects non-boolean enableFirebaseInstallationId', () => {
+    expect(() =>
+      validatePluginProps({ ...validProps, enableFirebaseInstallationId: 'true' }),
+    ).toThrow("'enableFirebaseInstallationId' must be a boolean");
+  });
+
   test('accepts valid 6-digit hex smallIconAccentColor', () => {
     expect(() =>
       validatePluginProps({ ...validProps, smallIconAccentColor: '#FF0000' }),
