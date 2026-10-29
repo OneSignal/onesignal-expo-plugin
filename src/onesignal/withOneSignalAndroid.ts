@@ -11,6 +11,7 @@ import type { ExpoConfig } from 'expo/config';
 import {
   AndroidConfig,
   ConfigPlugin,
+  WarningAggregator,
   withAndroidManifest,
   withDangerousMod,
   withGradleProperties,
@@ -176,6 +177,13 @@ const withFirebaseInstallationIdManifest: ConfigPlugin<OneSignalPluginProps> = (
   const enabled = onesignalProps.enableFirebaseInstallationId;
   if (enabled == null) {
     return config;
+  }
+
+  if (enabled && !config.android?.googleServicesFile) {
+    WarningAggregator.addWarningAndroid(
+      'onesignal-expo-plugin',
+      "'enableFirebaseInstallationId' is true but 'android.googleServicesFile' is not set. Firebase Installation ID push registration needs your own Firebase project's google-services.json.",
+    );
   }
 
   return withAndroidManifest(config, (config) => {

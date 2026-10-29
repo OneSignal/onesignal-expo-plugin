@@ -12,10 +12,13 @@ const withAndroidManifestMock = vi.fn(
   ) => action({ ...config, modResults: makeManifest() }),
 );
 
+const addWarningAndroidMock = vi.fn();
+
 vi.mock('expo/config-plugins', async (importOriginal) => {
   const actual = await importOriginal<typeof import('expo/config-plugins')>();
   return {
     AndroidConfig: actual.AndroidConfig,
+    WarningAggregator: { addWarningAndroid: addWarningAndroidMock },
     withAndroidManifest: withAndroidManifestMock,
     withDangerousMod: (config: ExpoConfig) => config,
     withGradleProperties: (
@@ -85,6 +88,31 @@ describe('withOneSignalAndroid', () => {
           'android:value': 'true',
         },
       });
+    });
+
+    test('warns when true without android.googleServicesFile', async () => {
+      const { withOneSignalAndroid } = await import('./withOneSignalAndroid');
+      addWarningAndroidMock.mockClear();
+
+      withOneSignalAndroid(makeConfig(), {
+        mode: 'production',
+        enableFirebaseInstallationId: true,
+      });
+
+      expect(addWarningAndroidMock).toHaveBeenCalledTimes(1);
+      expect(addWarningAndroidMock.mock.calls[0][1]).toContain('android.googleServicesFile');
+    });
+
+    test('does not warn when android.googleServicesFile is set', async () => {
+      const { withOneSignalAndroid } = await import('./withOneSignalAndroid');
+      addWarningAndroidMock.mockClear();
+
+      withOneSignalAndroid(
+        { ...makeConfig(), android: { googleServicesFile: './google-services.json' } },
+        { mode: 'production', enableFirebaseInstallationId: true },
+      );
+
+      expect(addWarningAndroidMock).not.toHaveBeenCalled();
     });
 
     test('replaces an existing FID meta-data entry instead of duplicating it', async () => {
