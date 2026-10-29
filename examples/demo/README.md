@@ -48,4 +48,6 @@ vp exec expo prebuild --platform android --clean
 vp exec expo run:android
 ```
 
+Run prebuild explicitly after adding or changing the file. `expo run:android` skips prebuild because `android/` already exists (the Gradle wrapper is committed), so it would build without FID.
+
 Confirm `firebase_messaging_installation_id_enabled` is `true` in `android/app/src/main/AndroidManifest.xml`. Expo Go is not supported.
