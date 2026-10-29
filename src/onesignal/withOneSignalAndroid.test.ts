@@ -124,16 +124,37 @@ describe('withOneSignalAndroid', () => {
       expect(withAndroidManifestMock).not.toHaveBeenCalled();
     });
 
-    test('does not touch the manifest when false', async () => {
-      const { withOneSignalAndroid } = await import('./withOneSignalAndroid');
-      withAndroidManifestMock.mockClear();
+    test('removes an existing FID meta-data entry when false', async () => {
+      const { withOneSignalAndroid, FIREBASE_INSTALLATION_ID_META_DATA } =
+        await import('./withOneSignalAndroid');
+      withAndroidManifestMock.mockImplementationOnce((config, action) => {
+        const manifest = makeManifest();
+        manifest.manifest.application![0]['meta-data'] = [
+          { $: { 'android:name': FIREBASE_INSTALLATION_ID_META_DATA, 'android:value': 'true' } },
+          { $: { 'android:name': 'other_meta_data', 'android:value': 'kept' } },
+        ];
+        return action({ ...config, modResults: manifest });
+      });
 
-      withOneSignalAndroid(makeConfig(), {
+      const config = withOneSignalAndroid(makeConfig(), {
         mode: 'production',
         enableFirebaseInstallationId: false,
       });
 
-      expect(withAndroidManifestMock).not.toHaveBeenCalled();
+      expect(getMetaData(config)).toEqual([
+        { $: { 'android:name': 'other_meta_data', 'android:value': 'kept' } },
+      ]);
+    });
+
+    test('does not write a false value when false', async () => {
+      const { withOneSignalAndroid } = await import('./withOneSignalAndroid');
+
+      const config = withOneSignalAndroid(makeConfig(), {
+        mode: 'production',
+        enableFirebaseInstallationId: false,
+      });
+
+      expect(getMetaData(config)).toEqual([]);
     });
   });
 });

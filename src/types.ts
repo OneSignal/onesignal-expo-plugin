@@ -102,7 +102,7 @@ export type OneSignalPluginProps = {
    * (optional, Android only) If true, sets `firebase_messaging_installation_id_enabled=true` in the Android manifest so
    * push registration uses the Firebase Installation ID (FID) path instead of the legacy FCM token API.
    * Requires the app's own Firebase project (`android.googleServicesFile`), `firebase-messaging` 25.1.0+
-   * and `react-native-onesignal` 5.5.16+ (OneSignal Android SDK 5.11.0+). Defaults to false (no manifest change).
+   * and `react-native-onesignal` 5.5.16+ (OneSignal Android SDK 5.11.0+). If unset, the manifest is untouched; if false, the app's own entry is removed.
    */
   enableFirebaseInstallationId?: boolean;
 

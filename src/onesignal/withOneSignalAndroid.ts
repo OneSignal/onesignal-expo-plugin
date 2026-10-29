@@ -166,23 +166,32 @@ const withLocationModuleGradleProperty: ConfigPlugin<OneSignalPluginProps> = (
   });
 };
 
-// Opt-in only: the flag is app-wide and other SDKs may already contribute it via
-// manifest merging, so an unset prop must leave the manifest untouched.
+// The flag is app-wide and other SDKs may contribute it via manifest merging, so
+// unset leaves the manifest alone and false only removes the app's own entry
+// (left behind by an earlier prebuild without --clean) rather than writing "false".
 const withFirebaseInstallationIdManifest: ConfigPlugin<OneSignalPluginProps> = (
   config,
   onesignalProps,
 ) => {
-  if (!onesignalProps.enableFirebaseInstallationId) {
+  const enabled = onesignalProps.enableFirebaseInstallationId;
+  if (enabled == null) {
     return config;
   }
 
   return withAndroidManifest(config, (config) => {
     const mainApplication = AndroidConfig.Manifest.getMainApplicationOrThrow(config.modResults);
-    AndroidConfig.Manifest.addMetaDataItemToMainApplication(
-      mainApplication,
-      FIREBASE_INSTALLATION_ID_META_DATA,
-      'true',
-    );
+    if (enabled) {
+      AndroidConfig.Manifest.addMetaDataItemToMainApplication(
+        mainApplication,
+        FIREBASE_INSTALLATION_ID_META_DATA,
+        'true',
+      );
+    } else {
+      AndroidConfig.Manifest.removeMetaDataItemFromMainApplication(
+        mainApplication,
+        FIREBASE_INSTALLATION_ID_META_DATA,
+      );
+    }
     return config;
   });
 };
