@@ -13,6 +13,7 @@ interface Props {
   icon?: React.ReactNode;
   iconPosition?: 'left' | 'right';
   leftAligned?: boolean;
+  singleLine?: boolean;
 }
 
 export default function ActionButton({
@@ -25,6 +26,7 @@ export default function ActionButton({
   icon,
   iconPosition = 'left',
   leftAligned,
+  singleLine,
 }: Props) {
   const bgColor = variant === 'primary' ? AppColors.osPrimary : 'transparent';
 
@@ -42,6 +44,7 @@ export default function ActionButton({
         styles.button,
         { backgroundColor: bgColor },
         borderStyle,
+        singleLine && styles.singleLine,
         (disabled || loading) && styles.disabled,
       ]}
       activeOpacity={0.8}
@@ -51,7 +54,13 @@ export default function ActionButton({
       ) : (
         <View style={[styles.inner, leftAligned && styles.leftAligned]}>
           {icon && iconPosition === 'left' && <View style={styles.iconLeft}>{icon}</View>}
-          <Text style={[styles.text, { color: textColor }]}>{label}</Text>
+          <Text
+            style={[styles.text, { color: textColor }]}
+            numberOfLines={singleLine ? 1 : undefined}
+            adjustsFontSizeToFit={singleLine}
+          >
+            {label}
+          </Text>
           {icon && iconPosition === 'right' && <View style={styles.iconRight}>{icon}</View>}
         </View>
       )}
@@ -72,6 +81,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  singleLine: {
+    paddingHorizontal: 8,
   },
   leftAligned: {
     justifyContent: 'flex-start',
