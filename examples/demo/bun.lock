@@ -820,7 +820,7 @@
 
     "on-headers": ["on-headers@1.1.0", "", {}, "sha512-737ZY3yNnXy37FHkQxPzt4UZ2UWPWiCZWLvFZ4fu5cueciegX0zGPnrlY6bwRg4FdQOe9YU8MkmJwGhoMybl8A=="],
 
-    "onesignal-expo-plugin": ["onesignal-expo-plugin@../../onesignal-expo-plugin.tgz", { "dependencies": { "@expo/image-utils": "^0.11.4" }, "peerDependencies": { "expo": ">=53.0.0", "react-native-onesignal": ">=5.0.0" } }, "sha512-U82SxmeWampZYQThPui5LBa/VPocnG5XFjrHAhO8SKXbzZO8EdJ3fBxbmmgsnfW0crMnrmMTWdBHoNS8U1+rpg=="],
+    "onesignal-expo-plugin": ["onesignal-expo-plugin@../../onesignal-expo-plugin.tgz", { "dependencies": { "@expo/image-utils": "^0.11.4" }, "peerDependencies": { "expo": ">=53.0.0", "react-native-onesignal": ">=5.0.0" } }, "sha512-BQdROgkJI3RY/+dZVrOz9K5+ZPwLpokJq1yd0pFIgxCeBwLbwnNTOhzCfoZf3jiEXvZPk/OIUgrCdVnZ7S5FGA=="],
 
     "onetime": ["onetime@2.0.1", "", { "dependencies": { "mimic-fn": "^1.0.0" } }, "sha512-oyyPpiMaKARvvcgip+JV+7zci5L8D1W9RZIz2l1o08AM3pfspitVWnPt3mzHcBPp12oYMTy0pqrFs/C+m3EwsQ=="],
 
