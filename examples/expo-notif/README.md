@@ -49,7 +49,7 @@ vp run android
 - `expo-notifications` before `onesignal-expo-plugin` in the plugin list
 - The local `withExpoNotificationsDelegate` compatibility plugin
 - OneSignal development mode
-- `com.onesignal.example` as the iOS bundle ID and Android package
+- `com.onesignal.example` as the iOS bundle ID and `com.onesignal.sdkdemo` as the Android package
 - iOS remote-notification background mode and development push entitlement
 
 ### iOS compatibility workaround

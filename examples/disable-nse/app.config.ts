@@ -12,7 +12,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     bundleIdentifier: 'com.onesignal.example',
   },
   android: {
-    package: 'com.onesignal.example',
+    package: 'com.onesignal.sdkdemo',
   },
   plugins: [
     [

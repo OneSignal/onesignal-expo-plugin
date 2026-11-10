@@ -2,7 +2,7 @@
 
 Reference app for `onesignal-expo-plugin` and `react-native-onesignal`. It showcases SDK features including push notifications, in-app messaging, user management, tags, triggers, outcomes, live activities, and more, using the plugin packed from this repository.
 
-The demo uses package/bundle id `com.onesignal.example`. It needs a native build; Expo Go is not supported.
+The demo uses Android package `com.onesignal.sdkdemo` and iOS bundle id `com.onesignal.example`. It needs a native build; Expo Go is not supported.
 
 ## Prerequisites
 
@@ -34,11 +34,11 @@ EXPO_PUBLIC_ONESIGNAL_API_KEY=your-onesignal-api-key
 EXPO_PUBLIC_ONESIGNAL_ANDROID_CHANNEL_ID=
 ```
 
-- `EXPO_PUBLIC_ONESIGNAL_APP_ID`: falls back to a built-in default App ID when empty.
+- `EXPO_PUBLIC_ONESIGNAL_APP_ID`: required. `app.config.ts` fails prebuild and builds when it is empty.
 - `EXPO_PUBLIC_ONESIGNAL_API_KEY`: REST API key, used to update and end live activities. Sending notifications from the demo doesn't need it.
 - `EXPO_PUBLIC_ONESIGNAL_ANDROID_CHANNEL_ID`: optional Android notification channel for the sound test notification. Falls back to a built-in default channel.
 
-The OneSignal app needs FCM credentials for Android and APNs credentials for the `com.onesignal.example` bundle ID on iOS.
+The OneSignal app needs FCM credentials for the `com.onesignal.sdkdemo` Android package and APNs credentials for the `com.onesignal.example` bundle ID on iOS.
 
 ## Run
 
@@ -72,14 +72,14 @@ Set `FORCE_SETUP=1` to reinstall the plugin even when the packed tarball is unch
 
 ## Firebase Installation ID (Android)
 
-The demo enables `enableFirebaseInstallationId` only when `examples/demo/google-services.json` exists (gitignored). Use one from a Firebase project whose client entry matches `com.onesignal.example`. The demo also forces `firebase-messaging` 25.1.2, which FID registration requires.
+FID is off by default. E2E turns it on with `FIREBASE_INSTALLATION_ID_ENABLED=true`, which needs `examples/demo/google-services.json` (gitignored) from a Firebase project whose client entry matches `com.onesignal.sdkdemo`. The config fails if the flag is on without the file. When the file exists, it is wired into `android.googleServicesFile`. The demo always forces `firebase-messaging` 25.1.3, which FID registration requires.
 
 ```bash
-vp exec expo prebuild --platform android --clean
-vp exec expo run:android
+FIREBASE_INSTALLATION_ID_ENABLED=true vp exec expo prebuild --platform android --clean
+FIREBASE_INSTALLATION_ID_ENABLED=true vp exec expo run:android
 ```
 
-Run prebuild explicitly after adding or changing the file. `expo run:android` skips prebuild because `android/` already exists (the Gradle wrapper is committed), so it would build without FID.
+Run prebuild explicitly after adding or changing the file or the flag. `expo run:android` skips prebuild because `android/` already exists (the Gradle wrapper is committed), so it would build without FID.
 
 Confirm `firebase_messaging_installation_id_enabled` is `true` in `android/app/src/main/AndroidManifest.xml`. Expo Go is not supported.
 

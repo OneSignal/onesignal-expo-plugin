@@ -30,9 +30,18 @@ jobs:
       github.event.inputs.platform == 'android' ||
       github.event.inputs.platform == 'both'
     runs-on: ubuntu-latest
+    env:
+      # Read by examples/demo/app.config.ts during prebuild and the release JS bundle.
+      FIREBASE_INSTALLATION_ID_ENABLED: 'true'
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+
+      - name: Write demo google-services.json
+        uses: OneSignal/sdk-shared/.github/actions/setup-google-services@main
+        with:
+          google-services-json: ${{ secrets.APPIUM_GOOGLE_SERVICES_JSON }}
+          path: examples/demo/google-services.json
 
       - name: Set up Java
         uses: actions/setup-java@v5
@@ -203,6 +212,7 @@ jobs:
       platform: android
       app-artifact: demo-apk
       app-filename: app-release.apk
+      bundle-id: com.onesignal.sdkdemo
       sdk-type: expo
       build-name: expo-android-${{ github.ref_name }}-${{ github.run_number }}
 

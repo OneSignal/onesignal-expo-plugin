@@ -28,6 +28,6 @@ The OneSignal Expo plugin configures native dependency resolution so the app bui
 `app.config.ts` enables:
 
 - `disableLocation: true` for the OneSignal plugin
-- `com.onesignal.example` as the iOS bundle ID and Android package
+- `com.onesignal.example` as the iOS bundle ID and `com.onesignal.sdkdemo` as the Android package
 - iOS remote-notification background mode and development push entitlement
 - `onesignal.disableLocation=true` in the generated Android Gradle properties
