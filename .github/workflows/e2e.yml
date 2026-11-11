@@ -30,9 +30,12 @@ jobs:
       github.event.inputs.platform == 'android' ||
       github.event.inputs.platform == 'both'
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        fid: ['on', 'off']
     env:
       # Read by examples/demo/app.config.ts during prebuild and the release JS bundle.
-      FIREBASE_INSTALLATION_ID_ENABLED: 'true'
+      FIREBASE_INSTALLATION_ID_ENABLED: ${{ matrix.fid == 'on' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -41,6 +44,7 @@ jobs:
         uses: OneSignal/sdk-shared/.github/actions/setup-google-services@main
         with:
           google-services-json: ${{ secrets.APPIUM_GOOGLE_SERVICES_JSON }}
+          enabled: ${{ matrix.fid == 'on' }}
           path: examples/demo/google-services.json
 
       - name: Set up Java
@@ -63,7 +67,7 @@ jobs:
       - name: Upload APK
         uses: actions/upload-artifact@v7
         with:
-          name: demo-apk
+          name: demo-apk${{ matrix.fid == 'off' && '-fid-off' || '' }}
           path: examples/demo/android/app/build/outputs/apk/release/app-release.apk
           retention-days: 1
           compression-level: 0
@@ -211,6 +215,7 @@ jobs:
     with:
       platform: android
       app-artifact: demo-apk
+      fid-off-app-artifact: demo-apk-fid-off
       app-filename: app-release.apk
       bundle-id: com.onesignal.sdkdemo
       sdk-type: expo
