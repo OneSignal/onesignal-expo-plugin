@@ -72,7 +72,7 @@ const withFastGradleProperties: ConfigPlugin = (cfg) =>
   });
 
 // The OneSignal Android SDK caps firebase-messaging at 24.x but FID
-// registration needs 25.1.0+, so the app has to force it.
+// registration needs 25.1.2+, so the app has to force it.
 const FIREBASE_MESSAGING_FORCE_MARKER = '// onesignal demo: force firebase-messaging for FID';
 
 const withFirebaseMessagingForFid: ConfigPlugin = (cfg) =>
@@ -82,7 +82,7 @@ const withFirebaseMessagingForFid: ConfigPlugin = (cfg) =>
 ${FIREBASE_MESSAGING_FORCE_MARKER}
 allprojects {
     configurations.all {
-        resolutionStrategy.force 'com.google.firebase:firebase-messaging:25.1.2'
+        resolutionStrategy.force 'com.google.firebase:firebase-messaging:25.1.3'
     }
 }
 `;
@@ -95,11 +95,21 @@ allprojects {
 // like `withFastGradleProperties` are applied by calling them on the
 // finished config instead.
 export default ({ config, projectRoot }: ConfigContext): ExpoConfig => {
-  // Firebase Installation ID registration needs the app's own Firebase project.
-  // The file is gitignored, so FID is only enabled where one has been provided.
+  if (!process.env.EXPO_PUBLIC_ONESIGNAL_APP_ID?.trim()) {
+    throw new Error('EXPO_PUBLIC_ONESIGNAL_APP_ID is not set. Add it to examples/demo/.env.');
+  }
+
+  // google-services.json is gitignored; E2E writes it from a secret.
   const googleServicesFile = existsSync(join(projectRoot, 'google-services.json'))
     ? './google-services.json'
     : undefined;
+  // E2E sets FIREBASE_INSTALLATION_ID_ENABLED=true. The flag does nothing
+  // without the default FirebaseApp from google-services.json.
+  const firebaseInstallationIdEnabled =
+    process.env.FIREBASE_INSTALLATION_ID_ENABLED?.trim().toLowerCase() === 'true';
+  if (firebaseInstallationIdEnabled && !googleServicesFile) {
+    throw new Error('FIREBASE_INSTALLATION_ID_ENABLED requires examples/demo/google-services.json');
+  }
 
   const expoConfig = withFastGradleProperties({
     ...config,
@@ -133,7 +143,7 @@ export default ({ config, projectRoot }: ConfigContext): ExpoConfig => {
       supportsTablet: true,
     },
     android: {
-      package: 'com.onesignal.example',
+      package: 'com.onesignal.sdkdemo',
       googleServicesFile,
       // For OneSignal location permissions
       permissions: [
@@ -150,7 +160,7 @@ export default ({ config, projectRoot }: ConfigContext): ExpoConfig => {
         smallIconAccentColor: '#C0FFEE', // Optional: For Android only
         largeIcons: ['./assets/images/icon.png'], // Optional: For Android only (right side icon)
         sounds: ['./assets/vine_boom.wav'], // Optional: Custom notification sounds
-        enableFirebaseInstallationId: !!googleServicesFile, // Optional: Android FID registration (needs googleServicesFile)
+        enableFirebaseInstallationId: firebaseInstallationIdEnabled, // Optional: Android FID registration (needs googleServicesFile)
 
         // Uncomment this to use the Objective-C version of the Notification Service Extension
         // iosNSEFilePath: './customNSE/NSE.m',
@@ -180,5 +190,5 @@ export default ({ config, projectRoot }: ConfigContext): ExpoConfig => {
       reactCompiler: true,
     },
   });
-  return googleServicesFile ? withFirebaseMessagingForFid(expoConfig) : expoConfig;
+  return withFirebaseMessagingForFid(expoConfig);
 };

@@ -25,7 +25,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
       supportsTablet: true,
     },
     android: {
-      package: 'com.onesignal.example',
+      package: 'com.onesignal.sdkdemo',
     },
     plugins: [
       'expo-notifications',

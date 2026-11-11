@@ -84,7 +84,7 @@ Install the OneSignal runtime SDK from npm, pinned:
 "react-native-onesignal": "5.5.16"
 ```
 
-Configure `app.config.ts` with the plugin as the FIRST entry, using the full options shape that the demo ships. `googleServicesFile` is `'./google-services.json'` when that gitignored file exists in the demo root and `undefined` otherwise. It is also set as `android.googleServicesFile`, and when present the demo forces `firebase-messaging` 25.1.2 in `android/build.gradle`:
+Configure `app.config.ts` with the plugin as the FIRST entry, using the full options shape that the demo ships. `googleServicesFile` is `'./google-services.json'` when that gitignored file exists in the demo root and `undefined` otherwise; it is set as `android.googleServicesFile`. `firebaseInstallationIdEnabled` is `process.env.FIREBASE_INSTALLATION_ID_ENABLED === 'true'` (off by default; E2E turns it on) and throws when on without `google-services.json`. The demo always forces `firebase-messaging` 25.1.3 in `android/build.gradle`:
 
 ```ts
 plugins: [
@@ -98,7 +98,7 @@ plugins: [
       smallIconAccentColor: '#C0FFEE',
       largeIcons: ['./assets/images/icon.png'],
       sounds: ['./assets/vine_boom.wav'],
-      enableFirebaseInstallationId: !!googleServicesFile, // Android FID, see below
+      enableFirebaseInstallationId: firebaseInstallationIdEnabled, // Android FID, see below
       // iosNSEFilePath: './customNSE/NSE.m', // opt-in Obj-C NSE
       liveActivities: {
         targetName: 'OneSignalWidget',
@@ -144,7 +144,7 @@ Then use: `bun run android` / `bun run ios`
 
 The demo uses Expo's `EXPO_PUBLIC_` env prefix; values are inlined into the JS bundle at build time. `.env` is gitignored; `.env.example` is committed.
 
-- `EXPO_PUBLIC_ONESIGNAL_APP_ID` -- read by `src/hooks/useOneSignal.ts`. Hardcoded fallback: `77e32082-ea27-42e3-a898-c72e141824ef`.
+- `EXPO_PUBLIC_ONESIGNAL_APP_ID` -- read by `src/hooks/useOneSignal.ts`. Required; `app.config.ts` throws when it is unset, which fails prebuild and the release JS bundle.
 - `EXPO_PUBLIC_ONESIGNAL_API_KEY` -- required for Live Activity REST update/end calls in `OneSignalApiService`.
 - `EXPO_PUBLIC_ONESIGNAL_ANDROID_CHANNEL_ID` -- optional Android Notification Channel ID for the WITH-SOUND test notification.
 
@@ -278,11 +278,10 @@ State lives in a single `OneSignalProvider` exposed via `useOneSignal()` (`src/h
 
 SDK init runs inside `OneSignalProvider` / `useOneSignalState()`, NOT in `app/_layout.tsx`. The layout only sets up the `Stack` and the `OneSignalProvider` + `ToastProvider` wrappers.
 
-App ID is resolved in `useOneSignal.ts` via `process.env.EXPO_PUBLIC_ONESIGNAL_APP_ID` with hardcoded fallback `77e32082-ea27-42e3-a898-c72e141824ef`. No `expo-constants` lookup, no `extra.oneSignalAppId`.
+App ID is resolved in `useOneSignal.ts` via `process.env.EXPO_PUBLIC_ONESIGNAL_APP_ID`. There is no default; `app.config.ts` fails the build when it is unset. No `expo-constants` lookup, no `extra.oneSignalAppId`.
 
 ```typescript
-const DEFAULT_APP_ID = '77e32082-ea27-42e3-a898-c72e141824ef';
-const appId = process.env.EXPO_PUBLIC_ONESIGNAL_APP_ID?.trim() || DEFAULT_APP_ID;
+const appId = (process.env.EXPO_PUBLIC_ONESIGNAL_APP_ID ?? '').trim();
 
 OneSignal.Debug.setLogLevel(LogLevel.Verbose);
 OneSignal.setConsentRequired(cachedConsentRequired);
@@ -465,7 +464,7 @@ In `app.config.ts`:
     supportsTablet: true,
   },
   android: {
-    package: 'com.onesignal.example',
+    package: 'com.onesignal.sdkdemo', // iOS stays com.onesignal.example
     permissions: [
       'android.permission.ACCESS_COARSE_LOCATION',
       'android.permission.ACCESS_FINE_LOCATION',
