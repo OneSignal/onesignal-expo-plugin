@@ -106,9 +106,9 @@ properties.
 
 `enableFirebaseInstallationId: true` opts in to the Firebase Installation ID (FID) push registration path. The plugin only writes the manifest flag; the rest of the setup is owned by your app:
 
-- Use `react-native-onesignal` 5.5.16 or newer (OneSignal Android SDK 5.11.0+).
+- Use `react-native-onesignal` 5.5.16 or newer (OneSignal Android SDK 5.11.0+). Prebuild fails on older versions.
 - Set `android.googleServicesFile` in your Expo config to a `google-services.json` from your own Firebase project. Its client entry must match `android.package` (and every variant you build). Expo prebuild then applies the Google Services Gradle plugin.
-- Resolve `com.google.firebase:firebase-messaging` 25.1.0 or newer. The OneSignal Android SDK declares a lower range, so force the version in your app, e.g. with a config plugin that adds a Gradle `resolutionStrategy`. Firebase Messaging 25.x requires `minSdkVersion` 23.
+- Resolve `com.google.firebase:firebase-messaging` 25.1.2 or newer. The OneSignal Android SDK declares a lower range, so force the version in your app, e.g. with a config plugin that adds a Gradle `resolutionStrategy`. Firebase Messaging 25.x requires `minSdkVersion` 23.
 - Build with a development build or `expo run:android`. Expo Go is not supported.
 
 Leaving the prop unset keeps the legacy FCM token path and requires none of the above. Setting it to `false` removes the flag from the app manifest, for example after an earlier `expo prebuild` without `--clean`; it never writes `false`. The flag is app-wide, so another dependency can also enable it through manifest merging; in that case the same setup applies even without this prop.
