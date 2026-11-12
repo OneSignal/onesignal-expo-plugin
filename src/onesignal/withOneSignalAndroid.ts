@@ -3,7 +3,8 @@
  * @see https://documentation.onesignal.com/docs/react-native-sdk-setup#step-4-install-for-ios-using-cocoapods-for-ios-apps
  */
 
-import { existsSync, mkdirSync, writeFileSync, copyFileSync } from 'fs';
+import { existsSync, mkdirSync, writeFileSync, copyFileSync, readFileSync } from 'fs';
+import { createRequire } from 'module';
 import { resolve, parse, basename } from 'path';
 
 import { generateImageAsync } from '@expo/image-utils';
@@ -25,6 +26,7 @@ import { OneSignalPluginProps } from '../types';
 const RESOURCE_ROOT_PATH = 'android/app/src/main/res/';
 const ONESIGNAL_DISABLE_LOCATION_GRADLE_PROPERTY = 'onesignal.disableLocation';
 export const FIREBASE_INSTALLATION_ID_META_DATA = 'firebase_messaging_installation_id_enabled';
+export const MIN_FID_REACT_NATIVE_ONESIGNAL_VERSION = '5.5.16';
 
 // The name of each small icon folder resource, and the icon size for that folder.
 const SMALL_ICON_DIRS_TO_SIZE: { [name: string]: number } = {
@@ -187,6 +189,9 @@ const withFirebaseInstallationIdManifest: ConfigPlugin<OneSignalPluginProps> = (
   }
 
   return withAndroidManifest(config, (config) => {
+    if (enabled) {
+      assertFidCapableReactNativeOneSignal(config.modRequest?.projectRoot);
+    }
     const mainApplication = AndroidConfig.Manifest.getMainApplicationOrThrow(config.modResults);
     if (enabled) {
       AndroidConfig.Manifest.addMetaDataItemToMainApplication(
@@ -203,6 +208,47 @@ const withFirebaseInstallationIdManifest: ConfigPlugin<OneSignalPluginProps> = (
     return config;
   });
 };
+
+// Older SDKs only use the legacy FCM token API, which Firebase disables once the flag is on
+// and firebase-messaging is 25.1+, so push registration fails with no fallback.
+function assertFidCapableReactNativeOneSignal(projectRoot: string | undefined) {
+  if (!projectRoot) {
+    return;
+  }
+  const version = getInstalledReactNativeOneSignalVersion(projectRoot);
+  if (version && compareVersions(version, MIN_FID_REACT_NATIVE_ONESIGNAL_VERSION) < 0) {
+    throw new Error(
+      `onesignal-expo-plugin: 'enableFirebaseInstallationId' requires react-native-onesignal ${MIN_FID_REACT_NATIVE_ONESIGNAL_VERSION} or newer, but ${version} is installed. Upgrade react-native-onesignal or remove 'enableFirebaseInstallationId'.`,
+    );
+  }
+}
+
+function getInstalledReactNativeOneSignalVersion(projectRoot: string): string | undefined {
+  try {
+    const projectRequire = createRequire(resolve(projectRoot, 'package.json'));
+    const packageJsonPath = projectRequire.resolve('react-native-onesignal/package.json');
+    return JSON.parse(readFileSync(packageJsonPath, 'utf8')).version;
+  } catch {
+    return undefined;
+  }
+}
+
+function compareVersions(a: string, b: string): number {
+  const toParts = (version: string) =>
+    version
+      .split('-')[0]
+      .split('.')
+      .map((part) => parseInt(part, 10) || 0);
+  const left = toParts(a);
+  const right = toParts(b);
+  for (let i = 0; i < Math.max(left.length, right.length); i++) {
+    const diff = (left[i] ?? 0) - (right[i] ?? 0);
+    if (diff !== 0) {
+      return diff;
+    }
+  }
+  return 0;
+}
 
 async function saveIconsArrayAsync(
   projectRoot: string,
