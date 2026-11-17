@@ -96,18 +96,16 @@ jobs:
         run: cp ExportOptions.plist ios/ExportOptions.plist
 
       # Patch the prebuilt pbxproj to use manual In House signing for Release on
-      # every target (main app, NSE, Live Activity widget). Done here instead of via
+      # every target (main app, NSE, Live Activity widget); DEVELOPMENT_TEAM comes
+      # from appleTeamId in app.config.ts. Done here instead of via
       # an Expo config plugin to avoid mod-ordering issues — at this point the
       # NSE/Widget targets already exist in the pbxproj.
       - name: Pin Release signing for all iOS targets
         working-directory: examples/demo/ios
-        env:
-          DEV_TEAM: 'DL8TF3X4K3'
         run: |
           /usr/bin/python3 - <<'PY'
-          import os, re, pathlib
+          import re, pathlib
 
-          dev_team = os.environ['DEV_TEAM']
           targets = {
               'OneSignalDemo': 'Appium Demo - Main',
               'OneSignalNotificationServiceExtension': 'Appium Demo - NSE',
@@ -126,12 +124,10 @@ jobs:
                       block = re.sub(r'\n\s*CODE_SIGN_STYLE = \w+;', '', block)
                       block = re.sub(r'\n\s*PROVISIONING_PROFILE_SPECIFIER = [^;]+;', '', block)
                       block = re.sub(r'\n\s*CODE_SIGN_IDENTITY = [^;]+;', '', block)
-                      block = re.sub(r'\n\s*DEVELOPMENT_TEAM = [^;]+;', '', block)
                       inject = (
                           '\n\t\t\t\tCODE_SIGN_STYLE = Manual;'
                           f'\n\t\t\t\tPROVISIONING_PROFILE_SPECIFIER = "{profile}";'
                           '\n\t\t\t\tCODE_SIGN_IDENTITY = "iPhone Distribution";'
-                          f'\n\t\t\t\tDEVELOPMENT_TEAM = {dev_team};'
                       )
                       block = block.replace('buildSettings = {', 'buildSettings = {' + inject, 1)
                       print(f'patched target={tname} profile={profile}')
