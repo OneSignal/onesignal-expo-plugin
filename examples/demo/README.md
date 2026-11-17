@@ -2,7 +2,7 @@
 
 Reference app for `onesignal-expo-plugin` and `react-native-onesignal`. It showcases SDK features including push notifications, in-app messaging, user management, tags, triggers, outcomes, live activities, and more, using the plugin packed from this repository.
 
-The demo uses Android package `com.onesignal.sdkdemo` and iOS bundle id `com.onesignal.example`. It needs a native build; Expo Go is not supported.
+The demo uses the app ID `com.onesignal.sdkdemo` on Android and iOS. It needs a native build; Expo Go is not supported.
 
 ## Prerequisites
 
@@ -38,7 +38,7 @@ EXPO_PUBLIC_ONESIGNAL_ANDROID_CHANNEL_ID=
 - `EXPO_PUBLIC_ONESIGNAL_API_KEY`: REST API key, used to update and end live activities. Sending notifications from the demo doesn't need it.
 - `EXPO_PUBLIC_ONESIGNAL_ANDROID_CHANNEL_ID`: optional Android notification channel for the sound test notification. Falls back to a built-in default channel.
 
-The OneSignal app needs FCM credentials for the `com.onesignal.sdkdemo` Android package and APNs credentials for the `com.onesignal.example` bundle ID on iOS.
+The OneSignal app needs FCM (Android) and APNs (iOS) credentials for `com.onesignal.sdkdemo`.
 
 ## Run
 

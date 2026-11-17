@@ -15,7 +15,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
     newArchEnabled: true,
     ios: {
       appleTeamId: '99SW8E36CT',
-      bundleIdentifier: 'com.onesignal.example',
+      bundleIdentifier: 'com.onesignal.sdkdemo',
       infoPlist: {
         UIBackgroundModes: ['remote-notification'],
       },
