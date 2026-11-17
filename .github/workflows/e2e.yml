@@ -95,14 +95,14 @@ jobs:
         working-directory: examples/demo
         run: cp ExportOptions.plist ios/ExportOptions.plist
 
-      # Patch the prebuilt pbxproj to use manual signing for Release on every
-      # target (main app, NSE, Live Activity widget). Done here instead of via
+      # Patch the prebuilt pbxproj to use manual In House signing for Release on
+      # every target (main app, NSE, Live Activity widget). Done here instead of via
       # an Expo config plugin to avoid mod-ordering issues — at this point the
       # NSE/Widget targets already exist in the pbxproj.
       - name: Pin Release signing for all iOS targets
         working-directory: examples/demo/ios
         env:
-          DEV_TEAM: '99SW8E36CT'
+          DEV_TEAM: 'DL8TF3X4K3'
         run: |
           /usr/bin/python3 - <<'PY'
           import os, re, pathlib
@@ -130,7 +130,7 @@ jobs:
                       inject = (
                           '\n\t\t\t\tCODE_SIGN_STYLE = Manual;'
                           f'\n\t\t\t\tPROVISIONING_PROFILE_SPECIFIER = "{profile}";'
-                          '\n\t\t\t\tCODE_SIGN_IDENTITY = "Apple Development";'
+                          '\n\t\t\t\tCODE_SIGN_IDENTITY = "iPhone Distribution";'
                           f'\n\t\t\t\tDEVELOPMENT_TEAM = {dev_team};'
                       )
                       block = block.replace('buildSettings = {', 'buildSettings = {' + inject, 1)
@@ -139,7 +139,7 @@ jobs:
               return block
 
           new_text = re.sub(
-              r'(/\* Release \*/ = \{[\s\S]*?name = Release;\s*\};)',
+              r'(/\* Release \*/ = \{\n[\s\S]*?\n\t\t\};)',
               lambda m: patch(m.group(1)),
               text,
           )

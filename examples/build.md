@@ -447,7 +447,7 @@ In `app.config.ts`:
   icon: './assets/images/icon.png',
   scheme: 'demo',
   ios: {
-    appleTeamId: '99SW8E36CT',
+    appleTeamId: 'DL8TF3X4K3',
     icon: './assets/images/icon.png',
     bundleIdentifier: 'com.onesignal.sdkdemo',
     infoPlist: {

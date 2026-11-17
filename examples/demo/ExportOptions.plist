@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
   <key>method</key>
-  <string>debugging</string>
+  <string>enterprise</string>
   <key>teamID</key>
-  <string>99SW8E36CT</string>
+  <string>DL8TF3X4K3</string>
   <key>signingStyle</key>
   <string>manual</string>
   <key>stripSwiftSymbols</key>

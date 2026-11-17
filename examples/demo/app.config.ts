@@ -121,7 +121,7 @@ export default ({ config, projectRoot }: ConfigContext): ExpoConfig => {
     scheme: 'demo',
     userInterfaceStyle: 'automatic',
     ios: {
-      appleTeamId: '99SW8E36CT',
+      appleTeamId: 'DL8TF3X4K3',
       icon: './assets/images/icon.png',
       bundleIdentifier: 'com.onesignal.sdkdemo',
       infoPlist: {

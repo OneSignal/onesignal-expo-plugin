@@ -10,7 +10,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   scheme: 'demo-no-location',
   userInterfaceStyle: 'automatic',
   ios: {
-    appleTeamId: '99SW8E36CT',
+    appleTeamId: 'DL8TF3X4K3',
     bundleIdentifier: 'com.onesignal.sdkdemo',
     infoPlist: {
       UIBackgroundModes: ['remote-notification'],
