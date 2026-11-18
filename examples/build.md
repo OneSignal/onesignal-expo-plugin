@@ -456,10 +456,8 @@ In `app.config.ts`:
       NSSupportsLiveActivities: true,
     },
     entitlements: {
-      'aps-environment': 'development',
-      // Placeholder app group; the actual OneSignal app group is supplied
-      // through the plugin's `appGroupName` option below.
-      'com.apple.security.application-groups': ['group.expoNotUsed'],
+      // CI sets APS_ENVIRONMENT=production for the In House archive.
+      'aps-environment': apsEnvironment,
     },
     supportsTablet: true,
   },
@@ -474,7 +472,7 @@ In `app.config.ts`:
 }
 ```
 
-The OneSignal plugin sets the real app group via `appGroupName: 'group.com.onesignal.sdkdemo.onesignal'` (see "OneSignal Plugin + Config"). `group.expoNotUsed` is a placeholder slot in `entitlements.application-groups` for cases where you want to add additional app groups.
+The OneSignal plugin sets the real app group via `appGroupName: 'group.com.onesignal.sdkdemo.onesignal'` (see "OneSignal Plugin + Config"). Don't add other app groups to `entitlements`: the In House profile only allows that one, so archiving fails.
 
 Identifiers must match whatever you wire up in Firebase / Huawei AGC manually. There are no `google-services.json` or `agconnect-services.json` files committed in `examples/demo/`.
 

@@ -142,7 +142,6 @@ export default ({ config, projectRoot }: ConfigContext): ExpoConfig => {
       },
       entitlements: {
         'aps-environment': apsEnvironment, // For push notifications support
-        'com.apple.security.application-groups': ['group.expoNotUsed'], // Additional app groups if needed (you can have multiple app groups)
       },
       supportsTablet: true,
     },
