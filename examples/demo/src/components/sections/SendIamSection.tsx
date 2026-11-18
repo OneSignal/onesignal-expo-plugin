@@ -1,9 +1,8 @@
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
 
 import { InAppMessageType, iamTypeLabel } from '../../models/InAppMessageType';
-import { AppSpacing } from '../../theme';
 import ActionButton from '../ActionButton';
+import ButtonGrid from '../ButtonGrid';
 import SectionCard from '../SectionCard';
 
 interface Props {
@@ -25,30 +24,16 @@ const IAM_TYPES: InAppMessageType[] = [
 export default function SendIamSection({ onSendIam, onInfoTap }: Props) {
   return (
     <SectionCard title="Send In-App Message" onInfoTap={onInfoTap} sectionKey="send_iam">
-      <View style={styles.grid}>
+      <ButtonGrid>
         {IAM_TYPES.map((type) => (
-          <View key={type} style={styles.cell}>
-            <ActionButton
-              label={iamTypeLabel[type]}
-              onPress={() => onSendIam(type)}
-              testID={`send_iam_${type}_button`}
-              singleLine
-            />
-          </View>
+          <ActionButton
+            key={type}
+            label={iamTypeLabel[type]}
+            onPress={() => onSendIam(type)}
+            testID={`send_iam_${type}_button`}
+          />
         ))}
-      </View>
+      </ButtonGrid>
     </SectionCard>
   );
 }
-
-const styles = StyleSheet.create({
-  grid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    columnGap: AppSpacing.gap,
-  },
-  cell: {
-    flexBasis: '40%',
-    flexGrow: 1,
-  },
-});

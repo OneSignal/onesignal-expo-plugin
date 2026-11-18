@@ -9,7 +9,8 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   orientation: 'portrait',
   newArchEnabled: true,
   ios: {
-    bundleIdentifier: 'com.onesignal.example',
+    appleTeamId: 'DL8TF3X4K3',
+    bundleIdentifier: 'com.onesignal.sdkdemo',
   },
   android: {
     package: 'com.onesignal.sdkdemo',

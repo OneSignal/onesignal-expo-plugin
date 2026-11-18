@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { TouchableOpacity, Text, StyleSheet, View, ActivityIndicator } from 'react-native';
 
 import { AppColors, AppSpacing } from '../theme';
+import { ButtonGridContext } from './ButtonGrid';
 
 interface Props {
   label: string;
@@ -26,8 +27,10 @@ export default function ActionButton({
   icon,
   iconPosition = 'left',
   leftAligned,
-  singleLine,
+  singleLine: singleLineProp,
 }: Props) {
+  const inGrid = useContext(ButtonGridContext);
+  const singleLine = singleLineProp || inGrid;
   const bgColor = variant === 'primary' ? AppColors.osPrimary : 'transparent';
 
   const borderStyle =
@@ -45,6 +48,7 @@ export default function ActionButton({
         { backgroundColor: bgColor },
         borderStyle,
         singleLine && styles.singleLine,
+        inGrid && styles.gridCell,
         (disabled || loading) && styles.disabled,
       ]}
       activeOpacity={0.8}
@@ -55,7 +59,7 @@ export default function ActionButton({
         <View style={[styles.inner, leftAligned && styles.leftAligned]}>
           {icon && iconPosition === 'left' && <View style={styles.iconLeft}>{icon}</View>}
           <Text
-            style={[styles.text, { color: textColor }]}
+            style={[styles.text, { color: textColor }, singleLine && styles.singleLineText]}
             numberOfLines={singleLine ? 1 : undefined}
             adjustsFontSizeToFit={singleLine}
           >
@@ -91,6 +95,14 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 14,
     fontWeight: '600',
+  },
+  singleLineText: {
+    flexShrink: 1,
+  },
+  gridCell: {
+    width: 'auto',
+    flexGrow: 1,
+    flexBasis: '40%',
   },
   iconLeft: {
     marginRight: 8,

@@ -92,7 +92,7 @@ plugins: [
     'onesignal-expo-plugin',
     {
       mode: 'development',
-      appGroupName: 'group.com.onesignal.example.onesignal',
+      appGroupName: 'group.com.onesignal.sdkdemo.onesignal',
       nseBundleIdentifier: 'NSE',
       smallIcons: ['./assets/images/small_icon.png'],
       smallIconAccentColor: '#C0FFEE',
@@ -447,24 +447,22 @@ In `app.config.ts`:
   icon: './assets/images/icon.png',
   scheme: 'demo',
   ios: {
-    appleTeamId: '99SW8E36CT',
+    appleTeamId: 'DL8TF3X4K3',
     icon: './assets/images/icon.png',
-    bundleIdentifier: 'com.onesignal.example',
+    bundleIdentifier: 'com.onesignal.sdkdemo',
     infoPlist: {
       UIBackgroundModes: ['remote-notification'],
       NSLocationWhenInUseUsageDescription: 'This app uses your location to...',
       NSSupportsLiveActivities: true,
     },
     entitlements: {
-      'aps-environment': 'development',
-      // Placeholder app group; the actual OneSignal app group is supplied
-      // through the plugin's `appGroupName` option below.
-      'com.apple.security.application-groups': ['group.expoNotUsed'],
+      // CI sets APS_ENVIRONMENT=production for the In House archive.
+      'aps-environment': apsEnvironment,
     },
     supportsTablet: true,
   },
   android: {
-    package: 'com.onesignal.sdkdemo', // iOS stays com.onesignal.example
+    package: 'com.onesignal.sdkdemo',
     permissions: [
       'android.permission.ACCESS_COARSE_LOCATION',
       'android.permission.ACCESS_FINE_LOCATION',
@@ -474,7 +472,7 @@ In `app.config.ts`:
 }
 ```
 
-The OneSignal plugin sets the real app group via `appGroupName: 'group.com.onesignal.example.onesignal'` (see "OneSignal Plugin + Config"). `group.expoNotUsed` is a placeholder slot in `entitlements.application-groups` for cases where you want to add additional app groups.
+The OneSignal plugin sets the real app group via `appGroupName: 'group.com.onesignal.sdkdemo.onesignal'` (see "OneSignal Plugin + Config"). Don't add other app groups to `entitlements`: the In House profile only allows that one, so archiving fails.
 
 Identifiers must match whatever you wire up in Firebase / Huawei AGC manually. There are no `google-services.json` or `agconnect-services.json` files committed in `examples/demo/`.
 

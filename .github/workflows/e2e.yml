@@ -79,6 +79,9 @@ jobs:
       github.event.inputs.platform == 'ios' ||
       github.event.inputs.platform == 'both'
     runs-on: macos-latest
+    env:
+      # In House profiles only allow production push; read by app.config.ts at prebuild.
+      APS_ENVIRONMENT: production
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -95,19 +98,17 @@ jobs:
         working-directory: examples/demo
         run: cp ExportOptions.plist ios/ExportOptions.plist
 
-      # Patch the prebuilt pbxproj to use manual signing for Release on every
-      # target (main app, NSE, Live Activity widget). Done here instead of via
+      # Patch the prebuilt pbxproj to use manual In House signing for Release on
+      # every target (main app, NSE, Live Activity widget); DEVELOPMENT_TEAM comes
+      # from appleTeamId in app.config.ts. Done here instead of via
       # an Expo config plugin to avoid mod-ordering issues — at this point the
       # NSE/Widget targets already exist in the pbxproj.
       - name: Pin Release signing for all iOS targets
         working-directory: examples/demo/ios
-        env:
-          DEV_TEAM: '99SW8E36CT'
         run: |
           /usr/bin/python3 - <<'PY'
-          import os, re, pathlib
+          import re, pathlib
 
-          dev_team = os.environ['DEV_TEAM']
           targets = {
               'OneSignalDemo': 'Appium Demo - Main',
               'OneSignalNotificationServiceExtension': 'Appium Demo - NSE',
@@ -116,6 +117,8 @@ jobs:
 
           pbx = pathlib.Path('OneSignalDemo.xcodeproj/project.pbxproj')
           text = pbx.read_text()
+
+          patched = set()
 
           def patch(block: str) -> str:
               for tname, profile in targets.items():
@@ -126,23 +129,25 @@ jobs:
                       block = re.sub(r'\n\s*CODE_SIGN_STYLE = \w+;', '', block)
                       block = re.sub(r'\n\s*PROVISIONING_PROFILE_SPECIFIER = [^;]+;', '', block)
                       block = re.sub(r'\n\s*CODE_SIGN_IDENTITY = [^;]+;', '', block)
-                      block = re.sub(r'\n\s*DEVELOPMENT_TEAM = [^;]+;', '', block)
                       inject = (
                           '\n\t\t\t\tCODE_SIGN_STYLE = Manual;'
                           f'\n\t\t\t\tPROVISIONING_PROFILE_SPECIFIER = "{profile}";'
-                          '\n\t\t\t\tCODE_SIGN_IDENTITY = "Apple Development";'
-                          f'\n\t\t\t\tDEVELOPMENT_TEAM = {dev_team};'
+                          '\n\t\t\t\tCODE_SIGN_IDENTITY = "iPhone Distribution";'
                       )
                       block = block.replace('buildSettings = {', 'buildSettings = {' + inject, 1)
+                      patched.add(tname)
                       print(f'patched target={tname} profile={profile}')
                       break
               return block
 
           new_text = re.sub(
-              r'(/\* Release \*/ = \{[\s\S]*?name = Release;\s*\};)',
+              r'(/\* Release \*/ = \{\n[\s\S]*?\n\t\t\};)',
               lambda m: patch(m.group(1)),
               text,
           )
+          missing = set(targets) - patched
+          if missing:
+              raise SystemExit(f'Release config not patched for: {sorted(missing)}')
           pbx.write_text(new_text)
           PY
 
@@ -196,8 +201,8 @@ jobs:
           unzip -oq "$IPA" -d /tmp/ipa
           APP=$(ls -d /tmp/ipa/Payload/*.app | head -n1)
           codesign -d --entitlements - "$APP" 2>&1 | tee /tmp/entitlements.txt
-          if ! grep -q 'aps-environment' /tmp/entitlements.txt; then
-            echo "::error::Built IPA is missing aps-environment entitlement; push subscription will not work"
+          if ! grep -A2 'aps-environment' /tmp/entitlements.txt | grep -q 'production'; then
+            echo "::error::Built IPA needs aps-environment=production for the In House profile"
             exit 1
           fi
 

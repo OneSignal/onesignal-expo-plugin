@@ -7,7 +7,7 @@ To test OneSignal push notifications in the Expo demo on iOS, make sure the `ios
   "expo": {
     "ios": {
       "icon": "./assets/images/icon.png",
-      "bundleIdentifier": "com.onesignal.example",
+      "bundleIdentifier": "com.onesignal.sdkdemo",
       "infoPlist": {
         "UIBackgroundModes": ["remote-notification"]
       },
