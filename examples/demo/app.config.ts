@@ -24,6 +24,10 @@ type GradlePropertiesItem =
 // register *after* the OneSignal plugin so its mods see the NSE/Widget
 // targets. Listing it as a string entry in `plugins:` after `onesignal-...`
 // is the only way to control that registration order.
+// In House profiles only allow production push; CI sets APS_ENVIRONMENT for
+// the device archive. Local and simulator builds stay on development.
+const apsEnvironment = process.env.APS_ENVIRONMENT === 'production' ? 'production' : 'development';
+
 const FAST_BUILD_PROPERTIES: Record<string, string> = {
   // Reuse compiled outputs (CMake, Kotlin, Java, dex) across builds.
   // Single biggest win for repeat builds; survives `./gradlew clean`.
@@ -137,7 +141,7 @@ export default ({ config, projectRoot }: ConfigContext): ExpoConfig => {
         NSSupportsLiveActivities: true,
       },
       entitlements: {
-        'aps-environment': 'development', // For push notifications support
+        'aps-environment': apsEnvironment, // For push notifications support
         'com.apple.security.application-groups': ['group.expoNotUsed'], // Additional app groups if needed (you can have multiple app groups)
       },
       supportsTablet: true,
@@ -153,7 +157,7 @@ export default ({ config, projectRoot }: ConfigContext): ExpoConfig => {
     },
     plugins: [
       withOneSignal({
-        mode: 'development',
+        mode: apsEnvironment,
         appGroupName: 'group.com.onesignal.sdkdemo.onesignal', // Optional: If you had your own app group name, you can set it here
         nseBundleIdentifier: 'NSE', // Optional: Custom bundle identifier for the Notification Service Extension
         smallIcons: ['./assets/images/small_icon.png'], // Optional: Custom notification icon (left side icon)

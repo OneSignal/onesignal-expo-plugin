@@ -79,6 +79,9 @@ jobs:
       github.event.inputs.platform == 'ios' ||
       github.event.inputs.platform == 'both'
     runs-on: macos-latest
+    env:
+      # In House profiles only allow production push; read by app.config.ts at prebuild.
+      APS_ENVIRONMENT: production
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -115,6 +118,8 @@ jobs:
           pbx = pathlib.Path('OneSignalDemo.xcodeproj/project.pbxproj')
           text = pbx.read_text()
 
+          patched = set()
+
           def patch(block: str) -> str:
               for tname, profile in targets.items():
                   if (
@@ -130,6 +135,7 @@ jobs:
                           '\n\t\t\t\tCODE_SIGN_IDENTITY = "iPhone Distribution";'
                       )
                       block = block.replace('buildSettings = {', 'buildSettings = {' + inject, 1)
+                      patched.add(tname)
                       print(f'patched target={tname} profile={profile}')
                       break
               return block
@@ -139,6 +145,9 @@ jobs:
               lambda m: patch(m.group(1)),
               text,
           )
+          missing = set(targets) - patched
+          if missing:
+              raise SystemExit(f'Release config not patched for: {sorted(missing)}')
           pbx.write_text(new_text)
           PY
 
@@ -192,8 +201,8 @@ jobs:
           unzip -oq "$IPA" -d /tmp/ipa
           APP=$(ls -d /tmp/ipa/Payload/*.app | head -n1)
           codesign -d --entitlements - "$APP" 2>&1 | tee /tmp/entitlements.txt
-          if ! grep -q 'aps-environment' /tmp/entitlements.txt; then
-            echo "::error::Built IPA is missing aps-environment entitlement; push subscription will not work"
+          if ! grep -A2 'aps-environment' /tmp/entitlements.txt | grep -q 'production'; then
+            echo "::error::Built IPA needs aps-environment=production for the In House profile"
             exit 1
           fi
 
