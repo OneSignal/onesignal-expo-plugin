@@ -11,14 +11,10 @@ The app registers `expo-notifications` listeners before initializing OneSignal, 
 
 ## Setup
 
-Copy `.env.example` to `.env` and set your OneSignal app ID:
+The demo uses the shared OneSignal app `1154c350-e715-4b71-a58b-1b84b6745baa` by default. To use your own app, copy `.env.example` to `.env` and set `EXPO_PUBLIC_ONESIGNAL_APP_ID`:
 
 ```sh
 cp .env.example .env
-```
-
-```sh
-EXPO_PUBLIC_ONESIGNAL_APP_ID=your-onesignal-app-id
 ```
 
 Install dependencies from this directory:
@@ -49,7 +45,7 @@ vp run android
 - `expo-notifications` before `onesignal-expo-plugin` in the plugin list
 - The local `withExpoNotificationsDelegate` compatibility plugin
 - OneSignal development mode
-- `com.onesignal.sdkdemo` as the iOS bundle ID and Android package
+- `com.onesignal.example` as the iOS bundle ID and Android package, on team `99SW8E36CT`
 - iOS remote-notification background mode and development push entitlement
 
 ### iOS compatibility workaround

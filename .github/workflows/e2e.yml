@@ -37,6 +37,8 @@ jobs:
     env:
       # Read by examples/demo/app.config.ts during prebuild and the release JS bundle.
       FIREBASE_INSTALLATION_ID_ENABLED: ${{ matrix.fid == 'on' }}
+      # Matches the package in the APPIUM_GOOGLE_SERVICES_JSON secret.
+      DEMO_BUNDLE_ID: com.onesignal.sdkdemo
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -82,6 +84,9 @@ jobs:
     env:
       # In House profiles only allow production push; read by app.config.ts at prebuild.
       APS_ENVIRONMENT: production
+      # Read by app.config.ts at prebuild; matches the In House profiles.
+      DEMO_BUNDLE_ID: com.onesignal.sdkdemo
+      DEMO_TEAM_ID: DL8TF3X4K3
     steps:
       - name: Checkout
         uses: actions/checkout@v6

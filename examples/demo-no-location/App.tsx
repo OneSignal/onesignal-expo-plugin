@@ -13,12 +13,10 @@ import {
 } from 'react-native';
 import { OneSignal } from 'react-native-onesignal';
 
-const ONESIGNAL_APP_ID =
-  process.env.EXPO_PUBLIC_ONESIGNAL_APP_ID?.trim() || 'YOUR-ONESIGNAL-APP-ID';
+const DEFAULT_APP_ID = '1154c350-e715-4b71-a58b-1b84b6745baa';
+const ONESIGNAL_APP_ID = process.env.EXPO_PUBLIC_ONESIGNAL_APP_ID?.trim() || DEFAULT_APP_ID;
 const TEST_IMAGE_URL = 'https://media.onesignal.com/automated_push_templates/ratings_template.png';
 const ANDROID_STATUS_BAR_HEIGHT = Platform.OS === 'android' ? (StatusBar.currentHeight ?? 0) : 0;
-
-const isPlaceholder = (value: string) => value.toLowerCase().startsWith('your-');
 
 export default function App() {
   const [hasNotificationPermission, setHasNotificationPermission] = useState<boolean | null>(null);
@@ -92,14 +90,6 @@ export default function App() {
       },
       type: 'image' | 'text',
     ) => {
-      if (isPlaceholder(ONESIGNAL_APP_ID)) {
-        Alert.alert(
-          'Configure OneSignal',
-          'Set EXPO_PUBLIC_ONESIGNAL_APP_ID in .env before sending a test push.',
-        );
-        return;
-      }
-
       if (!hasNotificationPermission) {
         Alert.alert(
           'Notifications Disabled',

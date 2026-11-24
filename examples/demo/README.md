@@ -2,7 +2,7 @@
 
 Reference app for `onesignal-expo-plugin` and `react-native-onesignal`. It showcases SDK features including push notifications, in-app messaging, user management, tags, triggers, outcomes, live activities, and more, using the plugin packed from this repository.
 
-The demo uses the app ID `com.onesignal.sdkdemo` on Android and iOS. It needs a native build; Expo Go is not supported.
+The demo uses the shared OneSignal app `1154c350-e715-4b71-a58b-1b84b6745baa` and the bundle ID and Android package `com.onesignal.example` by default. It needs a native build; Expo Go is not supported.
 
 ## Prerequisites
 
@@ -18,7 +18,7 @@ Install the plugin's dependencies from the repository root, since setup builds a
 vp install
 ```
 
-Then, in this directory:
+To use your own app, API key or signing, copy `.env.example` to `.env` in this directory:
 
 ```bash
 cp .env.example .env
@@ -26,7 +26,7 @@ cp .env.example .env
 
 Don't run `vp install` in this directory on a fresh clone. The demo depends on the packed `onesignal-expo-plugin.tgz`, which setup creates, and setup installs the demo's dependencies itself.
 
-Set your OneSignal credentials in `.env`:
+Then set your values in `.env`:
 
 ```bash
 EXPO_PUBLIC_ONESIGNAL_APP_ID=your-onesignal-app-id
@@ -34,11 +34,13 @@ EXPO_PUBLIC_ONESIGNAL_API_KEY=your-onesignal-api-key
 EXPO_PUBLIC_ONESIGNAL_ANDROID_CHANNEL_ID=
 ```
 
-- `EXPO_PUBLIC_ONESIGNAL_APP_ID`: required. `app.config.ts` fails prebuild and builds when it is empty.
+- `EXPO_PUBLIC_ONESIGNAL_APP_ID`: optional. Empty uses the shared demo app.
 - `EXPO_PUBLIC_ONESIGNAL_API_KEY`: REST API key, used to update and end live activities. Sending notifications from the demo doesn't need it.
 - `EXPO_PUBLIC_ONESIGNAL_ANDROID_CHANNEL_ID`: optional Android notification channel for the sound test notification. Falls back to a built-in default channel.
 
-The OneSignal app needs FCM (Android) and APNs (iOS) credentials for `com.onesignal.sdkdemo`.
+- `DEMO_BUNDLE_ID` / `DEMO_TEAM_ID`: optional. `app.config.ts` uses them for the iOS bundle ID, Android package and Apple team, defaulting to `com.onesignal.example` and `99SW8E36CT`. The NSE, widget and app group IDs derive from `DEMO_BUNDLE_ID`. Rerun prebuild after changing them. E2E sets `DEMO_BUNDLE_ID=com.onesignal.sdkdemo DEMO_TEAM_ID=DL8TF3X4K3`.
+
+The OneSignal app needs FCM (Android) and APNs (iOS) credentials for your bundle ID.
 
 ## Run
 
@@ -57,7 +59,7 @@ After changing `app.config.ts` or plugin config, regenerate the native projects:
 vp run clean
 ```
 
-iOS signing uses the `appleTeamId` in `app.config.ts`. Simulators work as is; for a physical device, set your own team.
+iOS signing uses `DEMO_TEAM_ID` (default `99SW8E36CT`). Simulators work as is; for a physical device, set your own team and bundle ID.
 
 ## Other scripts
 
@@ -72,7 +74,7 @@ Set `FORCE_SETUP=1` to reinstall the plugin even when the packed tarball is unch
 
 ## Firebase Installation ID (Android)
 
-FID is off by default. E2E turns it on with `FIREBASE_INSTALLATION_ID_ENABLED=true`, which needs `examples/demo/google-services.json` (gitignored) from a Firebase project whose client entry matches `com.onesignal.sdkdemo`. The config fails if the flag is on without the file. When the file exists, it is wired into `android.googleServicesFile`. The demo always forces `firebase-messaging` 25.1.3, which FID registration requires.
+FID is off by default. E2E turns it on with `FIREBASE_INSTALLATION_ID_ENABLED=true`, which needs `examples/demo/google-services.json` (gitignored) from a Firebase project whose client entry matches your Android package. The config fails if the flag is on without the file. When the file exists, it is wired into `android.googleServicesFile`. The demo always forces `firebase-messaging` 25.1.3, which FID registration requires.
 
 ```bash
 FIREBASE_INSTALLATION_ID_ENABLED=true vp exec expo prebuild --platform android --clean

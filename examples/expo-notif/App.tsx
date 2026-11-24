@@ -13,8 +13,8 @@ import {
 } from 'react-native';
 import { LogLevel, OneSignal, type NotificationWillDisplayEvent } from 'react-native-onesignal';
 
-const ONESIGNAL_APP_ID =
-  process.env.EXPO_PUBLIC_ONESIGNAL_APP_ID?.trim() || 'YOUR-ONESIGNAL-APP-ID';
+const DEFAULT_APP_ID = '1154c350-e715-4b71-a58b-1b84b6745baa';
+const ONESIGNAL_APP_ID = process.env.EXPO_PUBLIC_ONESIGNAL_APP_ID?.trim() || DEFAULT_APP_ID;
 const TEST_EXTERNAL_ID = 'expo-notif-compat-test';
 const LOCAL_NOTIFICATION_DATA = {
   route: 'chat/123',
@@ -37,8 +37,6 @@ type EventLog = {
   title: string;
   detail?: string;
 };
-
-const isPlaceholder = (value: string) => value.toLowerCase().startsWith('your-');
 
 const summarizeData = (data: unknown) => {
   if (!data || typeof data !== 'object') {
@@ -79,22 +77,20 @@ export default function App() {
         appendLog('Expo', 'Permission read failed', String(error));
       });
 
-    if (!isPlaceholder(ONESIGNAL_APP_ID)) {
-      void OneSignal.Notifications.getPermissionAsync()
-        .then(setOneSignalPermission)
-        .catch((error) => {
-          setOneSignalPermission(null);
-          appendLog('OneSignal', 'Permission read failed', String(error));
-        });
+    void OneSignal.Notifications.getPermissionAsync()
+      .then(setOneSignalPermission)
+      .catch((error) => {
+        setOneSignalPermission(null);
+        appendLog('OneSignal', 'Permission read failed', String(error));
+      });
 
-      void OneSignal.User.pushSubscription
-        .getIdAsync()
-        .then((id) => setPushSubscriptionId(id ?? null))
-        .catch((error) => {
-          setPushSubscriptionId(null);
-          appendLog('OneSignal', 'Push ID read failed', String(error));
-        });
-    }
+    void OneSignal.User.pushSubscription
+      .getIdAsync()
+      .then((id) => setPushSubscriptionId(id ?? null))
+      .catch((error) => {
+        setPushSubscriptionId(null);
+        appendLog('OneSignal', 'Push ID read failed', String(error));
+      });
   }, [appendLog]);
 
   useEffect(() => {
@@ -127,16 +123,6 @@ export default function App() {
         );
       }
     });
-
-    if (isPlaceholder(ONESIGNAL_APP_ID)) {
-      appendLog('OneSignal', 'Set EXPO_PUBLIC_ONESIGNAL_APP_ID before testing OneSignal callbacks');
-      refreshState();
-
-      return () => {
-        receivedSubscription.remove();
-        responseSubscription.remove();
-      };
-    }
 
     const handlePushSubscriptionChange = (event: { current: { id?: string } }) => {
       setPushSubscriptionId(event.current.id ?? null);
@@ -202,10 +188,8 @@ export default function App() {
       const expoStatus = await Notifications.requestPermissionsAsync();
       setExpoPermission(expoStatus.status);
 
-      if (!isPlaceholder(ONESIGNAL_APP_ID)) {
-        const oneSignalGranted = await OneSignal.Notifications.requestPermission(false);
-        setOneSignalPermission(oneSignalGranted);
-      }
+      const oneSignalGranted = await OneSignal.Notifications.requestPermission(false);
+      setOneSignalPermission(oneSignalGranted);
 
       refreshState();
       appendLog('App', 'Permission request complete');
@@ -242,14 +226,6 @@ export default function App() {
   }, [appendLog]);
 
   const sendOneSignalNotification = useCallback(async () => {
-    if (isPlaceholder(ONESIGNAL_APP_ID)) {
-      Alert.alert(
-        'Configure OneSignal',
-        'Set EXPO_PUBLIC_ONESIGNAL_APP_ID in .env before sending a OneSignal push.',
-      );
-      return;
-    }
-
     if (!pushSubscriptionId) {
       Alert.alert('No push subscription', 'Request permission, then wait for a OneSignal push ID.');
       return;

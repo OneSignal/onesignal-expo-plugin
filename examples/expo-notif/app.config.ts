@@ -14,8 +14,8 @@ export default ({ config }: ConfigContext): ExpoConfig => {
     userInterfaceStyle: 'automatic',
     newArchEnabled: true,
     ios: {
-      appleTeamId: 'DL8TF3X4K3',
-      bundleIdentifier: 'com.onesignal.sdkdemo',
+      appleTeamId: '99SW8E36CT',
+      bundleIdentifier: 'com.onesignal.example',
       infoPlist: {
         UIBackgroundModes: ['remote-notification'],
       },
@@ -25,7 +25,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
       supportsTablet: true,
     },
     android: {
-      package: 'com.onesignal.sdkdemo',
+      package: 'com.onesignal.example',
     },
     plugins: [
       'expo-notifications',
