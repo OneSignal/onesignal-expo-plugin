@@ -28,6 +28,11 @@ type GradlePropertiesItem =
 // the device archive. Local and simulator builds stay on development.
 const apsEnvironment = process.env.APS_ENVIRONMENT === 'production' ? 'production' : 'development';
 
+// E2E sets DEMO_BUNDLE_ID=com.onesignal.sdkdemo DEMO_TEAM_ID=DL8TF3X4K3; that
+// bundle ID is registered to the enterprise team only.
+const demoBundleId = process.env.DEMO_BUNDLE_ID?.trim() || 'com.onesignal.example';
+const demoTeamId = process.env.DEMO_TEAM_ID?.trim() || '99SW8E36CT';
+
 const FAST_BUILD_PROPERTIES: Record<string, string> = {
   // Reuse compiled outputs (CMake, Kotlin, Java, dex) across builds.
   // Single biggest win for repeat builds; survives `./gradlew clean`.
@@ -99,10 +104,6 @@ allprojects {
 // like `withFastGradleProperties` are applied by calling them on the
 // finished config instead.
 export default ({ config, projectRoot }: ConfigContext): ExpoConfig => {
-  if (!process.env.EXPO_PUBLIC_ONESIGNAL_APP_ID?.trim()) {
-    throw new Error('EXPO_PUBLIC_ONESIGNAL_APP_ID is not set. Add it to examples/demo/.env.');
-  }
-
   // google-services.json is gitignored; E2E writes it from a secret.
   const googleServicesFile = existsSync(join(projectRoot, 'google-services.json'))
     ? './google-services.json'
@@ -125,9 +126,9 @@ export default ({ config, projectRoot }: ConfigContext): ExpoConfig => {
     scheme: 'demo',
     userInterfaceStyle: 'automatic',
     ios: {
-      appleTeamId: 'DL8TF3X4K3',
+      appleTeamId: demoTeamId,
       icon: './assets/images/icon.png',
-      bundleIdentifier: 'com.onesignal.sdkdemo',
+      bundleIdentifier: demoBundleId,
       infoPlist: {
         // For push notifications support when app is not in foreground
         UIBackgroundModes: ['remote-notification'],
@@ -146,7 +147,7 @@ export default ({ config, projectRoot }: ConfigContext): ExpoConfig => {
       supportsTablet: true,
     },
     android: {
-      package: 'com.onesignal.sdkdemo',
+      package: demoBundleId,
       googleServicesFile,
       // For OneSignal location permissions
       permissions: [
@@ -157,7 +158,7 @@ export default ({ config, projectRoot }: ConfigContext): ExpoConfig => {
     plugins: [
       withOneSignal({
         mode: apsEnvironment,
-        appGroupName: 'group.com.onesignal.sdkdemo.onesignal', // Optional: If you had your own app group name, you can set it here
+        appGroupName: `group.${demoBundleId}.onesignal`, // Optional: If you had your own app group name, you can set it here
         nseBundleIdentifier: 'NSE', // Optional: Custom bundle identifier for the Notification Service Extension
         smallIcons: ['./assets/images/small_icon.png'], // Optional: Custom notification icon (left side icon)
         smallIconAccentColor: '#C0FFEE', // Optional: For Android only

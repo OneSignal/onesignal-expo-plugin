@@ -92,7 +92,7 @@ plugins: [
     'onesignal-expo-plugin',
     {
       mode: 'development',
-      appGroupName: 'group.com.onesignal.sdkdemo.onesignal',
+      appGroupName: `group.${demoBundleId}.onesignal`,
       nseBundleIdentifier: 'NSE',
       smallIcons: ['./assets/images/small_icon.png'],
       smallIconAccentColor: '#C0FFEE',
@@ -144,7 +144,8 @@ Then use: `bun run android` / `bun run ios`
 
 The demo uses Expo's `EXPO_PUBLIC_` env prefix; values are inlined into the JS bundle at build time. `.env` is gitignored; `.env.example` is committed.
 
-- `EXPO_PUBLIC_ONESIGNAL_APP_ID` -- read by `src/hooks/useOneSignal.ts`. Required; `app.config.ts` throws when it is unset, which fails prebuild and the release JS bundle.
+- `EXPO_PUBLIC_ONESIGNAL_APP_ID` -- read by `src/hooks/useOneSignal.ts`. Optional; empty falls back to the shared demo app `1154c350-e715-4b71-a58b-1b84b6745baa`.
+- `DEMO_BUNDLE_ID` / `DEMO_TEAM_ID` -- read by `app.config.ts` at prebuild for the iOS bundle ID, Android package and Apple team. Default `com.onesignal.example` / `99SW8E36CT`; E2E sets `com.onesignal.sdkdemo` / `DL8TF3X4K3`.
 - `EXPO_PUBLIC_ONESIGNAL_API_KEY` -- required for Live Activity REST update/end calls in `OneSignalApiService`.
 - `EXPO_PUBLIC_ONESIGNAL_ANDROID_CHANNEL_ID` -- optional Android Notification Channel ID for the WITH-SOUND test notification.
 
@@ -278,10 +279,10 @@ State lives in a single `OneSignalProvider` exposed via `useOneSignal()` (`src/h
 
 SDK init runs inside `OneSignalProvider` / `useOneSignalState()`, NOT in `app/_layout.tsx`. The layout only sets up the `Stack` and the `OneSignalProvider` + `ToastProvider` wrappers.
 
-App ID is resolved in `useOneSignal.ts` via `process.env.EXPO_PUBLIC_ONESIGNAL_APP_ID`. There is no default; `app.config.ts` fails the build when it is unset. No `expo-constants` lookup, no `extra.oneSignalAppId`.
+App ID is resolved in `useOneSignal.ts` via `process.env.EXPO_PUBLIC_ONESIGNAL_APP_ID`. An empty value falls back to the shared demo app. No `expo-constants` lookup, no `extra.oneSignalAppId`.
 
 ```typescript
-const appId = (process.env.EXPO_PUBLIC_ONESIGNAL_APP_ID ?? '').trim();
+const appId = process.env.EXPO_PUBLIC_ONESIGNAL_APP_ID?.trim() || DEFAULT_APP_ID;
 
 OneSignal.Debug.setLogLevel(LogLevel.Verbose);
 OneSignal.setConsentRequired(cachedConsentRequired);
@@ -447,9 +448,9 @@ In `app.config.ts`:
   icon: './assets/images/icon.png',
   scheme: 'demo',
   ios: {
-    appleTeamId: 'DL8TF3X4K3',
+    appleTeamId: demoTeamId, // DEMO_TEAM_ID, default 99SW8E36CT
     icon: './assets/images/icon.png',
-    bundleIdentifier: 'com.onesignal.sdkdemo',
+    bundleIdentifier: demoBundleId, // DEMO_BUNDLE_ID, default com.onesignal.example
     infoPlist: {
       UIBackgroundModes: ['remote-notification'],
       NSLocationWhenInUseUsageDescription: 'This app uses your location to...',
@@ -462,7 +463,7 @@ In `app.config.ts`:
     supportsTablet: true,
   },
   android: {
-    package: 'com.onesignal.sdkdemo',
+    package: demoBundleId,
     permissions: [
       'android.permission.ACCESS_COARSE_LOCATION',
       'android.permission.ACCESS_FINE_LOCATION',
@@ -472,7 +473,7 @@ In `app.config.ts`:
 }
 ```
 
-The OneSignal plugin sets the real app group via `appGroupName: 'group.com.onesignal.sdkdemo.onesignal'` (see "OneSignal Plugin + Config"). Don't add other app groups to `entitlements`: the In House profile only allows that one, so archiving fails.
+The OneSignal plugin sets the real app group via ``appGroupName: `group.${demoBundleId}.onesignal` `` (see "OneSignal Plugin + Config"). Don't add other app groups to `entitlements`: the In House profile only allows that one, so archiving fails.
 
 Identifiers must match whatever you wire up in Firebase / Huawei AGC manually. There are no `google-services.json` or `agconnect-services.json` files committed in `examples/demo/`.
 

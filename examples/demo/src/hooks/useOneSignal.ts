@@ -27,9 +27,10 @@ import { log } from '../services/LogService';
 import OneSignalApiService from '../services/OneSignalApiService';
 import PreferencesService from '../services/PreferencesService';
 
-// app.config.ts fails the build when this is unset.
+const DEFAULT_APP_ID = '1154c350-e715-4b71-a58b-1b84b6745baa';
+
 function resolveAppId(): string {
-  return (process.env.EXPO_PUBLIC_ONESIGNAL_APP_ID ?? '').trim();
+  return process.env.EXPO_PUBLIC_ONESIGNAL_APP_ID?.trim() || DEFAULT_APP_ID;
 }
 
 const apiService = OneSignalApiService.getInstance();
